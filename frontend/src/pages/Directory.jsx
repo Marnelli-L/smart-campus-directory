@@ -206,6 +206,8 @@ const categories = [
   "General"
 ];
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 function Directory() {
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
@@ -224,8 +226,8 @@ function Directory() {
         setLoading(true);
         setError(null);
         
-        console.log('Fetching departments from API...');
-        const response = await fetch('http://localhost:5000/api/buildings');
+  console.log('Fetching departments from API...');
+  const response = await fetch(`${API_URL}/api/buildings`);
         
         if (response.ok) {
           const data = await response.json();
@@ -690,7 +692,7 @@ function Directory() {
                     <img
                       src={
                         d.image
-                          ? `http://localhost:5000${d.image}`
+                          ? `${API_URL}${d.image}`
                           : d.name === "Registrar"
                           ? "/images/sample directory image.jpg"
                           : d.name === "Library"
