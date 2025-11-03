@@ -997,37 +997,7 @@ function Directory() {
                   </Paper>
                 )}
                 
-                {/* Quick Actions Section - toned down */}
-                <Box sx={{ mt: 1.5, p: 1.5, bgcolor: "#f8faf9", borderRadius: 1, border: "1px solid #eef2f1" }}>
-                  <Stack direction="row" spacing={1}>
-                    <Button
-                      size="small"
-                      variant="outlined"
-                      startIcon={<EmailIcon fontSize="small" />}
-                      sx={{
-                        borderColor: "#00594A",
-                        color: "#00594A",
-                        fontSize: "0.75rem",
-                        textTransform: "none",
-                        '&:hover': { borderColor: "#00473f", background: "#e6f3f1" },
-                      }}
-                      href={`mailto:directory@udm.edu.ph?subject=Correction for ${modalDept.name}`}
-                    >
-                      Report Issue
-                    </Button>
-                    {modalDept.email && (
-                      <Button
-                        size="small"
-                        variant="text"
-                        startIcon={<EmailIcon fontSize="small" />}
-                        sx={{ color: "#00594A", fontSize: "0.75rem", textTransform: "none" }}
-                        href={`mailto:${modalDept.email}`}
-                      >
-                        Email {modalDept.staff?.split(' ')[0] || 'Office'}
-                      </Button>
-                    )}
-                  </Stack>
-                </Box>
+                {/* (Removed quick actions at user request) */}
               </Stack>
             </DialogContent>
             <DialogActions
