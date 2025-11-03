@@ -8,7 +8,8 @@ const router = express.Router();
 // - Show items intended to be visible to users
 // - Primary: status = 'Active'
 // - Also: status = 'Draft' but publish date is today or earlier (auto-visible on publish date)
-// - Date comparisons use DATE-only to avoid UTC/timezone surprises
+// - Date comparisons: publish date must be today or earlier (using current timestamp, not just date)
+// - Expire date must be NULL or in the future (using date comparison for consistency)
 router.get('/', async (req, res) => {
   try {
     const result = await db.query(`
@@ -25,9 +26,9 @@ router.get('/', async (req, res) => {
       FROM announcements
       WHERE (
           status = 'Active'
-          OR (status = 'Draft' AND publish_date::date <= CURRENT_DATE)
+          OR (status = 'Draft' AND publish_date <= CURRENT_TIMESTAMP)
         )
-        AND publish_date::date <= CURRENT_DATE
+        AND publish_date <= CURRENT_TIMESTAMP
         AND (expire_date IS NULL OR expire_date::date >= CURRENT_DATE)
       ORDER BY priority DESC, publish_date DESC
     `);
