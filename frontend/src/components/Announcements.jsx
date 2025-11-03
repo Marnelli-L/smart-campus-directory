@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useLanguage } from "../context/LanguageContext";
 import realTimeUpdates from "../utils/realTimeUpdates";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
 function Announcements() {
   const { language } = useLanguage();
   const [announcements, setAnnouncements] = useState([
@@ -41,7 +43,7 @@ function Announcements() {
   useEffect(() => {
     const fetchAnnouncements = async () => {
       try {
-        const response = await fetch("/api/announcements");
+        const response = await fetch(`${API_URL}/api/announcements`);
         if (!response.ok) throw new Error("Failed to fetch announcements");
 
         const contentType = response.headers.get("content-type");
