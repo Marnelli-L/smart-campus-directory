@@ -3,7 +3,12 @@ const db = require('./db/db');
 const { logAudit } = require('./utils/auditLogger');
 const router = express.Router();
 
-// Get all active announcements (for public display)
+// Get announcements for public display
+// Rules:
+// - Show items intended to be visible to users
+// - Primary: status = 'Active'
+// - Also: status = 'Draft' but publish date is today or earlier (auto-visible on publish date)
+// - Date comparisons use DATE-only to avoid UTC/timezone surprises
 router.get('/', async (req, res) => {
   try {
     const result = await db.query(`
@@ -18,9 +23,12 @@ router.get('/', async (req, res) => {
         status,
         priority
       FROM announcements
-      WHERE status = 'Active' 
-        AND publish_date <= CURRENT_TIMESTAMP
-        AND (expire_date IS NULL OR expire_date > CURRENT_TIMESTAMP)
+      WHERE (
+          status = 'Active'
+          OR (status = 'Draft' AND publish_date::date <= CURRENT_DATE)
+        )
+        AND publish_date::date <= CURRENT_DATE
+        AND (expire_date IS NULL OR expire_date::date >= CURRENT_DATE)
       ORDER BY priority DESC, publish_date DESC
     `);
     res.json(result.rows);
