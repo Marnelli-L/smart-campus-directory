@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Corridor A* Pathfinding Demo</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #333;
+    }
+    .container {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    h1 {
+      color: #667eea;
+      margin-top: 0;
+      font-size: 32px;
+    }
+    h2 {
+      color: #764ba2;
+      margin-top: 30px;
+      border-bottom: 2px solid #667eea;
+      padding-bottom: 10px;
+    }
+    .feature {
+      background: #f8f9fa;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+    }
+    .code-block {
+      background: #1e1e1e;
+      color: #d4d4d4;
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      margin: 15px 0;
+      font-family: 'Consolas', 'Monaco', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    .keyword { color: #569cd6; }
+    .string { color: #ce9178; }
+    .function { color: #dcdcaa; }
+    .comment { color: #6a9955; font-style: italic; }
+    .number { color: #b5cea8; }
+    .tag { color: #4ec9b0; }
+    ul {
+      line-height: 1.8;
+    }
+    .highlight {
+      background: #fff3cd;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+    .success {
+      color: #28a745;
+      font-weight: bold;
+    }
+    .warning {
+      color: #ffc107;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎯 Corridor-Based A* Pathfinding</h1>
+    <p><strong>Accurate pathfinding that ONLY follows walkable paths - no building overlap!</strong></p>
+
+    <h2>✨ Key Features</h2>
+    
+    <div class="feature">
+      <strong class="success">✅ Graph-Based Navigation</strong>
+      <p>Builds a navigation graph exclusively from LineString features (corridors/paths) in your GeoJSON data.</p>
+    </div>
+
+    <div class="feature">
+      <strong class="success">✅ A* Algorithm</strong>
+      <p>Uses A* pathfinding with Haversine distance heuristic for optimal route finding.</p>
+    </div>
+
+    <div class="feature">
+      <strong class="success">✅ Strict Path Adherence</strong>
+      <p>Routes ONLY follow existing walkable paths - guide lines never cut through buildings.</p>
+    </div>
+
+    <div class="feature">
+      <strong class="success">✅ Smart Snapping</strong>
+      <p>Automatically finds nearest graph nodes to start/end points for accurate routing.</p>
+    </div>
+
+    <h2>📦 Implementation</h2>
+
+    <h3>1. Import the Pathfinder</h3>
+    <div class="code-block">
+<span class="keyword">import</span> { <span class="tag">corridorPathfinder</span> } <span class="keyword">from</span> <span class="string">'../utils/corridorPathfinding'</span>;
+    </div>
+
+    <h3>2. Initialize with GeoJSON</h3>
+    <div class="code-block">
+<span class="comment">// After loading your GeoJSON data</span>
+<span class="keyword">const</span> <span class="tag">initialized</span> = <span class="tag">corridorPathfinder</span>.<span class="function">initialize</span>(geojsonData);
+
+<span class="keyword">if</span> (initialized) {
+  console.<span class="function">log</span>(<span class="string">'✅ Pathfinding ready!'</span>);
+}
+    </div>
+
+    <h3>3. Find Routes</h3>
+    <div class="code-block">
+<span class="keyword">const</span> startPoint = [<span class="number">120.981634</span>, <span class="number">14.591628</span>]; <span class="comment">// Entrance</span>
+<span class="keyword">const</span> endPoint = [<span class="number">120.981578</span>, <span class="number">14.591934</span>];   <span class="comment">// Destination</span>
+
+<span class="keyword">const</span> result = <span class="tag">corridorPathfinder</span>.<span class="function">findRoute</span>(startPoint, endPoint);
+
+console.<span class="function">log</span>(<span class="string">'Path:'</span>, result.path);           <span class="comment">// Array of coordinates</span>
+console.<span class="function">log</span>(<span class="string">'Distance:'</span>, result.distance);   <span class="comment">// Meters</span>
+console.<span class="function">log</span>(<span class="string">'Valid:'</span>, result.valid);         <span class="comment">// true if corridor path found</span>
+    </div>
+
+    <h2>🔍 How It Works</h2>
+
+    <ol>
+      <li><strong>Graph Building:</strong> Extracts all LineString features and creates nodes at segment endpoints</li>
+      <li><strong>Edge Creation:</strong> Each LineString segment becomes a bidirectional edge with calculated distance</li>
+      <li><strong>Node Snapping:</strong> Finds nearest graph nodes to your start/end coordinates</li>
+      <li><strong>A* Search:</strong> Uses A* algorithm with Haversine heuristic to find optimal path</li>
+      <li><strong>Path Reconstruction:</strong> Combines path segments into complete route with full coordinates</li>
+    </ol>
+
+    <h2>📊 Return Value</h2>
+    <div class="code-block">
+{
+  <span class="tag">path</span>: [            <span class="comment">// Array of [lng, lat] coordinates</span>
+    [<span class="number">120.981634</span>, <span class="number">14.591628</span>],
+    [<span class="number">120.981620</span>, <span class="number">14.591750</span>],
+    [<span class="number">120.981578</span>, <span class="number">14.591934</span>]
+  ],
+  <span class="tag">distance</span>: <span class="number">45.3</span>,        <span class="comment">// Total distance in meters</span>
+  <span class="tag">waypoints</span>: <span class="number">3</span>,         <span class="comment">// Number of coordinate points</span>
+  <span class="tag">nodeCount</span>: <span class="number">2</span>,         <span class="comment">// Number of graph nodes traversed</span>
+  <span class="tag">valid</span>: <span class="keyword">true</span>            <span class="comment">// true if corridor path found</span>
+}
+    </div>
+
+    <h2>🎨 MapView.jsx Integration</h2>
+    <p>The pathfinding is automatically integrated:</p>
+    <ul>
+      <li>✅ Initializes when GeoJSON loads</li>
+      <li>✅ Replaces simple direct routes with corridor-based paths</li>
+      <li>✅ Maintains animated route visualization</li>
+      <li>✅ Falls back to direct line if no corridor path exists</li>
+    </ul>
+
+    <h2>🛤️ GeoJSON Requirements</h2>
+    <p>Your GeoJSON must contain <span class="highlight">LineString</span> features representing walkable paths:</p>
+    <div class="code-block">
+{
+  <span class="string">"type"</span>: <span class="string">"Feature"</span>,
+  <span class="string">"properties"</span>: {
+    <span class="string">"Path"</span>: <span class="string">"Main Corridor"</span>
+  },
+  <span class="string">"geometry"</span>: {
+    <span class="string">"type"</span>: <span class="string">"LineString"</span>,
+    <span class="string">"coordinates"</span>: [
+      [<span class="number">120.981479</span>, <span class="number">14.592152</span>],
+      [<span class="number">120.981468</span>, <span class="number">14.592149</span>]
+    ]
+  }
+}
+    </div>
+
+    <h2>🚀 Benefits</h2>
+    <ul>
+      <li><strong>Accurate Navigation:</strong> Guide lines follow actual walkable paths</li>
+      <li><strong>No Building Overlap:</strong> Routes never cut through walls or buildings</li>
+      <li><strong>Google Maps Quality:</strong> Professional-grade pathfinding</li>
+      <li><strong>Optimal Routes:</strong> A* algorithm finds shortest valid path</li>
+      <li><strong>Performance:</strong> Graph-based approach is fast and efficient</li>
+    </ul>
+
+    <h2>⚙️ Configuration</h2>
+    <p>The pathfinder works automatically with default settings. To customize:</p>
+    <div class="code-block">
+<span class="comment">// Access graph data</span>
+console.<span class="function">log</span>(<span class="tag">corridorPathfinder</span>.nodes.size);      <span class="comment">// Number of nodes</span>
+console.<span class="function">log</span>(<span class="tag">corridorPathfinder</span>.corridors.length); <span class="comment">// Number of corridors</span>
+
+<span class="comment">// Find nearest node to any coordinate</span>
+<span class="keyword">const</span> { node, distance } = <span class="tag">corridorPathfinder</span>.<span class="function">findNearestNode</span>([lng, lat]);
+    </div>
+
+    <h2>📝 Notes</h2>
+    <ul>
+      <li><span class="warning">⚠️</span> Requires LineString features in GeoJSON for pathfinding</li>
+      <li><span class="warning">⚠️</span> Falls back to direct line if no corridor path found</li>
+      <li><span class="success">✅</span> Automatically re-initializes when floor changes</li>
+      <li><span class="success">✅</span> Thread-safe singleton pattern</li>
+    </ul>
+
+    <div style="margin-top: 40px; padding: 20px; background: #e7f3ff; border-radius: 8px; border-left: 4px solid #2196F3;">
+      <strong style="color: #1976D2;">💡 Pro Tip:</strong>
+      <p style="margin: 10px 0 0 0;">Make sure your GeoJSON has comprehensive LineString coverage of all walkable areas. The algorithm can only route through paths that exist in your data!</p>
+    </div>
+  </div>
+</body>
+</html>

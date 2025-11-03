@@ -1,0 +1,2513 @@
+{
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Office of the President",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981618,
+          14.59188
+        ],
+        "type": "Point"
+      },
+      "id": "0127c4770cb8dbeb2c5e73367f60e388"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Vice President for Academic Affairs",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office of the Dean "
+      },
+      "geometry": {
+        "coordinates": [
+          120.981309,
+          14.591702
+        ],
+        "type": "Point"
+      },
+      "id": "016e85595d2c463943e83c36fd27d235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Office of the President for Student Success and Support Services",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981209,
+              14.591917
+            ],
+            [
+              120.981316,
+              14.591948
+            ],
+            [
+              120.981281,
+              14.59206
+            ],
+            [
+              120.981176,
+              14.592028
+            ],
+            [
+              120.981209,
+              14.591917
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "030610843d4b4baaf0e4b1c0eaba6578"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Quality Assurance and Accreditation",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981532,
+              14.592227
+            ],
+            [
+              120.981524,
+              14.592252
+            ],
+            [
+              120.981563,
+              14.592262
+            ],
+            [
+              120.98157,
+              14.592238
+            ],
+            [
+              120.981532,
+              14.592227
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "05fec6989adb0552e3c3432f54e093cc"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Security Office",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.980846,
+              14.593015
+            ],
+            [
+              120.980844,
+              14.59302
+            ],
+            [
+              120.980857,
+              14.593024
+            ],
+            [
+              120.980859,
+              14.593019
+            ],
+            [
+              120.980846,
+              14.593015
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "0aab62c6555730522b5289363553b1e0"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Staff Room",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Room"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.98118,
+              14.593198
+            ],
+            [
+              120.981201,
+              14.593136
+            ],
+            [
+              120.981251,
+              14.593151
+            ],
+            [
+              120.98123,
+              14.593213
+            ],
+            [
+              120.98118,
+              14.593198
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "0b72ceb7e2d84c16e9b60c3a04ae2415"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Vacant",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Room"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981124,
+              14.593181
+            ],
+            [
+              120.981146,
+              14.593118
+            ],
+            [
+              120.981201,
+              14.593136
+            ],
+            [
+              120.981179,
+              14.593197
+            ],
+            [
+              120.981124,
+              14.593181
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "0c629bd2bd047fbaa260f4d695181802"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "You are here"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981635,
+          14.591638
+        ],
+        "type": "Point"
+      },
+      "id": "0d9d46dce1f3e81c38e84f267e5a8990"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981245,
+              14.593091
+            ],
+            [
+              120.981232,
+              14.593128
+            ],
+            [
+              120.981277,
+              14.593143
+            ],
+            [
+              120.98129,
+              14.593106
+            ],
+            [
+              120.981245,
+              14.593091
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "1246c311adff5deb57c25c59a5c0c5b5"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs/ Exit from Library",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981167,
+          14.592877
+        ],
+        "type": "Point"
+      },
+      "id": "12abf32416e56998c94dec742e0f8275"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Cash Management Division",
+        "Building": "Main Building ",
+        "Floor": "Ground Floor",
+        "Type": "Office "
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981339,
+              14.592436
+            ],
+            [
+              120.981359,
+              14.592443
+            ],
+            [
+              120.981336,
+              14.592516
+            ],
+            [
+              120.981316,
+              14.59251
+            ],
+            [
+              120.981339,
+              14.592436
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "12cef66eb02dfb3f5e5d9332efaec1bf"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "route": "to office of the president"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981634,
+            14.591637
+          ],
+          [
+            120.981599,
+            14.59175
+          ],
+          [
+            120.98158,
+            14.591808
+          ],
+          [
+            120.981563,
+            14.591864
+          ],
+          [
+            120.981617,
+            14.591879
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "13ac911115b5b786120de39b58989b21"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Registrar",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981364,
+          14.592659
+        ],
+        "type": "Point"
+      },
+      "id": "1656342a8f8a176ab47e9256931d2c30"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "IGPS Office",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981578,
+          14.592026
+        ],
+        "type": "Point"
+      },
+      "id": "1fb4a6a3ecfc15467da1884f94eaaefa"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Conference Room",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981346,
+              14.591692
+            ],
+            [
+              120.981376,
+              14.591702
+            ],
+            [
+              120.98137,
+              14.591719
+            ],
+            [
+              120.98134,
+              14.591709
+            ],
+            [
+              120.981346,
+              14.591692
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "2bac3096803de74a4003b93b0319f23e"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Taekwando Room",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Gym / Training Room"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.980857,
+              14.593024
+            ],
+            [
+              120.980834,
+              14.593092
+            ],
+            [
+              120.980894,
+              14.59311
+            ],
+            [
+              120.980917,
+              14.593043
+            ],
+            [
+              120.980857,
+              14.593024
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "34e7dbb09c86b6c140981df0d848cb3f"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs ",
+        "Building": "Main Building ",
+        "Floor": "Ground Floor ",
+        "Type": "Stairs "
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981148,
+              14.592123
+            ],
+            [
+              120.981129,
+              14.592185
+            ],
+            [
+              120.981185,
+              14.592201
+            ],
+            [
+              120.981204,
+              14.592139
+            ],
+            [
+              120.981148,
+              14.592123
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "3b6013a95efa2cf60c1459de166c5a7a"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Staff Room",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Room"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981217,
+          14.593175
+        ],
+        "type": "Point"
+      },
+      "id": "47b02d82a723fc098a33ca6aceb900e2"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "College of Criminal Justice",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office of the Dean"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981267,
+          14.591841
+        ],
+        "type": "Point"
+      },
+      "id": "4856942392aedb744ecd62328c1e9b02"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Human Resources Management and Development Division",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981106,
+          14.593138
+        ],
+        "type": "Point"
+      },
+      "id": "4bfcb77b4f1dc8239462b9596dd5e2fc"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Office of the President for Student Success and Support Services",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981251,
+          14.591988
+        ],
+        "type": "Point"
+      },
+      "id": "50648a3c4bf4a9444cc2080cf205b150"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Accreditation Room",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981535,
+          14.592164
+        ],
+        "type": "Point"
+      },
+      "id": "513c707c8a07ae79ce5ab1b783f40435"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Garden",
+        "Type": "Garden",
+        "Floor": "Ground Floor"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981293,
+              14.592156
+            ],
+            [
+              120.981411,
+              14.59219
+            ],
+            [
+              120.981397,
+              14.592245
+            ],
+            [
+              120.981278,
+              14.59221
+            ],
+            [
+              120.981293,
+              14.592156
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "5252d4515e46f47ccad0ac72db44f4df"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Quality Assurance and Accreditation",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981548,
+          14.592243
+        ],
+        "type": "Point"
+      },
+      "id": "52df647a88d19532f7fd6036918c63e5"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Admin Wing",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981323,
+              14.592721
+            ],
+            [
+              120.981374,
+              14.592737
+            ],
+            [
+              120.981367,
+              14.592829
+            ],
+            [
+              120.98137,
+              14.59286
+            ],
+            [
+              120.981377,
+              14.592953
+            ],
+            [
+              120.981306,
+              14.592963
+            ],
+            [
+              120.981307,
+              14.59286
+            ],
+            [
+              120.981308,
+              14.592805
+            ],
+            [
+              120.981314,
+              14.592748
+            ],
+            [
+              120.981323,
+              14.592721
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "571183922ec5123772032af96f332df5"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Maintenance and Engineering",
+        "Building": "Main Building ",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981466,
+              14.592438
+            ],
+            [
+              120.981455,
+              14.592471
+            ],
+            [
+              120.981495,
+              14.592483
+            ],
+            [
+              120.981506,
+              14.592451
+            ],
+            [
+              120.981466,
+              14.592438
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "5c6a2e567db5fd4a1f4d00b5de7075d2"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Guidance Office",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981376,
+              14.591702
+            ],
+            [
+              120.981283,
+              14.591672
+            ],
+            [
+              120.981299,
+              14.591623
+            ],
+            [
+              120.981393,
+              14.591654
+            ],
+            [
+              120.981376,
+              14.591702
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "616432d705d61d4fbba1fa607f0bf6a4"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Comfort Room ",
+        "Building": "Main Building ",
+        "Floor": "Ground Floor",
+        "Type": "Restroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981133,
+          14.592264
+        ],
+        "type": "Point"
+      },
+      "id": "6242bfc190fc6372edc1c7dcdbdaa14c"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981417,
+              14.591718
+            ],
+            [
+              120.981455,
+              14.591729
+            ],
+            [
+              120.981445,
+              14.59176
+            ],
+            [
+              120.981408,
+              14.591749
+            ],
+            [
+              120.981417,
+              14.591718
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "634109bb7d91a25ec0e45d33092c12e5"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Exit",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Exit "
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981511,
+              14.592307
+            ],
+            [
+              120.981496,
+              14.592355
+            ],
+            [
+              120.981574,
+              14.592378
+            ],
+            [
+              120.981588,
+              14.59233
+            ],
+            [
+              120.981511,
+              14.592307
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "634348eeb49883488553abddcfdab968"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Taekwando Room",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Gym / Training Room"
+      },
+      "geometry": {
+        "coordinates": [
+          120.980879,
+          14.593067
+        ],
+        "type": "Point"
+      },
+      "id": "6672580335746000c62f9e9eb0929257"
+    },
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981257,
+              14.593136
+            ],
+            [
+              120.981277,
+              14.593143
+            ],
+            [
+              120.981271,
+              14.593159
+            ],
+            [
+              120.981251,
+              14.593152
+            ],
+            [
+              120.981257,
+              14.593136
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "66c548d9053c97ffa5bd3b1c9cc2d495"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs/ To Library",
+        "Buiding": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Stairs "
+      },
+      "geometry": {
+        "coordinates": [
+          120.9813,
+          14.592528
+        ],
+        "type": "Point"
+      },
+      "id": "66c732352f7c254a449446f9c8f463d1"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Garden",
+        "Type": "Garden",
+        "Floor": "Ground Floor"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981372,
+              14.591887
+            ],
+            [
+              120.981493,
+              14.591924
+            ],
+            [
+              120.981438,
+              14.592103
+            ],
+            [
+              120.981317,
+              14.59207
+            ],
+            [
+              120.981372,
+              14.591887
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "6763c6a59f35d065289149725fa2be7c"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981537,
+          14.59177
+        ],
+        "type": "Point"
+      },
+      "id": "699df2c8f21afe50c6e870d5eefaa907"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "College of Arts and Sciences",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office of the Dean"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981245,
+          14.59191
+        ],
+        "type": "Point"
+      },
+      "id": "73be17beb6ea9ac0449b1af7da695b1d"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Supply and Equipment Office",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.98147,
+          14.592495
+        ],
+        "type": "Point"
+      },
+      "id": "7618abbe47004763f041e3ca74823441"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Clinic",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Medical Facility "
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981486,
+              14.59238
+            ],
+            [
+              120.981466,
+              14.592438
+            ],
+            [
+              120.981525,
+              14.592457
+            ],
+            [
+              120.981543,
+              14.592398
+            ],
+            [
+              120.981486,
+              14.59238
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "7714d9c556a05c919338859bd92feff2"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Garden",
+        "Type": "Garden",
+        "Floor": "Ground Floor"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.98141,
+              14.591755
+            ],
+            [
+              120.981535,
+              14.591795
+            ],
+            [
+              120.981506,
+              14.591887
+            ],
+            [
+              120.981382,
+              14.591847
+            ],
+            [
+              120.98141,
+              14.591755
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "78d1d8bc863694ddc4e2dcab306e0e4d"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Security Office",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981456,
+              14.591729
+            ],
+            [
+              120.981465,
+              14.5917
+            ],
+            [
+              120.981532,
+              14.59172
+            ],
+            [
+              120.981523,
+              14.591748
+            ],
+            [
+              120.981456,
+              14.591729
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "79f2865651546a197b365ae57c85449a"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Comfort Room",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Restroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981113,
+              14.592245
+            ],
+            [
+              120.981162,
+              14.592259
+            ],
+            [
+              120.981158,
+              14.592283
+            ],
+            [
+              120.981105,
+              14.592267
+            ],
+            [
+              120.981113,
+              14.592245
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "7bfa88542d55cc207f6f0c3144b4b9f9"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Lobby",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Lobby"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981518,
+          14.591658
+        ],
+        "type": "Point"
+      },
+      "id": "7ed15fabecf701b1470dbe2a1e4a4335"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "CBA-PM Department",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office of the Dean"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.98129,
+              14.591864
+            ],
+            [
+              120.981279,
+              14.5919
+            ],
+            [
+              120.98122,
+              14.591882
+            ],
+            [
+              120.981231,
+              14.591846
+            ],
+            [
+              120.98129,
+              14.591864
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "8245eb4a1b9a43fe8d2844cc698d36e2"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs ",
+        "Building": "Main Building ",
+        "Floor": "Ground Floor ",
+        "Type": "Stairs "
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981281,
+              14.592501
+            ],
+            [
+              120.981335,
+              14.592518
+            ],
+            [
+              120.981322,
+              14.592558
+            ],
+            [
+              120.981267,
+              14.59254
+            ],
+            [
+              120.981281,
+              14.592501
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "870b90196e8de13d5d66e4f5812b81a8"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Security Office",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981493,
+          14.591724
+        ],
+        "type": "Point"
+      },
+      "id": "8755d88b65a8a9c40cd2a80c6cc92b3d"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Registrar",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981443,
+              14.592504
+            ],
+            [
+              120.981484,
+              14.592519
+            ],
+            [
+              120.981451,
+              14.592571
+            ],
+            [
+              120.981394,
+              14.592658
+            ],
+            [
+              120.981385,
+              14.592688
+            ],
+            [
+              120.981336,
+              14.592672
+            ],
+            [
+              120.981363,
+              14.59262
+            ],
+            [
+              120.981396,
+              14.592571
+            ],
+            [
+              120.981415,
+              14.592542
+            ],
+            [
+              120.981443,
+              14.592504
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "897687469392d3c0a48c19a81b23b312"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Clinic",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Medical Facility"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981506,
+          14.59242
+        ],
+        "type": "Point"
+      },
+      "id": "8c8ccb2befc3a42bdd96631f60850e15"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          120.980841,
+          14.592992
+        ],
+        "type": "Point"
+      },
+      "id": "8f2c46e820f89c1c8e3379588a25df14"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Planning and Budget and Accounting Division",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.980949,
+              14.593127
+            ],
+            [
+              120.980972,
+              14.59306
+            ],
+            [
+              120.981031,
+              14.593079
+            ],
+            [
+              120.981008,
+              14.593145
+            ],
+            [
+              120.980949,
+              14.593127
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "91848121b3cd0f2e771c8ee3d960eb97"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "College of Education",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office of the Dean"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981278,
+          14.591805
+        ],
+        "type": "Point"
+      },
+      "id": "925cef2f293ce9143a4cbc155c9ed4eb"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "CCS Department",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office of the Dean"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981323,
+              14.591761
+            ],
+            [
+              120.981312,
+              14.591794
+            ],
+            [
+              120.981251,
+              14.591777
+            ],
+            [
+              120.981262,
+              14.591743
+            ],
+            [
+              120.981323,
+              14.591761
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "93089abd377f01cdb6784bfc9c0f41a9"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Vice President for Academic Affairs",
+        "Building": "Main Building ",
+        "Floor": "Ground Floor",
+        "Type": "Dean's Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981283,
+              14.591672
+            ],
+            [
+              120.981346,
+              14.591692
+            ],
+            [
+              120.981334,
+              14.591728
+            ],
+            [
+              120.981272,
+              14.591709
+            ],
+            [
+              120.981283,
+              14.591672
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "944c366d3c6f5daae66b75fc7dbe9850"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs ",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.98152,
+              14.592278
+            ],
+            [
+              120.981511,
+              14.592307
+            ],
+            [
+              120.981547,
+              14.592317
+            ],
+            [
+              120.981555,
+              14.592288
+            ],
+            [
+              120.98152,
+              14.592278
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "9648c00d3cda5a159ada70218b2bd97e"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Vacant",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Room"
+      },
+      "geometry": {
+        "coordinates": [
+          120.980933,
+          14.593085
+        ],
+        "type": "Point"
+      },
+      "id": "972a5e05a04050139fb6c4d83e386d4e"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Guidance Office",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981334,
+          14.59166
+        ],
+        "type": "Point"
+      },
+      "id": "9795fd5a8af3c5807424f6f5c5b5c3ff"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Procurement Division",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981051,
+          14.593121
+        ],
+        "type": "Point"
+      },
+      "id": "992b320365414033b44a54b277c814dc"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Human Resources Management and Development Division",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981087,
+              14.593098
+            ],
+            [
+              120.981066,
+              14.593163
+            ],
+            [
+              120.981124,
+              14.593181
+            ],
+            [
+              120.981146,
+              14.593118
+            ],
+            [
+              120.981087,
+              14.593098
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "9a94cea290f26d22a5afd565270e0b9d"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981532,
+          14.592298
+        ],
+        "type": "Point"
+      },
+      "id": "a2797c577886d33e441c878a6fc22399"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981425,
+          14.592361
+        ],
+        "type": "Point"
+      },
+      "id": "a29ae9f97752fc2ed44ca7852f5db6dd"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Accreditation Room",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981503,
+              14.592071
+            ],
+            [
+              120.981611,
+              14.592102
+            ],
+            [
+              120.981571,
+              14.592238
+            ],
+            [
+              120.981463,
+              14.592208
+            ],
+            [
+              120.981503,
+              14.592071
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "a2c5e679e1dfb3fd80508b4b28bd9c50"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Buildin": "New Building",
+        "Floo": "Ground Floor",
+        "Typ": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          120.98126,
+          14.593117
+        ],
+        "type": "Point"
+      },
+      "id": "a3447220f79cf7096bc9978d60777c57"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981431,
+          14.591738
+        ],
+        "type": "Point"
+      },
+      "id": "ab4706bedce373fc489f00822a72a932"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Vacant",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Room"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981163,
+          14.593159
+        ],
+        "type": "Point"
+      },
+      "id": "b0060f93db3da866081fbeda721b0b2d"
+    },
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          [
+            120.981231,
+            14.59313
+          ],
+          [
+            120.981226,
+            14.593143
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "b0e679045d13a28ffb1f96997375b6e4"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "CAS Department",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office of the Dean"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.98122,
+              14.591882
+            ],
+            [
+              120.981279,
+              14.5919
+            ],
+            [
+              120.981268,
+              14.591934
+            ],
+            [
+              120.981209,
+              14.591917
+            ],
+            [
+              120.98122,
+              14.591882
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "b3da17388b60a8d9a8d8a322b54a264f"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Office of the President",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981586,
+              14.591797
+            ],
+            [
+              120.981693,
+              14.591828
+            ],
+            [
+              120.981652,
+              14.591966
+            ],
+            [
+              120.981545,
+              14.591935
+            ],
+            [
+              120.981586,
+              14.591797
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "b656dd59deb73c41c01d5cb127d817e7"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Cash Management Division",
+        "Building": "Main Building ",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981338,
+          14.592478
+        ],
+        "type": "Point"
+      },
+      "id": "b6b11217e87ab23f881fb8a8a228d1c1"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Canteen ",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Cafeteria"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981147,
+              14.592336
+            ],
+            [
+              120.981265,
+              14.592337
+            ],
+            [
+              120.981346,
+              14.592425
+            ],
+            [
+              120.981286,
+              14.592477
+            ],
+            [
+              120.98126,
+              14.592526
+            ],
+            [
+              120.981076,
+              14.5924
+            ],
+            [
+              120.981148,
+              14.592337
+            ],
+            [
+              120.981146,
+              14.592337
+            ],
+            [
+              120.981147,
+              14.592336
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "c306fe27a845f867fbbed965368112d1"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "IGPS Office",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981545,
+              14.591935
+            ],
+            [
+              120.981652,
+              14.591965
+            ],
+            [
+              120.981611,
+              14.592102
+            ],
+            [
+              120.981503,
+              14.592071
+            ],
+            [
+              120.981545,
+              14.591935
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "c3581555315284edf0bb440f7084a873"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Exit",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Exit "
+      },
+      "geometry": {
+        "coordinates": [
+          120.981538,
+          14.592341
+        ],
+        "type": "Point"
+      },
+      "id": "c37f7f540e6cbe5e18eae0163535608c"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "College of Business and Administration",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office of the Dean"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981257,
+          14.591873
+        ],
+        "type": "Point"
+      },
+      "id": "c45e442141902882b8deb8815f5e684a"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Vacant",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Room"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.980894,
+              14.59311
+            ],
+            [
+              120.980917,
+              14.593043
+            ],
+            [
+              120.980972,
+              14.59306
+            ],
+            [
+              120.980948,
+              14.593127
+            ],
+            [
+              120.980894,
+              14.59311
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "c6e4a89a00d0f95093d70e6afba0e6eb"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Admin Wing",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981335,
+          14.592876
+        ],
+        "type": "Point"
+      },
+      "id": "c72e5e61ec49f73becbbd23acdbfa098"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981169,
+          14.592163
+        ],
+        "type": "Point"
+      },
+      "id": "c9aa3bb4942e12a624185a9aff8bb009"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Supply and Equipment Office",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981455,
+              14.592471
+            ],
+            [
+              120.981495,
+              14.592484
+            ],
+            [
+              120.981484,
+              14.592519
+            ],
+            [
+              120.981443,
+              14.592504
+            ],
+            [
+              120.981455,
+              14.592471
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "cc7308c6d6ed27e6519f16886d188cd7"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "College of Engineering and Technology",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office of the Dean"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981288,
+          14.591769
+        ],
+        "type": "Point"
+      },
+      "id": "d22f710383cfcd834a09a327372f1954"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981405,
+              14.592336
+            ],
+            [
+              120.981395,
+              14.59237
+            ],
+            [
+              120.981441,
+              14.592384
+            ],
+            [
+              120.981452,
+              14.59235
+            ],
+            [
+              120.981405,
+              14.592336
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "d33b565885a37f976a0581bcf2fa2d73"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "CCJ Department",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office of the Dean"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981301,
+              14.591829
+            ],
+            [
+              120.98129,
+              14.591864
+            ],
+            [
+              120.981231,
+              14.591846
+            ],
+            [
+              120.981241,
+              14.591812
+            ],
+            [
+              120.981301,
+              14.591829
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "db58fdbf90a0632f3b2aa52b8c1a6fe0"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Storage",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Utility"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981264,
+          14.593147
+        ],
+        "type": "Point"
+      },
+      "id": "dc2364cf42624a54aeee5bfbd9d4de11"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Library",
+        "Building": "Main Building ",
+        "Floor": "Ground Floor",
+        "Type": "Stairs "
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981143,
+              14.592931
+            ],
+            [
+              120.981146,
+              14.59283
+            ],
+            [
+              120.98119,
+              14.59283
+            ],
+            [
+              120.98119,
+              14.592933
+            ],
+            [
+              120.981143,
+              14.592931
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "dedeb8132f4efcfbc737489c969ec637"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.980826,
+              14.592963
+            ],
+            [
+              120.980813,
+              14.593005
+            ],
+            [
+              120.980855,
+              14.593018
+            ],
+            [
+              120.980869,
+              14.592976
+            ],
+            [
+              120.980826,
+              14.592963
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "e111fb37a1ce2c1254d7f0521d3c85d7"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "CED Department",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office of the Dean"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981312,
+              14.591794
+            ],
+            [
+              120.981301,
+              14.591829
+            ],
+            [
+              120.981241,
+              14.591812
+            ],
+            [
+              120.981251,
+              14.591777
+            ],
+            [
+              120.981312,
+              14.591794
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "e2f8dbe4f9a409d4421c2d636ae0e721"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Planning and Budget and Accounting Division",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.980988,
+          14.593103
+        ],
+        "type": "Point"
+      },
+      "id": "e5ecf2ca90d839739a865c52b5b5fa9e"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Canteen",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Cafeteria"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981241,
+          14.592413
+        ],
+        "type": "Point"
+      },
+      "id": "e692ff8dfd01f0acd4393bcde1c2c9b5"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "College of Health Sciences",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office of the Dean"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981298,
+          14.591735
+        ],
+        "type": "Point"
+      },
+      "id": "e83e549fae1772c59ded1f4a0b9d88fb"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981523,
+              14.591749
+            ],
+            [
+              120.98156,
+              14.591759
+            ],
+            [
+              120.98155,
+              14.591791
+            ],
+            [
+              120.981514,
+              14.59178
+            ],
+            [
+              120.981523,
+              14.591749
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "eeae86319b978af87d6cf4feeb635f5f"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Maintenance and Engineering",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.98148,
+          14.592461
+        ],
+        "type": "Point"
+      },
+      "id": "f0b36e112c44e7a2ba5ed081f4b94dd6"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "CHS Department",
+        "Building": "Main Building",
+        "Floor": "Ground Floor",
+        "Type": "Office of the Dean"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981272,
+              14.591709
+            ],
+            [
+              120.981334,
+              14.591728
+            ],
+            [
+              120.981323,
+              14.591761
+            ],
+            [
+              120.981262,
+              14.591743
+            ],
+            [
+              120.981272,
+              14.591709
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "f30cbb8ddc9682744f52b7a0e685e5cd"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Ovpaa Conference Room",
+        "Building": "Main Building ",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981358,
+          14.591707
+        ],
+        "type": "Point"
+      },
+      "id": "f9df22ea83a0a0a3a8b8599c1c928047"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Procurement Division",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981008,
+              14.593145
+            ],
+            [
+              120.981031,
+              14.593079
+            ],
+            [
+              120.981087,
+              14.593098
+            ],
+            [
+              120.981066,
+              14.593163
+            ],
+            [
+              120.981008,
+              14.593145
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "fbc7ae46d3b8bebed3e865cbbcce36c9"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Security Office",
+        "Building": "New Building",
+        "Floor": "Ground Floor",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.980852,
+          14.59302
+        ],
+        "type": "Point"
+      },
+      "id": "fcc24edd1b933ef5ee376879bfb9a62a"
+    }
+  ],
+  "type": "FeatureCollection"
+}

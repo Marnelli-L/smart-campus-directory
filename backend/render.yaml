@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: smart-campus-backend
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 5000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: smart-campus-db
+          property: connectionString
+
+databases:
+  - name: smart-campus-db
+    plan: free
+    databaseName: smart_campus
+    user: smart_campus_user
