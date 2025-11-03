@@ -273,11 +273,7 @@ function Directory() {
       }
     };
 
-    // Always show static data first for immediate content
-    setDepartments(staticDepartments);
-    setLoading(false);
-    
-    // Then try to fetch from API
+    // Fetch from API immediately (don't show static data first)
     fetchDepartments();
 
     // Set up interval to refresh data every 30 seconds to stay in sync with admin changes
@@ -849,12 +845,12 @@ function Directory() {
         fullWidth
         PaperProps={{
           sx: {
-            borderRadius: 3,
+            borderRadius: 2,
             fontFamily: "inherit",
-            maxWidth: "520px",
+            maxWidth: "480px",
             margin: 2,
             maxHeight: "90vh",
-            animation: "slideUp 0.3s ease-out",
+            animation: "slideUp 0.25s ease-out",
             "@keyframes slideUp": {
               "0%": { transform: "translateY(50px)", opacity: 0 },
               "100%": { transform: "translateY(0)", opacity: 1 },
@@ -876,86 +872,66 @@ function Directory() {
             <DialogTitle
               id="dept-detail-title"
               sx={{
-                bgcolor: "linear-gradient(135deg, #00695C 0%, #4DB6AC 100%)",
-                background: "linear-gradient(135deg, #00695C 0%, #4DB6AC 100%)",
-                color: "#fff",
-                borderTopLeftRadius: 12,
-                borderTopRightRadius: 12,
+                bgcolor: "#fff",
+                color: "#0b3d36",
+                borderTopLeftRadius: 8,
+                borderTopRightRadius: 8,
                 fontFamily: "inherit",
-                pb: 3,
-                pt: 3,
-                position: "relative",
-                overflow: "hidden",
-                "&::before": {
-                  content: '""',
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  background: "linear-gradient(45deg, rgba(255,255,255,0.1) 0%, transparent 100%)",
-                  pointerEvents: "none",
-                },
+                py: 1.5,
+                px: 2,
+                borderBottom: "1px solid #e5e7eb",
               }}
             >
-              <Stack direction="row" alignItems="center" spacing={2} sx={{ position: "relative", zIndex: 1 }}>
-                <Avatar 
-                  sx={{ 
-                    bgcolor: "rgba(255,255,255,0.2)", 
-                    color: "#fff",
-                    width: 56,
-                    height: 56,
-                    border: "2px solid rgba(255,255,255,0.3)",
-                  }}
-                >
+              <Stack direction="row" alignItems="center" spacing={1.5}>
+                <Avatar sx={{ bgcolor: "#e6f3f1", color: "#00594A", width: 36, height: 36 }}>
                   {modalDept.icon}
                 </Avatar>
-                <Box>
-                  <Typography variant="h5" sx={{ fontWeight: "bold", mb: 0.5 }}>
+                <Box sx={{ minWidth: 0 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 0, lineHeight: 1.2 }} noWrap>
                     {modalDept.name}
                   </Typography>
                   <Chip
                     label={modalDept.category}
                     size="small"
                     sx={{
-                      bgcolor: "rgba(255,255,255,0.2)",
-                      color: "#fff",
-                      fontWeight: "bold",
-                      fontSize: "0.8rem",
-                      border: "1px solid rgba(255,255,255,0.3)",
+                      bgcolor: "#e6f3f1",
+                      color: "#00594A",
+                      fontWeight: 600,
+                      fontSize: "0.7rem",
+                      height: 22,
                     }}
                   />
                 </Box>
               </Stack>
             </DialogTitle>
-            <DialogContent dividers sx={{ pt: 3, pb: 3, fontFamily: "inherit" }}>
+            <DialogContent dividers sx={{ pt: 2, pb: 2, fontFamily: "inherit" }}>
               <Stack spacing={2.5}>
-                <Stack direction="row" spacing={1.5} alignItems="center">
-                  <BusinessIcon fontSize="small" sx={{ color: "#00695C" }} />
-                  <Typography variant="body2" sx={{ fontSize: "0.95rem" }}>
+                <Stack direction="row" spacing={1.25} alignItems="center">
+                  <BusinessIcon fontSize="small" sx={{ color: "#00594A" }} />
+                  <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
                     <strong>Location:</strong> {modalDept.location}
                   </Typography>
                 </Stack>
-                <Stack direction="row" spacing={1.5} alignItems="center">
-                  <AccessTimeIcon fontSize="small" sx={{ color: "#00695C" }} />
-                  <Typography variant="body2" sx={{ fontSize: "0.95rem" }}>
+                <Stack direction="row" spacing={1.25} alignItems="center">
+                  <AccessTimeIcon fontSize="small" sx={{ color: "#00594A" }} />
+                  <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
                     <strong>Office Hours:</strong> {modalDept.officeHours}
                   </Typography>
                 </Stack>
-                <Stack direction="row" spacing={1.5} alignItems="center">
-                  <PersonIcon fontSize="small" sx={{ color: "#00695C" }} />
-                  <Typography variant="body2" sx={{ fontSize: "0.95rem" }}>
+                <Stack direction="row" spacing={1.25} alignItems="center">
+                  <PersonIcon fontSize="small" sx={{ color: "#00594A" }} />
+                  <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
                     <strong>Staff-in-Charge:</strong> {modalDept.staff}
                   </Typography>
                 </Stack>
-                <Stack direction="row" spacing={1.5} alignItems="center">
-                  <EmailIcon fontSize="small" sx={{ color: "#00695C" }} />
-                  <Typography variant="body2" sx={{ fontSize: "0.95rem" }}>
+                <Stack direction="row" spacing={1.25} alignItems="center">
+                  <EmailIcon fontSize="small" sx={{ color: "#00594A" }} />
+                  <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
                     <strong>Email:</strong>{" "}
                     {modalDept.email ? (
                       <a
                         href={`mailto:${modalDept.email}`}
-                        style={{ color: "#00695C", textDecoration: "underline" }}
+                        style={{ color: "#00594A", textDecoration: "underline" }}
                       >
                         {modalDept.email}
                       </a>
@@ -964,9 +940,9 @@ function Directory() {
                     )}
                   </Typography>
                 </Stack>
-                <Stack direction="row" spacing={1.5} alignItems="center">
-                  <SupportAgentIcon fontSize="small" sx={{ color: "#00695C" }} />
-                  <Typography variant="body2" sx={{ fontSize: "0.95rem" }}>
+                <Stack direction="row" spacing={1.25} alignItems="center">
+                  <SupportAgentIcon fontSize="small" sx={{ color: "#00594A" }} />
+                  <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
                     <strong>Contact:</strong> {modalDept.contact}
                   </Typography>
                 </Stack>
@@ -1021,156 +997,77 @@ function Directory() {
                   </Paper>
                 )}
                 
-                {/* Quick Actions Section */}
-                <Box sx={{ 
-                  mt: 2, 
-                  p: 2, 
-                  bgcolor: "#f8f9fa", 
-                  borderRadius: 2,
-                  display: "flex",
-                  gap: 1,
-                  flexWrap: "wrap"
-                }}>
-                  <Typography variant="caption" sx={{ 
-                    color: "#666", 
-                    fontWeight: "bold",
-                    width: "100%",
-                    mb: 1
-                  }}>
-                    Quick Actions:
-                  </Typography>
-                  <Button
-                    size="small"
-                    variant="outlined"
-                    startIcon={<EmailIcon />}
-                    sx={{
-                      borderColor: "#ff9800",
-                      color: "#ff9800",
-                      fontSize: "0.75rem",
-                      "&:hover": {
-                        borderColor: "#f57c00",
-                        background: "#ff980011",
-                      },
-                    }}
-                    href={`mailto:directory@udm.edu.ph?subject=Correction for ${modalDept.name}`}
-                  >
-                    Report Issue
-                  </Button>
-                  {modalDept.email && (
+                {/* Quick Actions Section - toned down */}
+                <Box sx={{ mt: 1.5, p: 1.5, bgcolor: "#f8faf9", borderRadius: 1, border: "1px solid #eef2f1" }}>
+                  <Stack direction="row" spacing={1}>
                     <Button
                       size="small"
                       variant="outlined"
-                      startIcon={<EmailIcon />}
+                      startIcon={<EmailIcon fontSize="small" />}
                       sx={{
-                        borderColor: "#00695C",
-                        color: "#00695C",
+                        borderColor: "#00594A",
+                        color: "#00594A",
                         fontSize: "0.75rem",
-                        "&:hover": {
-                          borderColor: "#00594A",
-                          background: "#00695C11",
-                        },
+                        textTransform: "none",
+                        '&:hover': { borderColor: "#00473f", background: "#e6f3f1" },
                       }}
-                      href={`mailto:${modalDept.email}`}
+                      href={`mailto:directory@udm.edu.ph?subject=Correction for ${modalDept.name}`}
                     >
-                      Email Directly
+                      Report Issue
                     </Button>
-                  )}
+                    {modalDept.email && (
+                      <Button
+                        size="small"
+                        variant="text"
+                        startIcon={<EmailIcon fontSize="small" />}
+                        sx={{ color: "#00594A", fontSize: "0.75rem", textTransform: "none" }}
+                        href={`mailto:${modalDept.email}`}
+                      >
+                        Email {modalDept.staff?.split(' ')[0] || 'Office'}
+                      </Button>
+                    )}
+                  </Stack>
                 </Box>
               </Stack>
             </DialogContent>
             <DialogActions
               sx={{
-                justifyContent: "space-between",
-                px: 3,
-                pb: 3,
-                pt: 2,
-                fontFamily: "inherit",
-                display: "flex",
-                flexDirection: "row",
-                flexWrap: "wrap",
-                gap: 1.5,
-                alignItems: "center",
-                background: "linear-gradient(180deg, rgba(0,105,92,0.02) 0%, rgba(0,105,92,0.05) 100%)",
+                justifyContent: "flex-end",
+                px: 2,
+                py: 1.25,
+                gap: 1,
+                borderTop: "1px solid #e5e7eb",
+                background: "#fff",
               }}
             >
               <Button
-                variant="contained"
-                sx={{
-                  background: "linear-gradient(135deg, #1565c0 0%, #42a5f5 100%)",
-                  color: "#fff",
-                  fontWeight: 700,
-                  borderRadius: 3,
-                  fontFamily: "inherit",
-                  px: 3,
-                  py: 1.5,
-                  fontSize: "0.9rem",
-                  whiteSpace: "nowrap",
-                  flex: "1 1 auto",
-                  minWidth: 0,
-                  boxShadow: "0 4px 12px rgba(21,101,192,0.3)",
-                  transition: "all 0.2s ease",
-                  "&:hover": {
-                    background: "linear-gradient(135deg, #0d47a1 0%, #1976d2 100%)",
-                    transform: "translateY(-1px)",
-                    boxShadow: "0 6px 16px rgba(21,101,192,0.4)",
-                  },
-                }}
-                startIcon={<NavigationIcon />}
-                onClick={() => handleNavigateHere(modalDept)}
-                aria-label={`Navigate to ${modalDept.name}`}
+                variant="text"
+                size="small"
+                sx={{ color: "#6b7280" }}
+                onClick={handleCloseModal}
               >
-                Navigate Here
+                Close
               </Button>
               <Button
                 variant="outlined"
-                sx={{
-                  borderColor: "#00695C",
-                  color: "#00695C",
-                  fontWeight: 700,
-                  borderRadius: 3,
-                  fontFamily: "inherit",
-                  px: 3,
-                  py: 1.5,
-                  fontSize: "0.9rem",
-                  whiteSpace: "nowrap",
-                  flex: "1 1 auto",
-                  minWidth: 0,
-                  borderWidth: 2,
-                  transition: "all 0.2s ease",
-                  "&:hover": {
-                    borderColor: "#00594A",
-                    background: "#00695C",
-                    color: "#fff",
-                    transform: "translateY(-1px)",
-                  },
-                }}
+                size="small"
+                sx={{ borderColor: "#00594A", color: "#00594A", textTransform: "none" }}
                 startIcon={<MapIcon />}
                 href={modalDept.mapLink}
                 target="_blank"
                 aria-label={`View ${modalDept.name} on map`}
               >
-                View on Map
+                Map
               </Button>
               <Button
-                variant="text"
-                sx={{
-                  color: "#666",
-                  fontWeight: 600,
-                  borderRadius: 3,
-                  fontFamily: "inherit",
-                  px: 2,
-                  py: 1.5,
-                  fontSize: "0.9rem",
-                  whiteSpace: "nowrap",
-                  flexShrink: 0,
-                  minWidth: "80px",
-                  "&:hover": {
-                    background: "rgba(0,0,0,0.05)",
-                  },
-                }}
-                onClick={handleCloseModal}
+                variant="contained"
+                size="small"
+                sx={{ bgcolor: "#00594A", '&:hover': { bgcolor: "#00473f" }, textTransform: "none" }}
+                startIcon={<NavigationIcon />}
+                onClick={() => handleNavigateHere(modalDept)}
+                aria-label={`Navigate to ${modalDept.name}`}
               >
-                Close
+                Navigate
               </Button>
             </DialogActions>
           </>
