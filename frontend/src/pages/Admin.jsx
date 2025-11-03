@@ -1,5 +1,29 @@
 import React, { useState, useEffect, useCallback } from "react";
 
+// Centralized API base URL and safe fetch patch
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+// In production builds, some legacy calls still point to localhost.
+// Patch window.fetch once to rewrite those URLs to the configured API_URL.
+if (typeof window !== 'undefined' && !window.__apiFetchPatched) {
+  const originalFetch = window.fetch.bind(window);
+  window.fetch = (input, init) => {
+    try {
+      if (typeof input === 'string') {
+        if (input.startsWith('http://localhost:5000')) {
+          input = input.replace('http://localhost:5000', API_URL);
+        } else if (input.startsWith('/api/')) {
+          input = `${API_URL}${input}`;
+        }
+      }
+    } catch {
+      // ignore and fall back to original input
+    }
+    return originalFetch(input, init);
+  };
+  window.__apiFetchPatched = true;
+}
+
 // Enhanced nav links with section categories for possible RBAC expansion
 const navLinks = [
   { name: "Dashboard" },
@@ -2302,7 +2326,7 @@ const Admin = ({ setIsAuthenticated }) => {
                     <div className="flex-shrink-0">
                       {bldg.image ? (
                         <img 
-                          src={`http://localhost:5000${bldg.image}`} 
+                          src={`${API_URL}${bldg.image}`} 
                           alt={bldg.name}
                           className="w-32 h-32 object-cover rounded-lg border-2 border-[#E0F2EF] shadow-sm"
                           onError={(e) => {
@@ -3358,7 +3382,7 @@ const Admin = ({ setIsAuthenticated }) => {
                       <div className="mt-3">
                         <p className="text-sm font-semibold text-gray-700 mb-2">Current Image:</p>
                         <img 
-                          src={`http://localhost:5000${editingItem.image}`} 
+                          src={`${API_URL}${editingItem.image}`} 
                           alt="Current" 
                           className="max-w-xs max-h-48 rounded-lg border-2 border-gray-300"
                         />
