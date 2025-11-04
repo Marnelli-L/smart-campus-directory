@@ -114,7 +114,9 @@ export default function OnScreenKeyboard({
   };
 
   const handleSuggestionClick = (suggestion) => {
-    onChange(suggestion);
+    // Handle both string suggestions and object suggestions
+    const suggestionText = typeof suggestion === 'string' ? suggestion : suggestion.label || suggestion;
+    onChange(suggestionText);
     if (onEnter) {
       setTimeout(() => onEnter(), 100);
     }
@@ -228,69 +230,49 @@ export default function OnScreenKeyboard({
 
       {/* Suggestions */}
       {suggestions && suggestions.length > 0 && (
-        <div style={{
-          display: 'flex',
-          gap: '8px',
-          flexWrap: 'wrap',
-          padding: '12px',
-          background: 'linear-gradient(145deg, #f9fafb 0%, #ffffff 100%)',
-          borderRadius: '12px',
+        <div style={{ 
+          display: 'flex', 
+          flexWrap: 'wrap', 
+          gap: '8px', 
+          marginBottom: '12px',
           maxHeight: '90px',
-          overflowY: 'auto',
-          border: '1px solid #e5e7eb'
+          overflowY: 'auto'
         }}>
-          <div style={{ 
-            width: '100%',
-            fontSize: '12px', 
-            fontWeight: '700',
-            color: theme.textSecondary,
-            marginBottom: '4px',
-            textTransform: 'uppercase',
-            letterSpacing: '0.05em'
-          }}>
-            Suggestions
-          </div>
-          {suggestions.slice(0, 8).map((suggestion, index) => (
-            <button
-              key={index}
-              onClick={() => handleSuggestionClick(suggestion)}
-              style={{
-                padding: '8px 14px',
-                background: 'linear-gradient(145deg, #ffffff 0%, #f0fdf4 100%)',
-                border: `2px solid ${theme.primary}`,
-                borderRadius: '20px',
-                color: theme.primary,
-                fontWeight: '600',
-                fontSize: '14px',
-                cursor: 'pointer',
-                boxShadow: theme.shadow,
-                transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
-                WebkitTapHighlightColor: 'transparent'
-              }}
-              onMouseDown={(e) => {
-                e.currentTarget.style.transform = 'scale(0.95)';
-                e.currentTarget.style.background = theme.primary;
-                e.currentTarget.style.color = '#fff';
-              }}
-              onMouseUp={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-                e.currentTarget.style.background = 'linear-gradient(145deg, #ffffff 0%, #f0fdf4 100%)';
-                e.currentTarget.style.color = theme.primary;
-              }}
-              onTouchStart={(e) => {
-                e.currentTarget.style.transform = 'scale(0.95)';
-                e.currentTarget.style.background = theme.primary;
-                e.currentTarget.style.color = '#fff';
-              }}
-              onTouchEnd={(e) => {
-                e.currentTarget.style.transform = 'scale(1)';
-                e.currentTarget.style.background = 'linear-gradient(145deg, #ffffff 0%, #f0fdf4 100%)';
-                e.currentTarget.style.color = theme.primary;
-              }}
-            >
-              {suggestion}
-            </button>
-          ))}
+          {suggestions.slice(0, 8).map((suggestion, index) => {
+            const displayText = typeof suggestion === 'string' ? suggestion : suggestion.label;
+            
+            return (
+              <button
+                key={index}
+                onClick={() => handleSuggestionClick(suggestion)}
+                style={{
+                  padding: '8px 14px',
+                  backgroundColor: '#fff',
+                  border: '1.5px solid #00695C',
+                  borderRadius: '20px',
+                  cursor: 'pointer',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  color: '#00695C',
+                  transition: 'all 0.2s ease',
+                  whiteSpace: 'nowrap',
+                  maxWidth: '200px',
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = '#00695C';
+                  e.currentTarget.style.color = '#fff';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = '#fff';
+                  e.currentTarget.style.color = '#00695C';
+                }}
+              >
+                {displayText}
+              </button>
+            );
+          })}
         </div>
       )}
 

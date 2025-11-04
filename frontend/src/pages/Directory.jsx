@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import OnScreenKeyboard from "../components/OnScreenKeyboard";
@@ -91,6 +91,90 @@ function Directory() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+
+  // Generate suggestions from directory entries
+  const getDirectorySuggestions = useCallback((query) => {
+    if (!query || query.trim().length < 2) return [];
+    
+    const searchTerm = query.toLowerCase().trim();
+    const suggestions = [];
+    
+    // Helper function to check if term matches at word boundaries
+    const matchesWord = (text, term) => {
+      const textLower = text.toLowerCase();
+      // Exact match
+      if (textLower === term) return 'exact';
+      // Starts with term
+      if (textLower.startsWith(term)) return 'starts';
+      // Word boundary match (term appears as separate word)
+      const wordBoundaryRegex = new RegExp(`\\b${term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, 'i');
+      if (wordBoundaryRegex.test(text)) return 'word';
+      // Contains term (lowest priority)
+      if (textLower.includes(term)) return 'contains';
+      return null;
+    };
+    
+    // Search through departments
+    departments.forEach(dept => {
+      const score = {
+        value: 0,
+        label: '',
+        sublabel: ''
+      };
+      
+      // Check name (highest priority)
+      const nameMatch = matchesWord(dept.name, searchTerm);
+      if (nameMatch) {
+        if (nameMatch === 'exact') score.value = 100;
+        else if (nameMatch === 'starts') score.value = 95;
+        else if (nameMatch === 'word') score.value = 90;
+        else score.value = 70; // contains
+        score.label = dept.name;
+        score.sublabel = `${dept.location} • ${dept.category}`;
+      }
+      // Check location
+      else if (dept.location.toLowerCase().includes(searchTerm)) {
+        score.value = 60;
+        score.label = dept.name;
+        score.sublabel = dept.location;
+      }
+      // Check category
+      else if (dept.category.toLowerCase().includes(searchTerm)) {
+        score.value = 50;
+        score.label = dept.name;
+        score.sublabel = `${dept.category} • ${dept.location}`;
+      }
+      // Check contact
+      else if (dept.contact.toLowerCase().includes(searchTerm)) {
+        score.value = 40;
+        score.label = dept.name;
+        score.sublabel = `Contact: ${dept.contact}`;
+      }
+      // Check email
+      else if (dept.email && dept.email.toLowerCase().includes(searchTerm)) {
+        score.value = 35;
+        score.label = dept.name;
+        score.sublabel = dept.email;
+      }
+      // Check staff
+      else if (dept.staff && dept.staff.toLowerCase().includes(searchTerm)) {
+        score.value = 30;
+        score.label = dept.name;
+        score.sublabel = `Staff: ${dept.staff}`;
+      }
+      
+      if (score.value > 0) {
+        suggestions.push(score);
+      }
+    });
+    
+    // Sort by score (highest first) and return top 8
+    return suggestions
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 8)
+      .map(s => ({ label: s.label, sublabel: s.sublabel }));
+  }, [departments]);
 
   // Fetch departments from admin API
   useEffect(() => {
@@ -204,6 +288,21 @@ function Directory() {
       });
     }
   }, [departments]);
+
+  // Fetch suggestions as user types
+  useEffect(() => {
+    const fetchSuggestions = () => {
+      if (search.trim().length >= 2) {
+        const suggestions = getDirectorySuggestions(search.trim());
+        setSearchSuggestions(suggestions);
+      } else {
+        setSearchSuggestions([]);
+      }
+    };
+
+    const debounceTimer = setTimeout(fetchSuggestions, 300);
+    return () => clearTimeout(debounceTimer);
+  }, [search, departments, getDirectorySuggestions]);
 
   // Enhanced filtering and search logic
   const getFilteredAndSortedResults = React.useMemo(() => {
@@ -1015,7 +1114,7 @@ function Directory() {
             <OnScreenKeyboard
               value={search}
               onChange={(v) => setSearch(v)}
-              suggestions={[]}
+              suggestions={searchSuggestions}
               onClose={() => setKeyboardOpen(false)}
               onEnter={() => setKeyboardOpen(false)}
               style={{ maxWidth: '900px', width: '95vw' }}

@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle } from 'react';
+﻿import React, { useEffect, useRef, useState, forwardRef, useImperativeHandle, useCallback } from 'react';
 import * as turf from '@turf/turf';
-import { corridorPathfinder } from '../utils/corridorPathfinding';
+import { findSimpleRoute } from '../utils/simplePathfinding';
+import { smartSearch, loadAllFloorData } from '../utils/smartSearch';
 
 // Import your Mapbox sample component here
 // import YourMapboxComponent from './YourMapboxComponent';
@@ -20,6 +21,14 @@ const MapView = forwardRef(({
   const [routeInfo, setRouteInfo] = useState(null);
   const animatedRouteRef = useRef(null); // Ref for animated route function
   const watchIdRef = useRef(null); // For tracking geolocation watch
+  const lastLocationLogRef = useRef(0); // Throttle location logging
+  const isProcessingRouteRef = useRef(false); // Prevent simultaneous route calculations
+  const lastDestinationRef = useRef(null); // Track last processed destination
+  const [_isNavigating, setIsNavigating] = useState(false); // Navigation mode state
+  const [currentUserLocation, setCurrentUserLocation] = useState(null); // Track user position
+  const [_destinationCoords, setDestinationCoords] = useState(null); // Store destination
+  const [_remainingDistance, setRemainingDistance] = useState(null); // Distance to destination
+  const navigationIntervalRef = useRef(null); // Interval for route updates
   const destination = selectedDestination || searchDestination;
 
   // Expose methods to parent component
@@ -33,7 +42,7 @@ const MapView = forwardRef(({
           bearing: 253,
           essential: true
         });
-        console.log('🔄 Map view reset to default');
+        console.log('”„ Map view reset to default');
       }
     },
     startLocationTracking: () => {
@@ -70,7 +79,7 @@ const MapView = forwardRef(({
               }
             });
             
-            // Add accuracy circle
+            // Add accuracy circle (smaller and less obtrusive)
             mapRef.current.addLayer({
               id: 'user-location-accuracy',
               type: 'circle',
@@ -79,15 +88,15 @@ const MapView = forwardRef(({
                 'circle-radius': {
                   stops: [
                     [0, 0],
-                    [20, accuracy * 0.8]
+                    [20, Math.min(accuracy * 0.3, 25)]  // Cap at 25 pixels, reduced from 0.8
                   ],
                   base: 2
                 },
                 'circle-color': '#007cbf',
-                'circle-opacity': 0.1,
+                'circle-opacity': 0.05,  // Much more transparent
                 'circle-stroke-color': '#007cbf',
                 'circle-stroke-width': 1,
-                'circle-stroke-opacity': 0.3
+                'circle-stroke-opacity': 0.2  // More subtle
               }
             });
             
@@ -123,15 +132,22 @@ const MapView = forwardRef(({
             mapRef.current.flyTo({
               center: userLocation,
               zoom: 19,
+              pitch: 10,  // Lock pitch
+              bearing: 253,  // Lock bearing
               essential: true,
               duration: 1500
             });
           }
           
-          console.log('📍 Location updated:', userLocation, 'Accuracy:', accuracy.toFixed(2), 'm');
+          // Throttle location logging - only log every 10 seconds
+          const now = Date.now();
+          if (now - lastLocationLogRef.current > 10000) {
+            console.log('“ Location updated:', userLocation, 'Accuracy:', accuracy.toFixed(2), 'm');
+            lastLocationLogRef.current = now;
+          }
         },
         (error) => {
-          console.error('❌ Error tracking location:', error);
+          console.error('âŒ Error tracking location:', error);
           let errorMessage = 'Unable to track your location. ';
           switch(error.code) {
             case error.PERMISSION_DENIED:
@@ -157,18 +173,18 @@ const MapView = forwardRef(({
         { 
           enableHighAccuracy: true, 
           timeout: 10000, 
-          maximumAge: 0 
+          maximumAge: 30000  // Cache location for 30 seconds to reduce updates
         }
       );
       
-      console.log('🎯 Started real-time location tracking');
+      console.log('Ž¯ Started real-time location tracking');
     },
     stopLocationTracking: () => {
       // Stop watching location
       if (watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current);
         watchIdRef.current = null;
-        console.log('⏹️ Stopped location tracking');
+        console.log('â¹ï¸ Stopped location tracking');
       }
 
       // Remove location layers from map
@@ -186,57 +202,340 @@ const MapView = forwardRef(({
       }
     },
     locateUser: () => {
-      if (mapRef.current && navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const userLocation = [position.coords.longitude, position.coords.latitude];
+      console.log('” Locate Me button clicked');
+      
+      if (!navigator.geolocation) {
+        alert('Geolocation is not supported by your browser.');
+        return;
+      }
+      
+      if (!mapRef.current) {
+        console.error('âŒ Map not initialized');
+        return;
+      }
+      
+      // University entrance coordinates from GeoJSON (Ground Floor)
+      const UNIVERSITY_ENTRANCE = [120.981546, 14.591557];
+      
+      // Function to check if location is inside university
+      const isInsideUniversity = (coords) => {
+        const [lng, lat] = coords;
+        const bounds = {
+          minLng: 120.9810,
+          maxLng: 120.9825,
+          minLat: 14.5910,
+          maxLat: 14.5925
+        };
+        return (
+          lng >= bounds.minLng &&
+          lng <= bounds.maxLng &&
+          lat >= bounds.minLat &&
+          lat <= bounds.maxLat
+        );
+      };
+      
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          let userLocation = [position.coords.longitude, position.coords.latitude];
+          let isOutside = false;
+          
+          console.log('“ Raw GPS location:', userLocation);
+          
+          // Check if user is outside the university
+          if (!isInsideUniversity(userLocation)) {
+            console.log('âš ï¸ User detected OUTSIDE campus - using entrance as location');
+            userLocation = UNIVERSITY_ENTRANCE;
+            isOutside = true;
             
-            // Add or update user location marker
-            if (mapRef.current.getLayer('user-location')) {
-              mapRef.current.getSource('user-location').setData({
+            alert('“ You are currently outside the university.\nShowing Ground Floor entrance as your location.');
+          } else {
+            console.log('âœ… User is INSIDE campus');
+          }
+          
+          // Remove existing "You Are Here" marker if it exists
+          const existingMarker = document.getElementById('you-are-here-marker');
+          if (existingMarker) {
+            existingMarker.remove();
+          }
+          
+          // Create "You Are Here" marker
+          const youAreHereEl = document.createElement('div');
+          youAreHereEl.id = 'you-are-here-marker';
+          youAreHereEl.style.cssText = `
+            position: relative;
+            cursor: pointer;
+            z-index: 150;
+          `;
+          
+          // Create pin container
+          const pinContainer = document.createElement('div');
+          pinContainer.style.cssText = `
+            position: relative;
+            width: 40px;
+            height: 40px;
+            z-index: 151;
+          `;
+          
+          // Create the marker pin (pulsing dark green dot)
+          const markerPin = document.createElement('div');
+          markerPin.style.cssText = `
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, #00695C 0%, #004D40 100%);
+            border: 4px solid white;
+            border-radius: 50%;
+            box-shadow: 
+              0 6px 20px rgba(0, 105, 92, 0.6),
+              0 2px 8px rgba(0, 0, 0, 0.3);
+            animation: pulse-you-are-here 2s ease-in-out infinite;
+          `;
+          
+          // Add pulse animation
+          const style = document.createElement('style');
+          style.textContent = `
+            @keyframes pulse-you-are-here {
+              0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+              }
+              50% {
+                transform: scale(1.15);
+                opacity: 0.85;
+              }
+            }
+          `;
+          if (!document.getElementById('you-are-here-pulse-style')) {
+            style.id = 'you-are-here-pulse-style';
+            document.head.appendChild(style);
+          }
+          
+          pinContainer.appendChild(markerPin);
+          
+          // Create the "You Are Here" label
+          const labelContainer = document.createElement('div');
+          labelContainer.style.cssText = `
+            position: absolute;
+            bottom: 52px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            pointer-events: none;
+          `;
+          
+          const label = document.createElement('div');
+          label.style.cssText = `
+            background: linear-gradient(135deg, #00695C 0%, #004D40 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 
+              0 4px 12px rgba(0, 105, 92, 0.4),
+              0 2px 6px rgba(0, 0, 0, 0.2);
+            border: 2px solid white;
+          `;
+          label.textContent = isOutside ? 'You Are Here (Entrance)' : 'You Are Here';
+          
+          labelContainer.appendChild(label);
+          youAreHereEl.appendChild(pinContainer);
+          youAreHereEl.appendChild(labelContainer);
+          
+          // Add marker to map
+          new window.mapboxgl.Marker({ 
+            element: youAreHereEl,
+            anchor: 'bottom',
+            offset: [0, 8]
+          })
+          .setLngLat(userLocation)
+          .addTo(mapRef.current);
+          
+          // Also add the blue circle layer for better visibility
+          if (mapRef.current.getLayer('user-location-dot')) {
+            mapRef.current.getSource('user-location').setData({
+              type: 'Point',
+              coordinates: userLocation
+            });
+          } else {
+            mapRef.current.addSource('user-location', {
+              type: 'geojson',
+              data: {
                 type: 'Point',
                 coordinates: userLocation
-              });
-            } else {
-              mapRef.current.addSource('user-location', {
-                type: 'geojson',
-                data: {
-                  type: 'Point',
-                  coordinates: userLocation
-                }
-              });
-              
-              mapRef.current.addLayer({
-                id: 'user-location',
-                type: 'circle',
-                source: 'user-location',
-                paint: {
-                  'circle-radius': 10,
-                  'circle-color': '#007cbf',
-                  'circle-stroke-color': '#fff',
-                  'circle-stroke-width': 2
-                }
-              });
-            }
-            
-            // Fly to user location
-            mapRef.current.flyTo({
-              center: userLocation,
-              zoom: 18,
-              essential: true
+              }
             });
             
-            console.log('📍 User location:', userLocation);
-          },
-          (error) => {
-            console.error('❌ Error getting user location:', error);
-            alert('Unable to get your location. Please enable location services.');
-          },
-          { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
-        );
-      } else {
-        alert('Geolocation is not supported by your browser.');
-      }
+            // Add accuracy circle (smaller and less obtrusive)
+            mapRef.current.addLayer({
+              id: 'user-location-accuracy',
+              type: 'circle',
+              source: 'user-location',
+              paint: {
+                'circle-radius': Math.min(Math.max(position.coords.accuracy / 3, 10), 20),  // Cap between 10-20 pixels
+                'circle-color': 'rgba(0, 105, 92, 0.08)',  // More transparent
+                'circle-stroke-width': 1,
+                'circle-stroke-color': 'rgba(0, 105, 92, 0.3)'  // More subtle
+              }
+            });
+            
+            // Add user dot (subtle, marker is main indicator)
+            mapRef.current.addLayer({
+              id: 'user-location-dot',
+              type: 'circle',
+              source: 'user-location',
+              paint: {
+                'circle-radius': 6,
+                'circle-color': '#00695C',
+                'circle-stroke-color': '#fff',
+                'circle-stroke-width': 2
+              }
+            });
+          }
+          
+          // Fly to user location
+          mapRef.current.flyTo({
+            center: userLocation,
+            zoom: 19,
+            pitch: 10,  // Lock pitch
+            bearing: 253,  // Lock bearing
+            essential: true,
+            duration: 1500
+          });
+          
+          console.log('âœ… Showing user location:', userLocation);
+        },
+        (error) => {
+          console.error('âŒ Geolocation error:', error);
+          
+          // If geolocation fails, default to entrance
+          console.log('âš ï¸ Geolocation failed - showing entrance as fallback');
+          const fallbackLocation = UNIVERSITY_ENTRANCE;
+          
+          // Remove existing "You Are Here" marker if it exists
+          const existingMarker = document.getElementById('you-are-here-marker');
+          if (existingMarker) {
+            existingMarker.remove();
+          }
+          
+          // Create "You Are Here" marker at entrance
+          const youAreHereEl = document.createElement('div');
+          youAreHereEl.id = 'you-are-here-marker';
+          youAreHereEl.style.cssText = `
+            position: relative;
+            cursor: pointer;
+            z-index: 150;
+          `;
+          
+          const pinContainer = document.createElement('div');
+          pinContainer.style.cssText = `
+            position: relative;
+            width: 40px;
+            height: 40px;
+            z-index: 151;
+          `;
+          
+          const markerPin = document.createElement('div');
+          markerPin.style.cssText = `
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, #00695C 0%, #004D40 100%);
+            border: 4px solid white;
+            border-radius: 50%;
+            box-shadow: 
+              0 6px 20px rgba(0, 105, 92, 0.6),
+              0 2px 8px rgba(0, 0, 0, 0.3);
+            animation: pulse-you-are-here 2s ease-in-out infinite;
+          `;
+          
+          pinContainer.appendChild(markerPin);
+          
+          const labelContainer = document.createElement('div');
+          labelContainer.style.cssText = `
+            position: absolute;
+            bottom: 52px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            pointer-events: none;
+          `;
+          
+          const label = document.createElement('div');
+          label.style.cssText = `
+            background: linear-gradient(135deg, #00695C 0%, #004D40 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 
+              0 4px 12px rgba(0, 105, 92, 0.4),
+              0 2px 6px rgba(0, 0, 0, 0.2);
+            border: 2px solid white;
+          `;
+          label.textContent = 'You Are Here (Entrance)';
+          
+          labelContainer.appendChild(label);
+          youAreHereEl.appendChild(pinContainer);
+          youAreHereEl.appendChild(labelContainer);
+          
+          // Add marker to map
+          new window.mapboxgl.Marker({ 
+            element: youAreHereEl,
+            anchor: 'bottom',
+            offset: [0, 8]
+          })
+          .setLngLat(fallbackLocation)
+          .addTo(mapRef.current);
+          
+          // Add fallback blue circle layer
+          if (mapRef.current.getLayer('user-location-dot')) {
+            mapRef.current.getSource('user-location').setData({
+              type: 'Point',
+              coordinates: fallbackLocation
+            });
+          } else {
+            mapRef.current.addSource('user-location', {
+              type: 'geojson',
+              data: {
+                type: 'Point',
+                coordinates: fallbackLocation
+              }
+            });
+            
+            mapRef.current.addLayer({
+              id: 'user-location-dot',
+              type: 'circle',
+              source: 'user-location',
+              paint: {
+                'circle-radius': 6,
+                'circle-color': '#00695C',
+                'circle-stroke-color': '#fff',
+                'circle-stroke-width': 2
+              }
+            });
+          }
+          
+          mapRef.current.flyTo({
+            center: fallbackLocation,
+            zoom: 19,
+            pitch: 10,  // Lock pitch
+            bearing: 253,  // Lock bearing
+            essential: true,
+            duration: 1500
+          });
+          
+          alert('“ Unable to get your exact location.\nShowing Ground Floor entrance instead.\n\nError: ' + error.message);
+        },
+        { 
+          enableHighAccuracy: true, 
+          timeout: 10000,  // Increased timeout to 10 seconds
+          maximumAge: 0 
+        }
+      );
     }
   }));
 
@@ -246,7 +545,7 @@ const MapView = forwardRef(({
       if (watchIdRef.current !== null) {
         navigator.geolocation.clearWatch(watchIdRef.current);
         watchIdRef.current = null;
-        console.log('🧹 Cleaned up location tracking on unmount');
+        console.log('§¹ Cleaned up location tracking on unmount');
       }
     };
   }, []);
@@ -280,7 +579,7 @@ const MapView = forwardRef(({
     }
 
   function initializeMap() {
-      console.log('🗺️ Initializing map...');
+      console.log('—ºï¸ Initializing map...');
       console.log('Container ref:', mapContainerRef.current);
       console.log('Existing map:', mapRef.current);
       
@@ -289,7 +588,7 @@ const MapView = forwardRef(({
           // Your Mapbox access token
           window.mapboxgl.accessToken = 'pk.eyJ1IjoibmVsbGlpaS0wMjYiLCJhIjoiY21naXVsZzRoMGRubDJsb3Y0b2E0M2R6aSJ9.eH1rbt1exyBhvY2ccAWK9w';
           
-          console.log('🔑 Mapbox token set');
+          console.log('”‘ Mapbox token set');
           
           // Define reasonable bounds for your campus area
           // Widened bounds to give more panning room around the campus
@@ -350,9 +649,47 @@ const MapView = forwardRef(({
 
         mapRef.current.on('load', () => {
           setMapLoaded(true);
-          console.log('🗺️ Mapbox loaded successfully!');
-          console.log('🎯 Map center:', mapRef.current.getCenter());
-          console.log('🔍 Map zoom:', mapRef.current.getZoom());
+          console.log('—ºï¸ Mapbox loaded successfully!');
+          console.log('Ž¯ Map center:', mapRef.current.getCenter());
+          console.log('” Map zoom:', mapRef.current.getZoom());
+          
+          // âœ¨ Initialize CLEAN route source and layers
+          mapRef.current.addSource('navigation-route', {
+            type: 'geojson',
+            data: {
+              type: 'Feature',
+              properties: {},
+              geometry: {
+                type: 'LineString',
+                coordinates: []
+              }
+            }
+          });
+          
+          // Add single, bold, highly visible route line
+          mapRef.current.addLayer({
+            id: 'navigation-route-line',
+            type: 'line',
+            source: 'navigation-route',
+            paint: {
+              'line-color': '#1E88E5', // Bright blue like Google Maps
+              'line-width': 8,
+              'line-opacity': 0.9
+            },
+            layout: {
+              'line-cap': 'round',
+              'line-join': 'round'
+            }
+          });
+          
+          console.log('âœ… Navigation route layer ready');
+          
+          // Preload all floor data for smart search
+          loadAllFloorData().then(() => {
+            console.log('âœ… All floor data preloaded for smart search');
+          }).catch(err => {
+            console.error('âŒ Error preloading floor data:', err);
+          });
           
           // Bright ambient lighting for light white buildings
           mapRef.current.setLight({
@@ -378,7 +715,7 @@ const MapView = forwardRef(({
         });
         
         } catch (error) {
-          console.error('❌ Error initializing map:', error);
+          console.error('âŒ Error initializing map:', error);
         }
       }
     }
@@ -386,87 +723,78 @@ const MapView = forwardRef(({
     async function addCampusGeoJSON(floorKey = 'ground') {
       if (!mapRef.current) return;
       try {
-        console.log('📊 Loading GeoJSON data...');
-        // Choose file based on floorKey
-        let geojsonPath = '/images/smart-campus-map.geojson';
-        if (floorKey === '2') {
-          geojsonPath = '/images/2nd-floor-map.geojson';
-        } else if (floorKey === '3') {
-          geojsonPath = '/images/3rd-floor-map.geojson';
-        } else if (floorKey === '4') {
-          geojsonPath = '/images/4th-floor-map.geojson';
-          console.log(`📂 Fetching GeoJSON for 4th floor: ${geojsonPath}`);
-        }
-        // Load your smart campus GeoJSON data for the requested floor
-        const response = await fetch(geojsonPath);
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        setGeojsonData(data); // Store GeoJSON data for searching
-        setFloor(floorKey);
-        console.log('✅ GeoJSON data loaded - ready for corridor pathfinding');
-        console.log('🛤️ Will use ONLY white corridor LineStrings for navigation');
-        console.log('🗺️ Loaded GeoJSON data:', data);
-        console.log('📍 Features count:', data.features.length);
-
-        // Initialize corridor-based A* pathfinding with floor information
-        const pathfindingInitialized = corridorPathfinder.initialize(data, floorKey);
-        if (pathfindingInitialized) {
-          console.log(`✅ Corridor A* pathfinding initialized for floor: ${floorKey}`);
-          
-          // Add visualization of all walkable paths for debugging
-          const walkablePaths = data.features.filter(f => f.geometry.type === 'LineString');
-          console.log(`🛤️ Total walkable paths (LineStrings): ${walkablePaths.length}`);
-          
-          // Show sample paths
-          if (walkablePaths.length > 0) {
-            console.log('📋 Sample walkable paths:');
-            walkablePaths.slice(0, 5).forEach((path, idx) => {
-              const coords = path.geometry.coordinates;
-              console.log(`  ${idx + 1}. ${coords.length} points, from [${coords[0][0].toFixed(6)}, ${coords[0][1].toFixed(6)}] to [${coords[coords.length-1][0].toFixed(6)}, ${coords[coords.length-1][1].toFixed(6)}]`);
-            });
-            
-            // CRITICAL: Visualize ALL LineStrings on the map so we can see them
-            if (mapRef.current.getSource('debug-corridors')) {
-              mapRef.current.removeLayer('debug-corridors');
-              mapRef.current.removeSource('debug-corridors');
+        console.log('“Š Loading ALL floor GeoJSON data for multi-floor navigation...');
+        
+        // Load ALL floor GeoJSON files simultaneously for multi-floor pathfinding
+        const floorFiles = [
+          { key: 'ground', path: '/images/smart-campus-map.geojson' },
+          { key: '2', path: '/images/2nd-floor-map.geojson' },
+          { key: '3', path: '/images/3rd-floor-map.geojson' },
+          { key: '4', path: '/images/4th-floor-map.geojson' }
+        ];
+        
+        const floorDataPromises = floorFiles.map(async ({ key, path }) => {
+          try {
+            const response = await fetch(path);
+            if (!response.ok) {
+              console.warn(`WARNING: Failed to load ${path}: ${response.status}`);
+              return null;
             }
-            
-            mapRef.current.addSource('debug-corridors', {
-              type: 'geojson',
-              data: {
-                type: 'FeatureCollection',
-                features: walkablePaths
-              }
+            const data = await response.json();
+            // Tag each feature with its floor
+            data.features.forEach(feature => {
+              if (!feature.properties) feature.properties = {};
+              feature.properties.floor = key;
+              feature.properties.Floor = key;
             });
-            
-            mapRef.current.addLayer({
-              id: 'debug-corridors',
-              type: 'line',
-              source: 'debug-corridors',
-              paint: {
-                'line-color': '#00ff00', // Bright green for visibility
-                'line-width': 4,
-                'line-opacity': 0.8
-              }
-            });
-            
-            console.log('✅ Added green lines showing ALL walkable corridors');
+            console.log(`âœ… Loaded ${path}: ${data.features.length} features`);
+            return { key, data };
+          } catch (error) {
+            console.error(`âŒ Error loading ${path}:`, error);
+            return null;
           }
-        } else {
-          console.warn('⚠️ Corridor pathfinding initialization failed');
+        });
+        
+        const allFloorData = await Promise.all(floorDataPromises);
+        const validFloorData = allFloorData.filter(d => d !== null);
+        
+        if (validFloorData.length === 0) {
+          throw new Error('Failed to load any floor data');
         }
-
-        // Manage building polygons source (replace data if exists)
-        const buildingsData = {
-          ...data,
-          features: data.features.filter(f => f.geometry.type === 'Polygon')
+        
+        // Combine all floors into one unified GeoJSON dataset
+        const combinedData = {
+          type: 'FeatureCollection',
+          features: []
         };
         
-        console.log('🏗️ Building polygons:', buildingsData.features.length);
-        console.log('📊 Polygons with names:', buildingsData.features.filter(f => f.properties.Name || f.properties.name).length);
-        console.log('📝 Sample named polygons:', buildingsData.features
+        validFloorData.forEach(({ data }) => {
+          combinedData.features.push(...data.features);
+        });
+        
+        console.log(`âœ… Combined ${validFloorData.length} floors: ${combinedData.features.length} total features`);
+        
+        // Get current floor data for display
+        const currentFloorData = validFloorData.find(d => d.key === floorKey)?.data || validFloorData[0].data;
+        setGeojsonData(currentFloorData); // Store current floor data for searching
+        setFloor(floorKey);
+        
+        console.log('—ºï¸ Current floor data:', currentFloorData);
+        console.log('“ Current floor features:', currentFloorData.features.length);
+        console.log('¢ Combined data features:', combinedData.features.length);
+
+        // Initialize corridor-based A* pathfinding with ALL floors
+        // Simple routing - no initialization needed
+
+        // Manage building polygons source - show only current floor
+        const buildingsData = {
+          ...currentFloorData,
+          features: currentFloorData.features.filter(f => f.geometry.type === 'Polygon')
+        };
+        
+        console.log('—ï¸ Building polygons (current floor):', buildingsData.features.length);
+        console.log('“Š Polygons with names:', buildingsData.features.filter(f => f.properties.Name || f.properties.name).length);
+        console.log('“ Sample named polygons:', buildingsData.features
           .filter(f => f.properties.Name || f.properties.name)
           .slice(0, 5)
           .map(f => f.properties.Name || f.properties.name)
@@ -474,10 +802,10 @@ const MapView = forwardRef(({
         
         if (mapRef.current.getSource('campus-buildings')) {
           mapRef.current.getSource('campus-buildings').setData(buildingsData);
-          console.log('✅ Updated campus-buildings source with new floor data');
+          console.log('âœ… Updated campus-buildings source with new floor data');
         } else {
           mapRef.current.addSource('campus-buildings', { type: 'geojson', data: buildingsData });
-          console.log('✅ Created campus-buildings source');
+          console.log('âœ… Created campus-buildings source');
         }
 
         // Create label points from polygon centroids for better text rendering
@@ -524,28 +852,27 @@ const MapView = forwardRef(({
             })
         };
         
-        console.log('📍 Created label points:', labelPoints.features.length);
-        console.log('🔍 First 3 label points:', labelPoints.features.slice(0, 3).map(f => ({
+        console.log('“ Created label points:', labelPoints.features.length);
+        console.log('” First 3 label points:', labelPoints.features.slice(0, 3).map(f => ({
           name: f.properties.Name,
           coords: f.geometry.coordinates
         })));
         
         if (mapRef.current.getSource('building-label-points')) {
           mapRef.current.getSource('building-label-points').setData(labelPoints);
-          console.log('✅ Updated building-label-points source');
+          console.log('âœ… Updated building-label-points source');
         } else {
           mapRef.current.addSource('building-label-points', { 
             type: 'geojson', 
             data: labelPoints 
           });
-          console.log('✅ Created building-label-points source');
+          console.log('âœ… Created building-label-points source');
         }
 
         // Add paths/corridors FIRST (before buildings and labels for proper layering)
-        const pathsData = 
-        {
-          ...data,
-          features: data.features.filter(f => f.geometry.type === 'LineString')
+        const pathsData = {
+          ...currentFloorData,
+          features: currentFloorData.features.filter(f => f.geometry.type === 'LineString')
         };
         if (mapRef.current.getSource('campus-paths')) {
           mapRef.current.getSource('campus-paths').setData(pathsData);
@@ -573,7 +900,7 @@ const MapView = forwardRef(({
               'line-gap-width': 0
             }
           });
-          console.log('✅ Campus paths outline layer created (bottom layer)');
+          console.log('âœ… Campus paths outline layer created (bottom layer)');
         }
         
         // Clean white corridors with improved visibility (on top of outline)
@@ -595,7 +922,7 @@ const MapView = forwardRef(({
               'line-opacity': 1.0
             }
           });
-          console.log('✅ Campus paths/corridors layer created for pathfinding');
+          console.log('âœ… Campus paths/corridors layer created for pathfinding');
         }
 
         // Light white 3D blocks with bright ambiance (on top of paths)
@@ -642,7 +969,7 @@ const MapView = forwardRef(({
         // Text comes from the "Name" or "name" property in GeoJSON Polygons
         // Large, bold labels that are clearly visible
         if (!mapRef.current.getLayer('campus-buildings-labels')) {
-          console.log('🏷️ Creating building labels layer for the first time...');
+          console.log('·ï¸ Creating building labels layer for the first time...');
           
           mapRef.current.addLayer({
             id: 'campus-buildings-labels',
@@ -689,33 +1016,33 @@ const MapView = forwardRef(({
               'text-opacity': 1.0
             }
           });
-          console.log('✅ Building labels layer created using POINT geometries!');
-          console.log('📍 Labels should now be visible on 3rd floor');
+          console.log('âœ… Building labels layer created using POINT geometries!');
+          console.log('“ Labels should now be visible on 3rd floor');
           
           // Verify layer was created correctly
           setTimeout(() => {
             const layer = mapRef.current.getLayer('campus-buildings-labels');
             if (layer) {
-              console.log('🔍 VERIFICATION - Layer exists:', layer.id);
-              console.log('🔍 Layer type:', layer.type);
-              console.log('🔍 Layer source:', layer.source);
-              console.log('🔍 Layer visibility:', mapRef.current.getLayoutProperty('campus-buildings-labels', 'visibility'));
+              console.log('” VERIFICATION - Layer exists:', layer.id);
+              console.log('” Layer type:', layer.type);
+              console.log('” Layer source:', layer.source);
+              console.log('” Layer visibility:', mapRef.current.getLayoutProperty('campus-buildings-labels', 'visibility'));
               
               // Check if source has data
               const source = mapRef.current.getSource('building-label-points');
               if (source && source._data) {
-                console.log('🔍 Source has features:', source._data.features ? source._data.features.length : 'NO FEATURES');
+                console.log('” Source has features:', source._data.features ? source._data.features.length : 'NO FEATURES');
                 if (source._data.features && source._data.features.length > 0) {
-                  console.log('🔍 First feature:', source._data.features[0]);
+                  console.log('” First feature:', source._data.features[0]);
                 }
               }
             } else {
-              console.error('❌ Layer NOT FOUND after creation!');
+              console.error('âŒ Layer NOT FOUND after creation!');
             }
           }, 1000);
-          console.log('� Layer will show labels for features with Name/name property');
+          console.log('ï¿½ Layer will show labels for features with Name/name property');
         } else {
-          console.log('� Labels layer already exists - it will auto-update with source data');
+          console.log('ï¿½ Labels layer already exists - it will auto-update with source data');
         }
 
         // Add room/office markers (labels removed, only clickable points with popups)
@@ -724,14 +1051,14 @@ const MapView = forwardRef(({
           markersRef.current = [];
         }
 
-        const pointFeatures = data.features.filter(f =>
+        const pointFeatures = currentFloorData.features.filter(f =>
           f.geometry.type === 'Point' && (f.properties.Name || f.properties.name)
         );
 
         // Set up the route function for this point feature
         animatedRouteRef.current = (coords, itemName) => {
           setRouteInfo(null); // Clear previous route info
-          console.log('🧭 Navigating to:', itemName, 'at', coords);
+          console.log('§­ Navigating to:', itemName, 'at', coords);
           // Route will be handled by the destination effect
         };
 
@@ -751,33 +1078,33 @@ const MapView = forwardRef(({
           
           const popup = new window.mapboxgl.Popup({
             offset: 20,
-            closeButton: true,
+            closeButton: false,
             className: 'campus-building-popup',
             maxWidth: '320px',
             anchor: 'bottom'
           }).setHTML(`
-            <div style="padding: 0; font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; border-radius: 8px; overflow: hidden;">
-              <!-- Header with accent color -->
-              <div style="background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%); padding: 14px 16px; border-bottom: 2px solid rgba(0,0,0,0.08);">
-                <h3 style="margin: 0; color: white; font-size: 16px; font-weight: 600; letter-spacing: 0.3px;">
+            <div style="padding: 0; font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; border-radius: 10px; overflow: hidden; box-shadow: 0 4px 16px rgba(0,0,0,0.15); min-width: 220px; max-width: 260px;">
+              <!-- Header -->
+              <div style="background: linear-gradient(135deg, #00594A 0%, #00695C 100%); padding: 12px 14px;">
+                <h3 style="margin: 0; color: white; font-size: 14px; font-weight: 700; letter-spacing: 0.2px; text-align: center;">
                   ${itemName}
                 </h3>
               </div>
               
               <!-- Content section -->
-              <div style="padding: 14px 16px; background: #fff;">
-                <div style="font-size: 13px; color: #4b5563; line-height: 1.6;">
-                  <div style="margin: 8px 0; display: flex; align-items: flex-start;">
-                    <span style="color: #0f766e; font-weight: 600; min-width: 70px;">🏢 Building:</span>
-                    <span style="color: #333; flex: 1;">${props.Building || props.building || 'Main Campus'}</span>
+              <div style="padding: 10px 14px; background: #ffffff;">
+                <div style="font-size: 12px; color: #374151; line-height: 1.6; display: flex; flex-direction: column; gap: 8px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="color: #6b7280; font-weight: 500;">Building</span>
+                    <span style="color: #1f2937; font-weight: 600; font-size: 11px;">${props.Building || props.building || 'Main Campus'}</span>
                   </div>
-                  <div style="margin: 8px 0; display: flex; align-items: flex-start;">
-                    <span style="color: #0f766e; font-weight: 600; min-width: 70px;">📍 Floor:</span>
-                    <span style="color: #333; flex: 1;">${props.Floor || props.floor || 'Ground Floor'}</span>
+                  <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f3f4f6;">
+                    <span style="color: #6b7280; font-weight: 500;">Floor</span>
+                    <span style="color: #1f2937; font-weight: 600; font-size: 11px;">${props.Floor || props.floor || 'Ground Floor'}</span>
                   </div>
-                  <div style="margin: 8px 0; display: flex; align-items: flex-start;">
-                    <span style="color: #0f766e; font-weight: 600; min-width: 70px;">🏷️ Type:</span>
-                    <span style="color: #333; flex: 1;">${props.Type || props.type || 'Room'}</span>
+                  <div style="display: flex; align-items: center; justify-content: space-between; padding: 6px 0;">
+                    <span style="color: #6b7280; font-weight: 500;">Type</span>
+                    <span style="color: #1f2937; font-weight: 600; font-size: 11px;">${props.Type || props.type || 'Room'}</span>
                   </div>
                 </div>
               </div>
@@ -786,13 +1113,12 @@ const MapView = forwardRef(({
               <button id="navigate-btn-${itemName.replace(/\s+/g, '-').replace(/[^a-z0-9-]/gi, '')}" 
                 style="
                   width: 100%;
-                  padding: 12px 16px;
-                  background: linear-gradient(135deg, #0f766e 0%, #14b8a6 100%);
+                  padding: 10px 14px;
+                  background: linear-gradient(135deg, #00594A 0%, #00695C 100%);
                   color: white;
                   border: none;
-                  border-top: 1px solid rgba(0,0,0,0.08);
-                  font-size: 14px;
-                  font-weight: 600;
+                  font-size: 13px;
+                  font-weight: 700;
                   font-family: 'Open Sans', sans-serif;
                   letter-spacing: 0.3px;
                   cursor: pointer;
@@ -800,12 +1126,13 @@ const MapView = forwardRef(({
                   display: flex;
                   align-items: center;
                   justify-content: center;
-                  gap: 8px;
+                  gap: 6px;
+                  box-shadow: inset 0 -2px 4px rgba(0,0,0,0.1);
                 "
-                onmouseover="this.style.background='linear-gradient(135deg, #134e48 0%, #0d9488 100%)'; this.style.transform='translateY(-1px)';"
-                onmouseout="this.style.background='linear-gradient(135deg, #0f766e 0%, #14b8a6 100%)'; this.style.transform='translateY(0)';"
+                onmouseover="this.style.background='linear-gradient(135deg, #004d3d 0%, #00594A 100%)'; this.style.transform='translateY(-1px)'; this.style.boxShadow='inset 0 -2px 4px rgba(0,0,0,0.15), 0 2px 8px rgba(0,89,74,0.3)';"
+                onmouseout="this.style.background='linear-gradient(135deg, #00594A 0%, #00695C 100%)'; this.style.transform='translateY(0)'; this.style.boxShadow='inset 0 -2px 4px rgba(0,0,0,0.1)';"
               >
-                🧭 Navigate Here
+                Navigate Here
               </button>
             </div>
           `).addTo(mapRef.current);
@@ -816,26 +1143,17 @@ const MapView = forwardRef(({
             if (navBtn) {
               navBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
-                // Trigger search with the building name
-                const searchInput = document.querySelector('input[placeholder*="Search"]') || 
-                                   document.querySelector('input[type="search"]');
-                if (searchInput) {
-                  searchInput.value = itemName;
-                  searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-                  searchInput.dispatchEvent(new Event('change', { bubbles: true }));
-                  // Close popup
-                  popup.remove();
-                } else {
-                  console.log('🧭 Navigate to:', itemName);
-                  // Fallback: center map on this location
-                  if (e.lngLat) {
-                    mapRef.current.flyTo({
-                      center: e.lngLat,
-                      zoom: 19,
-                      duration: 1000
-                    });
-                  }
-                }
+                
+                // Trigger navigation by dispatching a custom event to the parent
+                console.log('§­ Navigating to:', itemName);
+                
+                // Dispatch custom event that Map.jsx can listen to
+                window.dispatchEvent(new CustomEvent('navigateToLocation', { 
+                  detail: { location: itemName } 
+                }));
+                
+                // Close popup
+                popup.remove();
               });
             }
           }, 0);
@@ -868,7 +1186,7 @@ const MapView = forwardRef(({
 
         addLegendAndControls();
       } catch (error) {
-        console.error('❌ Error loading GeoJSON:', error);
+        console.error('âŒ Error loading GeoJSON:', error);
       }
     }
     
@@ -911,11 +1229,11 @@ const MapView = forwardRef(({
         </div>
         <div style="display: flex; align-items: center; margin: 6px 0;">
           <div style="width: 16px; height: 16px; background: #4CAF50; border: 1px solid #388E3C; border-radius: 3px; margin-right: 8px;"></div>
-          <span style="color: #555;">Gardens 🌿</span>
+          <span style="color: #555;">Gardens</span>
         </div>
         <div style="display: flex; align-items: center; margin: 8px 0 4px 0;">
           <div style="width: 16px; height: 3px; background: #ffffff; border: 1px solid #757575; margin-right: 8px;"></div>
-          <span style="color: #555; font-size: 11px;">� Pathways</span>
+          <span style="color: #555; font-size: 11px;">Pathways</span>
         </div>
       `;
       
@@ -936,111 +1254,355 @@ const MapView = forwardRef(({
     };
   }, [floor]); // Re-run initialization when floor changes so we can load appropriate GeoJSON
 
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // š€ LIVE NAVIGATION SYSTEM - Real-time route updates as user moves
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  
+  /**
+   * Stop live navigation mode
+   */
+  const stopLiveNavigation = useCallback(() => {
+    console.log('›‘ Stopping live navigation');
+    
+    setIsNavigating(false);
+    setCurrentUserLocation(null);
+    setDestinationCoords(null);
+    setRemainingDistance(null);
+    
+    // Stop geolocation tracking
+    if (watchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = null;
+    }
+    
+    // Stop navigation interval
+    if (navigationIntervalRef.current !== null) {
+      clearInterval(navigationIntervalRef.current);
+      navigationIntervalRef.current = null;
+    }
+    
+    // Remove user location marker
+    if (mapRef.current) {
+      if (mapRef.current.getLayer('user-location-dot')) {
+        mapRef.current.removeLayer('user-location-dot');
+      }
+      if (mapRef.current.getLayer('user-location-accuracy')) {
+        mapRef.current.removeLayer('user-location-accuracy');
+      }
+      if (mapRef.current.getSource('user-location')) {
+        mapRef.current.removeSource('user-location');
+      }
+    }
+  }, []);
+  
+  /**
+   * Update user location marker on map
+   */
+  const updateUserLocationMarker = useCallback((userLocation, accuracy) => {
+    if (!mapRef.current) return;
+    
+    // Update or create user location marker
+    if (mapRef.current.getSource('user-location')) {
+      mapRef.current.getSource('user-location').setData({
+        type: 'Point',
+        coordinates: userLocation
+      });
+    } else {
+      // Create user location source and layer
+      mapRef.current.addSource('user-location', {
+        type: 'geojson',
+        data: {
+          type: 'Point',
+          coordinates: userLocation
+        }
+      });
+      
+      // Add accuracy circle (smaller and less obtrusive)
+      mapRef.current.addLayer({
+        id: 'user-location-accuracy',
+        type: 'circle',
+        source: 'user-location',
+        paint: {
+          'circle-radius': Math.min(Math.max(accuracy / 4, 8), 18),  // Cap between 8-18 pixels
+          'circle-color': 'rgba(66, 133, 244, 0.08)',  // Much more transparent
+          'circle-stroke-width': 1,
+          'circle-stroke-color': 'rgba(66, 133, 244, 0.3)'  // More subtle
+        }
+      });
+      
+      // Add user dot
+      mapRef.current.addLayer({
+        id: 'user-location-dot',
+        type: 'circle',
+        source: 'user-location',
+        paint: {
+          'circle-radius': 8,
+          'circle-color': '#4285F4',
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#ffffff'
+        }
+      });
+    }
+    
+    // Center map on user location
+    mapRef.current.easeTo({
+      center: userLocation,
+      zoom: 19,
+      pitch: 10,  // Lock pitch
+      bearing: 253,  // Lock bearing
+      duration: 1000
+    });
+  }, []);
+  
+  /**
+   * Recalculate and update route from current user position to destination
+   */
+  const updateNavigationRoute = useCallback(async (userLocation, destinationCoords, destinationInfo) => {
+    if (!mapRef.current || !geojsonData) return;
+    
+    console.log('”„ Updating navigation route...');
+    
+    // Calculate distance to destination
+    const distanceToDestination = turf.distance(
+      turf.point(userLocation),
+      turf.point(destinationCoords),
+      { units: 'meters' }
+    );
+    
+    setRemainingDistance(distanceToDestination);
+    
+    console.log(`“ Distance remaining: ${distanceToDestination.toFixed(1)}m`);
+    
+    // Check if user reached destination (within 5 meters)
+    if (distanceToDestination < 5) {
+      console.log('Ž‰ DESTINATION REACHED!');
+      stopLiveNavigation();
+      alert(`Ž‰ You have arrived at ${destinationInfo.name}!`);
+      return;
+    }
+    
+    // Recalculate path from current location to destination
+    const pathfindingResult = findSimpleRoute(userLocation, destinationCoords);
+    
+    if (!pathfindingResult || !pathfindingResult.valid) {
+      console.warn('âš ï¸ Could not find path from current location');
+      return;
+    }
+    
+    const routePath = pathfindingResult.path;
+    
+    // âœ¨ UPDATE ROUTE LINE - Simple and clean
+    if (mapRef.current.getSource('navigation-route')) {
+      mapRef.current.getSource('navigation-route').setData({
+        type: 'Feature',
+        properties: {},
+        geometry: {
+          type: 'LineString',
+          coordinates: routePath
+        }
+      });
+      
+      console.log('âœ… Route line updated with', routePath.length, 'points');
+    }
+    
+    // Update route info panel
+    const estimatedTimeSeconds = pathfindingResult.distance / 1.4;
+    const estimatedMinutes = Math.ceil(estimatedTimeSeconds / 60);
+    
+    setRouteInfo({
+      distance: pathfindingResult.distance,
+      waypoints: pathfindingResult.waypoints,
+      isValid: true,
+      estimatedTime: estimatedMinutes,
+      destination: destinationInfo.name,
+      building: destinationInfo.building,
+      floor: destinationInfo.floor,
+      floors: pathfindingResult.floors || [destinationInfo.floor],
+      isMultiFloor: pathfindingResult.isMultiFloor || false,
+      floorTransitions: pathfindingResult.floorTransitions || []
+    });
+  }, [geojsonData, stopLiveNavigation]);
+  
+  /**
+   * Check if a location is inside the university campus bounds
+   * University bounds based on the GeoJSON map data
+   */
+  const isInsideUniversity = useCallback((coords) => {
+    const [lng, lat] = coords;
+    
+    // University campus bounds (approximate rectangle around New Era University)
+    // Based on the GeoJSON data coordinates
+    const bounds = {
+      minLng: 120.9810,  // Western boundary
+      maxLng: 120.9825,  // Eastern boundary
+      minLat: 14.5910,   // Southern boundary
+      maxLat: 14.5925    // Northern boundary
+    };
+    
+    const isInside = (
+      lng >= bounds.minLng &&
+      lng <= bounds.maxLng &&
+      lat >= bounds.minLat &&
+      lat <= bounds.maxLat
+    );
+    
+    console.log(`“ Location check: [${lng.toFixed(6)}, ${lat.toFixed(6)}] - ${isInside ? 'INSIDE' : 'OUTSIDE'} campus`);
+    
+    return isInside;
+  }, []);
+  
+  /**
+   * Start live navigation mode - continuously updates route as user moves
+   * Like Google Maps turn-by-turn navigation
+   */
+  const startLiveNavigation = useCallback((destinationCoords, destinationInfo) => {
+    console.log('Ž¯ Starting LIVE NAVIGATION MODE');
+    console.log('“ Destination:', destinationInfo.name);
+    
+    // University entrance coordinates from GeoJSON (Ground Floor)
+    const UNIVERSITY_ENTRANCE = [120.981546, 14.591557];
+    const YOU_ARE_HERE_KIOSK = [120.981616, 14.591631];
+    
+    // Enable navigation mode
+    setIsNavigating(true);
+    setDestinationCoords(destinationCoords);
+    
+    // Start continuous location tracking
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by your browser.');
+      return;
+    }
+    
+    // Stop any existing tracking
+    if (watchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+    }
+    if (navigationIntervalRef.current !== null) {
+      clearInterval(navigationIntervalRef.current);
+    }
+    
+    // Start watching user position
+    watchIdRef.current = navigator.geolocation.watchPosition(
+      (position) => {
+        let userLocation = [position.coords.longitude, position.coords.latitude];
+        
+        // Check if user is outside the university
+        if (!isInsideUniversity(userLocation)) {
+          // Throttle warning logs
+          const now = Date.now();
+          if (now - lastLocationLogRef.current > 10000) {
+            console.log('âš ï¸ User detected OUTSIDE campus - using entrance as starting point');
+            lastLocationLogRef.current = now;
+          }
+          userLocation = UNIVERSITY_ENTRANCE;
+          
+          // Show notification to user
+          if (!sessionStorage.getItem('outdoor-warning-shown')) {
+            alert('“ You are currently outside the university. Navigation will start from the Ground Floor entrance.');
+            sessionStorage.setItem('outdoor-warning-shown', 'true');
+          }
+        }
+        
+        setCurrentUserLocation(userLocation);
+        
+        // Throttle navigation logs - only every 10 seconds
+        const now = Date.now();
+        if (now - lastLocationLogRef.current > 10000) {
+          console.log('“ Navigation position update:', userLocation);
+          lastLocationLogRef.current = now;
+        }
+        
+        // Update user marker on map
+        updateUserLocationMarker(userLocation, position.coords.accuracy);
+        
+        // Recalculate route from current position to destination
+        updateNavigationRoute(userLocation, destinationCoords, destinationInfo);
+      },
+      (error) => {
+        console.error('âŒ Geolocation error:', error);
+        
+        // If geolocation fails, default to entrance
+        console.log('âš ï¸ Geolocation failed - defaulting to entrance');
+        const fallbackLocation = UNIVERSITY_ENTRANCE;
+        setCurrentUserLocation(fallbackLocation);
+        updateUserLocationMarker(fallbackLocation, 50);
+        updateNavigationRoute(fallbackLocation, destinationCoords, destinationInfo);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 5000,
+        maximumAge: 30000  // Cache location for 30 seconds to reduce excessive updates
+      }
+    );
+    
+    // Reduced interval to every 10 seconds to prevent excessive updates
+    navigationIntervalRef.current = setInterval(() => {
+      if (currentUserLocation && destinationCoords) {
+        updateNavigationRoute(currentUserLocation, destinationCoords, destinationInfo);
+      }
+    }, 10000);  // Changed from 2s to 10s
+    
+    // Cleanup function to prevent memory leaks
+    return () => {
+      if (navigationIntervalRef.current) {
+        clearInterval(navigationIntervalRef.current);
+        navigationIntervalRef.current = null;
+      }
+    };
+  }, [currentUserLocation, updateUserLocationMarker, updateNavigationRoute, isInsideUniversity]);
+  
+  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 
 
   // Handle destination changes with animated pathfinding
   useEffect(() => {
-    // Enhanced destination search with fuzzy matching (Google Maps style)
-    const findDestination = (searchTerm) => {
-      if (!geojsonData || !searchTerm) return null;
+    // Enhanced destination search using smart multi-floor search
+    const findDestination = async (searchTerm) => {
+      if (!searchTerm) return null;
       
-      const normalizedSearch = searchTerm.toLowerCase().trim();
+      console.log(`” Smart searching for: "${searchTerm}"`);
       
-      // Get all point features (rooms, offices, etc.)
-      const pointFeatures = geojsonData.features.filter(f => 
-        f.geometry.type === 'Point' && (f.properties.Name || f.properties.name)
-      );
+      // Use smart search to find across all floors
+      const searchResult = await smartSearch(searchTerm);
       
-      console.log(`🔍 Searching for: "${searchTerm}" in ${pointFeatures.length} locations`);
-      
-      // 1. Try exact match (case-insensitive)
-      let match = pointFeatures.find(f => {
-        const itemName = (f.properties.Name || f.properties.name || '').toLowerCase();
-        return itemName === normalizedSearch;
-      });
-      
-      if (match) {
-        console.log('✅ Exact match found:', match.properties.Name || match.properties.name);
-        return match;
-      }
-      
-      // 2. Try starts-with match
-      match = pointFeatures.find(f => {
-        const itemName = (f.properties.Name || f.properties.name || '').toLowerCase();
-        return itemName.startsWith(normalizedSearch);
-      });
-      
-      if (match) {
-        console.log('✅ Starts-with match found:', match.properties.Name || match.properties.name);
-        return match;
-      }
-      
-      // 3. Try contains match
-      match = pointFeatures.find(f => {
-        const itemName = (f.properties.Name || f.properties.name || '').toLowerCase();
-        return itemName.includes(normalizedSearch);
-      });
-      
-      if (match) {
-        console.log('✅ Contains match found:', match.properties.Name || match.properties.name);
-        return match;
-      }
-      
-      // 4. Try reverse contains (search contains item name)
-      match = pointFeatures.find(f => {
-        const itemName = (f.properties.Name || f.properties.name || '').toLowerCase();
-        return normalizedSearch.includes(itemName);
-      });
-      
-      if (match) {
-        console.log('✅ Reverse match found:', match.properties.Name || match.properties.name);
-        return match;
-      }
-      
-      // 5. Try word-by-word fuzzy match (for multi-word searches)
-      const searchWords = normalizedSearch.split(/\s+/);
-      match = pointFeatures.find(f => {
-        const itemName = (f.properties.Name || f.properties.name || '').toLowerCase();
-        const itemWords = itemName.split(/\s+/);
+      if (searchResult.bestMatch) {
+        const match = searchResult.bestMatch;
+        console.log(`âœ… Found: "${match.name}" on ${match.floor} (${match.floorKey})`);
         
-        // Check if any search word matches any item word
-        return searchWords.some(searchWord => 
-          itemWords.some(itemWord => 
-            itemWord.includes(searchWord) || searchWord.includes(itemWord)
-          )
-        );
-      });
-      
-      if (match) {
-        console.log('✅ Fuzzy match found:', match.properties.Name || match.properties.name);
-        return match;
+        // Check if we need to switch floors (only switch once, don't trigger repeatedly)
+        if (match.floorKey !== floor) {
+          console.log(`”„ Switching from floor "${floor}" to floor "${match.floorKey}"`);
+          
+          // Prevent infinite loop by checking if we're already processing
+          if (!isProcessingRouteRef.current) {
+            // Actually reload the map with the new floor data
+            if (addCampusRef.current) {
+              console.log(`“‚ Loading ${match.floorKey} floor GeoJSON...`);
+              addCampusRef.current(match.floorKey);
+            }
+          }
+        }
+        
+        return {
+          coordinates: match.coordinates,
+          name: match.name,
+          building: match.building,
+          floor: match.floor,
+          type: match.type,
+          floorKey: match.floorKey
+        };
       }
       
-      // 6. Try building/type match
-      match = pointFeatures.find(f => {
-        const building = (f.properties.Building || '').toLowerCase();
-        const type = (f.properties.Type || '').toLowerCase();
-        return building.includes(normalizedSearch) || 
-               type.includes(normalizedSearch) ||
-               normalizedSearch.includes(building) ||
-               normalizedSearch.includes(type);
-      });
-      
-      if (match) {
-        console.log('✅ Building/Type match found:', match.properties.Name || match.properties.name);
-        return match;
-      }
-      
-      console.warn(`⚠️ No match found for: "${searchTerm}"`);
+      console.warn(`WARNING: No match found for: "${searchTerm}"`);
       return null;
     };
 
     // SM Kiosk-style animated pathfinding
-    function addAnimatedRoute(destinationName) {
-      console.log('🎯 addAnimatedRoute called with:', destinationName);
+    async function addAnimatedRoute(destinationName) {
+      console.log('Ž¯ addAnimatedRoute called with:', destinationName);
       
       if (!mapRef.current) {
-        console.error('❌ No map reference');
+        console.error('âŒ No map reference');
         return;
       }
 
@@ -1057,33 +1619,34 @@ const MapView = forwardRef(({
         
         if (youAreHereLocation) {
           entrancePoint = youAreHereLocation.geometry.coordinates;
-          console.log('✅ Found "You Are Here" in GeoJSON:', entrancePoint);
+          console.log('âœ… Found "You Are Here" in GeoJSON:', entrancePoint);
         } else {
-          console.log('✅ Using exact "You Are Here" coordinates from GeoJSON:', entrancePoint);
+          console.log('âœ… Using exact "You Are Here" coordinates from GeoJSON:', entrancePoint);
         }
       }
       
-      // Find destination coordinates from GeoJSON data
-      const foundDestination = findDestination(destinationName);
+      // Find destination using smart search (searches all floors)
+      const foundDestination = await findDestination(destinationName);
       let destinationCoords;
       let destinationInfo = {};
       
       if (foundDestination) {
-        destinationCoords = foundDestination.geometry.coordinates;
+        destinationCoords = foundDestination.coordinates;
         destinationInfo = {
-          name: foundDestination.properties.Name || foundDestination.properties.name,
-          building: foundDestination.properties.Building || 'Unknown Building',
-          floor: foundDestination.properties.Floor || 'Ground Floor',
-          type: foundDestination.properties.Type || 'Location'
+          name: foundDestination.name,
+          building: foundDestination.building,
+          floor: foundDestination.floor,
+          type: foundDestination.type,
+          floorKey: foundDestination.floorKey
         };
-        console.log('✅ Found destination in GeoJSON:', destinationInfo.name);
-        console.log('📍 Location:', destinationCoords);
-        console.log('🏢 Building:', destinationInfo.building);
-        console.log('🏗️ Floor:', destinationInfo.floor);
-        console.log('📌 Type:', destinationInfo.type);
+        console.log('âœ… Found destination via smart search:', destinationInfo.name);
+        console.log('“ Location:', destinationCoords);
+        console.log('¢ Building:', destinationInfo.building);
+        console.log('—ï¸ Floor:', destinationInfo.floor);
+        console.log('“Œ Type:', destinationInfo.type);
       } else {
-        console.warn(`⚠️ "${destinationName}" not found in GeoJSON - using fallback`);
-        // Fallback to hardcoded destinations if not found in GeoJSON
+        console.warn(`WARNING: not found - using fallback`);
+        // Fallback to hardcoded destinations if not found
         const fallbackDestinations = {
           'Registrar': [120.981578, 14.591934],
           'NB101': [120.981299, 14.591841], 
@@ -1099,33 +1662,43 @@ const MapView = forwardRef(({
           floor: 'Ground Floor',
           type: 'Location'
         };
-        console.log('📍 Using fallback coordinates:', destinationCoords);
+        console.log('“ Using fallback coordinates:', destinationCoords);
       }
-      console.log('🎯 === CREATING ROUTE ===');
-      console.log('📍 Start point (entrance):', entrancePoint);
-      console.log('📍 End point (destination):', destinationCoords);
-      console.log('🎯 Destination:', destinationInfo.name);
+      console.log('Ž¯ === CREATING ROUTE ===');
+      console.log('“ Start point (entrance):', entrancePoint);
+      console.log('“ End point (destination):', destinationCoords);
+      console.log('Ž¯ Destination:', destinationInfo.name);
       
-      // Use corridor-based A* pathfinding (only follows LineString paths)
-      console.log('🔄 Running A* pathfinding algorithm...');
-      const pathfindingResult = corridorPathfinder.findRoute(entrancePoint, destinationCoords);
+      // STRICT MODE: Only use corridor pathfinding - no direct line fallbacks
+      console.log('”„ Running corridor-based pathfinding (strict mode)...');
+      let pathfindingResult = findSimpleRoute(entrancePoint, destinationCoords, geojsonData?.features || []);
       
-      // DEBUG: Log the actual pathfinding result
-      console.log('🔍 PATHFINDING RESULT:', pathfindingResult);
-      console.log('🔍 Result valid:', pathfindingResult.valid);
-      console.log('🔍 Result path length:', pathfindingResult.path?.length);
-      console.log('🔍 First 3 points:', pathfindingResult.path?.slice(0, 3));
-      console.log('🔍 Last 3 points:', pathfindingResult.path?.slice(-3));
+      if (!pathfindingResult || !pathfindingResult.valid) {
+        console.warn('âš ï¸ No valid corridor path found');
+        console.log('ï¿½ Route will NOT be drawn - strict corridor-only mode');
+        
+        // Create result with valid: false - route will not be drawn
+        const dx = destinationCoords[0] - entrancePoint[0];
+        const dy = destinationCoords[1] - entrancePoint[1];
+        const directDistance = Math.sqrt(dx*dx + dy*dy) * 111320;
+        
+        pathfindingResult = {
+          path: [],
+          distance: directDistance,
+          waypoints: 0,
+          valid: false, // Route will NOT be drawn
+          floors: [destinationInfo.floor],
+          error: 'No corridor connection available - corridors must connect start and destination'
+        };
+        
+        console.log('%câš ï¸ No corridor route available:', 'background: #FF9800; color: white; font-size: 12px; padding: 4px;', 
+          'Destination cannot be reached via corridors');
+      } else {
+        console.log('%câœ… Corridor route found:', 'background: #4CAF50; color: white; font-size: 12px; padding: 4px;', 
+          `${pathfindingResult.distance.toFixed(1)}m, ${pathfindingResult.waypoints} waypoints - follows corridors only`);
+      }
       
       const routePath = pathfindingResult.path;
-      const routeMetadata = {
-        distance: pathfindingResult.distance,
-        waypoints: pathfindingResult.waypoints,
-        nodeCount: pathfindingResult.nodeCount,
-        isValid: pathfindingResult.valid,
-        followsCorridors: pathfindingResult.valid,
-        destination: destinationInfo
-      };
       
       // Calculate estimated walking time (average walking speed: 1.4 m/s)
       const estimatedTimeSeconds = pathfindingResult.distance / 1.4;
@@ -1145,39 +1718,87 @@ const MapView = forwardRef(({
       });
       
       if (pathfindingResult.valid) {
-        console.log('✅ A* CORRIDOR PATH FOUND!');
-        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
-        console.log(`🎯 Destination: ${destinationInfo.name}`);
-        console.log(`🏢 Building: ${destinationInfo.building}`);
-        console.log(`🏗️ Floor: ${destinationInfo.floor}`);
-        console.log(`📏 Distance: ${pathfindingResult.distance.toFixed(1)} meters`);
-        console.log(`⏱️ Est. Time: ${estimatedMinutes} minute${estimatedMinutes !== 1 ? 's' : ''}`);
-        console.log(`🛤️ Waypoints: ${routePath.length} points`);
-        console.log(`🔗 Nodes: ${pathfindingResult.nodeCount} corridor segments`);
-        console.log('✅ Route follows corridors only - NO building overlap');
-        console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+        console.log('âœ… A* CORRIDOR PATH FOUND!');
+        console.log('â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”');
+        console.log(`Ž¯ Destination: ${destinationInfo.name}`);
+        console.log(`¢ Building: ${destinationInfo.building}`);
+        console.log(`—ï¸ Floor: ${destinationInfo.floor}`);
+        console.log(`“ Distance: ${pathfindingResult.distance.toFixed(1)} meters`);
+        console.log(`â±ï¸ Est. Time: ${estimatedMinutes} minute${estimatedMinutes !== 1 ? 's' : ''}`);
+        console.log(`›¤ï¸ Waypoints: ${routePath.length} points`);
+        console.log(`”— Nodes: ${pathfindingResult.nodeCount} corridor segments`);
+        console.log('âœ… Route follows corridors only - NO building overlap');
+        console.log('â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”â”');
+        
+        // Switch to destination floor if multi-floor route
+        if (pathfindingResult.isMultiFloor && pathfindingResult.floors && pathfindingResult.floors.length > 0) {
+          const destinationFloor = pathfindingResult.floors[pathfindingResult.floors.length - 1];
+          console.log(`”„ Multi-floor route detected. Switching to destination floor: ${destinationFloor}`);
+          
+          // Update the floor display
+          if (addCampusRef.current && destinationFloor !== floor) {
+            // Reload map with destination floor
+            setTimeout(() => {
+              addCampusRef.current(destinationFloor);
+            }, 500); // Small delay to let user see the route info first
+          }
+        }
+        
+        // âœ¨ DRAW ROUTE LINE - CLEAN & SIMPLE
+        if (mapRef.current && mapRef.current.getSource('navigation-route')) {
+          mapRef.current.getSource('navigation-route').setData({
+            type: 'Feature',
+            properties: {},
+            geometry: {
+              type: 'LineString',
+              coordinates: routePath
+            }
+          });
+          
+          console.log('âœ… Route line drawn with', routePath.length, 'points');
+          
+          // Move navigation route to top layer so it appears above everything
+          if (mapRef.current.getLayer('navigation-route-line')) {
+            mapRef.current.moveLayer('navigation-route-line');
+            console.log('âœ… Navigation route moved to top layer');
+          }
+          
+          // Fit map to show the entire route
+          const bounds = routePath.reduce((bounds, coord) => {
+            return bounds.extend(coord);
+          }, new window.mapboxgl.LngLatBounds(routePath[0], routePath[0]));
+          
+          mapRef.current.fitBounds(bounds, {
+            padding: 100,
+            duration: 1000,
+            pitch: 10,  // Lock pitch - no perspective change
+            bearing: 253  // Lock bearing - no rotation
+          });
+        }
+        
+        // š€ START LIVE NAVIGATION MODE
+        console.log('Ž¯ Activating LIVE NAVIGATION SYSTEM...');
+        startLiveNavigation(destinationCoords, destinationInfo);
       } else {
         // Enforce corridor-only routing: do NOT draw straight fallback lines
-        console.warn('⚠️ No corridor path found. Route will not be drawn because we only allow paths along LineStrings.');
-        console.log(`📏 Direct distance (not used): ${pathfindingResult.distance.toFixed(1)} meters`);
+        console.warn('âš ï¸ No corridor path found. Route will not be drawn because we only allow paths along LineStrings.');
+        console.log(`“ Direct distance (not used): ${pathfindingResult.distance.toFixed(1)} meters`);
       }
       
-      console.log('🎯 === END ROUTE CREATION ===');
-      // Clear existing route first
-      clearAnimatedRoute();
-      // Add entrance marker
-      addEntranceMarker(entrancePoint);
-      // Add destination marker (Google Maps style)
-      addDestinationMarker(destinationCoords, destinationInfo);
-      // Only add route line if we have a valid corridor path
-      if (pathfindingResult.valid && routePath && routePath.length > 1) {
-        animateRouteLine(routePath, routeMetadata);
-      } else {
-        console.log('⚠️ No route line drawn (no valid corridor path)');
-      }
+      console.log('Ž¯ === END ROUTE CREATION ===');
+      
+      // Clear old markers
+      const existingEntranceMarkers = document.querySelectorAll('#entrance-marker');
+      existingEntranceMarkers.forEach(marker => marker.remove());
+      const existingDestMarkers = document.querySelectorAll('#destination-marker');
+      existingDestMarkers.forEach(marker => marker.remove());
+      
+      // Markers removed per user request - no pinpoint icons
+      // _addEntranceMarker(entrancePoint);
+      // _addDestinationMarker(destinationCoords, destinationInfo);
     }
-    function addEntranceMarker(coords) {
-      console.log('📍 Adding entrance marker at:', coords);
+    function _addEntranceMarker(coords) {
+      console.log('“ Adding entrance marker at:', coords);
       
       try {
         // Add modern "You Are Here" starting point marker matching system theme
@@ -1229,7 +1850,7 @@ const MapView = forwardRef(({
           top: 6px;
           left: 6px;
         `;
-        markerCircle.innerHTML = '●';
+        markerCircle.innerHTML = 'â—';
         
         // Point indicator (triangle pointing down)
         const pointIndicator = document.createElement('div');
@@ -1300,7 +1921,7 @@ const MapView = forwardRef(({
         entranceEl.appendChild(pinContainer);
         entranceEl.appendChild(labelContainer);
         
-        console.log('📍 Creating marker element with precise positioning');
+        console.log('“ Creating marker element with precise positioning');
         const marker = new window.mapboxgl.Marker({ 
           element: entranceEl,
           anchor: 'bottom',
@@ -1309,17 +1930,17 @@ const MapView = forwardRef(({
         .setLngLat(coords)
         .addTo(mapRef.current);
         
-        console.log('✅ Entrance marker added successfully with system theme');
+        console.log('âœ… Entrance marker added successfully with system theme');
         return marker;
         
       } catch (error) {
-        console.error('❌ Error adding entrance marker:', error);
+        console.error('âŒ Error adding entrance marker:', error);
       }
     }
 
-    function addDestinationMarker(coords, destinationInfo) {
-      console.log('🎯 Adding destination marker at:', coords);
-      console.log('📍 Destination:', destinationInfo);
+    function _addDestinationMarker(coords, destinationInfo) {
+      console.log('Ž¯ Adding destination marker at:', coords);
+      console.log('“ Destination:', destinationInfo);
       
       try {
         // Remove existing destination marker if any
@@ -1431,7 +2052,7 @@ const MapView = forwardRef(({
           text-overflow: ellipsis;
           border: 1px solid rgba(0, 105, 92, 0.2);
         `;
-        subLabel.textContent = `${destinationInfo.building || 'Building'} • ${destinationInfo.floor || 'Floor'}`;
+        subLabel.textContent = `${destinationInfo.building || 'Building'} â€¢ ${destinationInfo.floor || 'Floor'}`;
         
         labelContainer.appendChild(label);
         labelContainer.appendChild(subLabel);
@@ -1451,7 +2072,7 @@ const MapView = forwardRef(({
         // Add popup on click with system theme
         const popup = new window.mapboxgl.Popup({ 
           offset: 25,
-          closeButton: true,
+          closeButton: false,
           closeOnClick: false
         })
           .setHTML(`
@@ -1473,229 +2094,59 @@ const MapView = forwardRef(({
           popup.setLngLat(coords).addTo(mapRef.current);
         });
         
-        console.log('✅ Destination marker added successfully');
+        console.log('âœ… Destination marker added successfully');
         return marker;
         
       } catch (error) {
-        console.error('❌ Error adding destination marker:', error);
-      }
-    }
-
-    function animateRouteLine(pathCoords, metadata = {}) {
-      console.log('🎨 Creating enhanced animated route with coords:', pathCoords);
-      console.log('📊 Route metadata:', metadata);
-      
-      try {
-        // Check if map is ready
-        if (!mapRef.current.isStyleLoaded || !mapRef.current.isStyleLoaded()) {
-          console.log('⏳ Map style not loaded, retrying in 500ms');
-          setTimeout(() => animateRouteLine(pathCoords), 500);
-          return;
-        }
-
-        console.log('✅ Map style loaded, creating animated route');
-
-        // Add route source with full path
-        mapRef.current.addSource('route-line', {
-          type: 'geojson',
-          data: {
-            type: 'Feature',
-            properties: {},
-            geometry: {
-              type: 'LineString',
-              coordinates: pathCoords
-            }
-          }
-        });
-
-        // Add outer glow effect (system theme color)
-        mapRef.current.addLayer({
-          id: 'route-glow',
-          type: 'line',
-          source: 'route-line',
-          paint: {
-            'line-color': '#00695C',
-            'line-width': 14,
-            'line-opacity': 0.3,
-            'line-blur': 6
-          }
-        });
-
-        // Add middle glow layer
-        mapRef.current.addLayer({
-          id: 'route-glow-mid',
-          type: 'line',
-          source: 'route-line',
-          paint: {
-            'line-color': '#00695C',
-            'line-width': 10,
-            'line-opacity': 0.5,
-            'line-blur': 3
-          }
-        });
-
-        // Main route line (bold and visible)
-        mapRef.current.addLayer({
-          id: 'route-line',
-          type: 'line',
-          source: 'route-line',
-          paint: {
-            'line-color': '#00695C',
-            'line-width': 6,
-            'line-opacity': 0.95
-          },
-          layout: {
-            'line-cap': 'round',
-            'line-join': 'round'
-          }
-        });
-
-        // Add white inner line for contrast
-        mapRef.current.addLayer({
-          id: 'route-line-inner',
-          type: 'line',
-          source: 'route-line',
-          paint: {
-            'line-color': '#FFFFFF',
-            'line-width': 2,
-            'line-opacity': 0.6
-          },
-          layout: {
-            'line-cap': 'round',
-            'line-join': 'round'
-          }
-        });
-
-        // Add animated dots moving along the path
-        let animationStep = 0;
-        const animateMovingDot = () => {
-          const step = (animationStep % 100) / 100;
-          
-          if (!mapRef.current.getSource('route-animation')) {
-            mapRef.current.addSource('route-animation', {
-              type: 'geojson',
-              data: {
-                type: 'Feature',
-                properties: {},
-                geometry: {
-                  type: 'Point',
-                  coordinates: interpolateAlongPath(pathCoords, step)
-                }
-              }
-            });
-          } else {
-            mapRef.current.getSource('route-animation').setData({
-              type: 'Feature',
-              properties: {},
-              geometry: {
-                type: 'Point',
-                coordinates: interpolateAlongPath(pathCoords, step)
-              }
-            });
-          }
-
-          if (!mapRef.current.getLayer('route-animation')) {
-            mapRef.current.addLayer({
-              id: 'route-animation',
-              type: 'circle',
-              source: 'route-animation',
-              paint: {
-                'circle-radius': 8,
-                'circle-color': '#FFFFFF',
-                'circle-stroke-color': '#00695C',
-                'circle-stroke-width': 3,
-                'circle-opacity': 1
-              }
-            });
-          }
-
-          animationStep += 2;
-          if (mapRef.current.getLayer('route-animation')) {
-            requestAnimationFrame(animateMovingDot);
-          }
-        };
-
-        // Start animation
-        animateMovingDot();
-
-        console.log('✅ Professional animated route created with system theme');
-
-      } catch (error) {
-        console.error('❌ Error creating animated route:', error);
-      }
-    }
-
-    // Helper function to interpolate along path
-    function interpolateAlongPath(coords, t) {
-      if (coords.length < 2) return coords[0] || [0, 0];
-      
-      const totalSegments = coords.length - 1;
-      const segmentIndex = Math.floor(t * totalSegments);
-      const segmentT = (t * totalSegments) - segmentIndex;
-      
-      const start = coords[Math.min(segmentIndex, coords.length - 2)];
-      const end = coords[Math.min(segmentIndex + 1, coords.length - 1)];
-      
-      return [
-        start[0] + (end[0] - start[0]) * segmentT,
-        start[1] + (end[1] - start[1]) * segmentT
-      ];
-    }
-
-
-
-    function clearAnimatedRoute() {
-      if (!mapRef.current) return;
-      
-      try {
-        // Remove existing route layers safely
-        ['route-line', 'route-line-inner', 'route-glow', 'route-glow-mid', 'route-animation'].forEach(layerId => {
-          if (mapRef.current.getLayer && mapRef.current.getLayer(layerId)) {
-            mapRef.current.removeLayer(layerId);
-          }
-        });
-        
-        // Remove route sources safely
-        ['route-line', 'route-animation'].forEach(sourceId => {
-          if (mapRef.current.getSource && mapRef.current.getSource(sourceId)) {
-            mapRef.current.removeSource(sourceId);
-          }
-        });
-        
-        // Remove entrance marker safely
-        const existingEntranceMarkers = document.querySelectorAll('#entrance-marker');
-        existingEntranceMarkers.forEach(marker => marker.remove());
-        
-        // Remove destination marker safely
-        const existingDestMarkers = document.querySelectorAll('#destination-marker');
-        existingDestMarkers.forEach(marker => marker.remove());
-        
-      } catch (error) {
-        console.warn('Error clearing animated route:', error);
+        console.error('âŒ Error adding destination marker:', error);
       }
     }
 
     // Execute the routing logic
     if (destination && mapRef.current && mapLoaded) {
-      console.log('🎯 Starting navigation to:', destination);
-      console.log('Map ready:', !!mapRef.current);
-      console.log('Map loaded:', mapLoaded);
+      // Prevent running if we're already processing this destination
+      if (isProcessingRouteRef.current && lastDestinationRef.current === destination) {
+        console.log('â¸ï¸ Already processing route for:', destination);
+        return;
+      }
       
-      try {
-        addAnimatedRoute(destination);
-      } catch (error) {
-        console.error('Error in animated route:', error);
+      console.log('Ž¯ Starting navigation to:', destination);
+      lastDestinationRef.current = destination;
+      isProcessingRouteRef.current = true;
+      
+      (async () => {
+        try {
+          await addAnimatedRoute(destination);
+        } catch (error) {
+          console.error('Error in routing:', error);
+        } finally {
+          // Reset after a delay to allow for new searches
+          setTimeout(() => {
+            isProcessingRouteRef.current = false;
+          }, 1000);
+        }
+      })();
+    } else if (mapRef.current && mapLoaded && !destination) {
+      // Clear route when destination is removed
+      lastDestinationRef.current = null;
+      isProcessingRouteRef.current = false;
+      
+      if (mapRef.current.getSource('navigation-route')) {
+        mapRef.current.getSource('navigation-route').setData({
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'LineString',
+            coordinates: []
+          }
+        });
       }
-    } else if (mapRef.current && mapLoaded) {
-      console.log('🧹 Clearing routes');
-      try {
-        clearAnimatedRoute();
-        setRouteInfo(null); // Clear route information
-      } catch (error) {
-        console.error('Error clearing route:', error);
-      }
+      setRouteInfo(null);
     }
-  }, [destination, mapLoaded, geojsonData]);
+  // Note: geojsonData intentionally excluded from dependencies to prevent infinite loop
+  // when floor switching triggers GeoJSON reload
+  // eslint-disable-next-line
+  }, [destination, mapLoaded, floor, startLiveNavigation]);
 
   return (
     <div style={{ 
@@ -1732,7 +2183,7 @@ const MapView = forwardRef(({
           zIndex: 1000,
           boxShadow: '0 4px 12px rgba(0,0,0,0.15)'
         }}>
-          🎯 Showing: <strong>{destination}</strong>
+          Ž¯ Showing: <strong>{destination}</strong>
         </div>
       )}
 
@@ -1803,7 +2254,6 @@ const MapView = forwardRef(({
                     fontSize: '11px',
                     fontWeight: '500'
                   }}>
-                    <span style={{ fontSize: '14px' }}>📏</span>
                     <span>Distance</span>
                   </div>
                   <span style={{ 
@@ -1832,7 +2282,6 @@ const MapView = forwardRef(({
                     fontSize: '11px',
                     fontWeight: '500'
                   }}>
-                    <span style={{ fontSize: '14px' }}>⏱️</span>
                     <span>Walk Time</span>
                   </div>
                   <span style={{ 
@@ -1860,7 +2309,6 @@ const MapView = forwardRef(({
                     fontSize: '11px',
                     fontWeight: '500'
                   }}>
-                    <span style={{ fontSize: '14px' }}>🏢</span>
                     <span>Floors</span>
                   </div>
                   <span style={{ 
@@ -1870,7 +2318,7 @@ const MapView = forwardRef(({
                   }}>{routeInfo.floors.map(f => {
                     if (f === 'ground' || f === 'G' || f === '1') return 'GF';
                     return f === '2' ? '2F' : f === '3' ? '3F' : f === '4' ? '4F' : f + 'F';
-                  }).join(' → ')}</span>
+                  }).join(' â†’ ')}</span>
                 </div>
               )}
             </div>
@@ -1891,7 +2339,7 @@ const MapView = forwardRef(({
           textAlign: 'center',
           zIndex: 1001
         }}>
-          <div>🗺️ Loading Mapbox...</div>
+          <div>Loading Mapbox...</div>
         </div>
       )}
 
@@ -1903,3 +2351,11 @@ const MapView = forwardRef(({
 MapView.displayName = 'MapView';
 
 export default MapView;
+
+
+
+
+
+
+
+

@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import MapView from "../components/MapView";
 import OnScreenKeyboard from "../components/OnScreenKeyboard";
 import { campusSearchEngine, SearchUtils } from "../utils/advancedSearch";
+import { getSearchSuggestions } from "../utils/smartSearch";
 
 // Available rooms for search suggestions - will be loaded from GeoJSON
 let ALL_ROOMS = [
@@ -29,6 +30,7 @@ function Map() {
   const [searchDestination, setSearchDestination] = useState(null);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [locationTracking, setLocationTracking] = useState(false);
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
   const searchInputRef = useRef(null);
   const mapViewRef = useRef(null);
 
@@ -38,12 +40,8 @@ function Map() {
     if (destinationParam) {
       setSearch(destinationParam);
       setSearchDestination(destinationParam);
-      // Auto-focus search bar for better UX
-      if (searchInputRef.current) {
-        setTimeout(() => {
-          searchInputRef.current.focus();
-        }, 100);
-      }
+      // Don't auto-focus to avoid opening keyboard automatically
+      // User can tap the search field if they want to modify the search
     }
   }, [searchParams]);
 
@@ -184,6 +182,41 @@ function Map() {
     }
   }, [location.state]);
 
+  // Smart search suggestions - fetch as user types
+  useEffect(() => {
+    const fetchSuggestions = async () => {
+      if (search.trim().length >= 2) {
+        try {
+          const suggestions = await getSearchSuggestions(search.trim());
+          setSearchSuggestions(suggestions);
+        } catch (error) {
+          console.error('Error fetching suggestions:', error);
+          setSearchSuggestions([]);
+        }
+      } else {
+        setSearchSuggestions([]);
+      }
+    };
+
+    const debounceTimer = setTimeout(fetchSuggestions, 300);
+    return () => clearTimeout(debounceTimer);
+  }, [search]);
+
+  // Listen for navigation events from map popup clicks
+  useEffect(() => {
+    const handleNavigateToLocation = (event) => {
+      const { location } = event.detail;
+      if (location) {
+        console.log('📍 Received navigation request for:', location);
+        setSearch(location);
+        setSearchDestination(location);
+      }
+    };
+
+    window.addEventListener('navigateToLocation', handleNavigateToLocation);
+    return () => window.removeEventListener('navigateToLocation', handleNavigateToLocation);
+  }, []);
+
   // Custom dropdown open state for floor selector
   const [floorDropdownOpen, setFloorDropdownOpen] = useState(false);
   const floorDropdownRef = useRef(null);
@@ -202,61 +235,59 @@ function Map() {
 
   return (
     <div className="min-h-screen font-sans flex flex-col relative">
-      {/* Controls Bar */}
-      <div className="w-full flex justify-center mt-4 absolute top-0 left-0 z-50">
+      {/* Controls Bar - Mobile Responsive */}
+      <div className="w-full flex justify-center mt-2 md:mt-4 absolute top-0 left-0 z-50 px-2 md:px-0">
         <div
           className="
-            flex flex-row items-center
-            py-4 px-6
-            rounded-3xl
+            flex flex-col md:flex-row items-stretch md:items-center
+            py-2 md:py-4 px-3 md:px-6
+            rounded-2xl md:rounded-3xl
             bg-white
             shadow
             border border-[#e0e0e0]
-            gap-4
+            gap-2 md:gap-4
             transition-all
             relative
             z-30
           "
           style={{
-            // Let width fit content, but max out for better responsive behavior
-            width: "auto",
+            width: "100%",
             maxWidth: "95vw",
-            marginBottom: 28,
+            marginBottom: 14,
             boxShadow: "0 2px 10px 0 rgba(0,105,92,0.08)",
-            alignItems: "center",
+            alignItems: "stretch",
             justifyContent: "center",
             overflow: "visible",
             minWidth: 0,
-            flexWrap: "nowrap",
           }}
         >
           {/* Enhanced Search Bar with category filter */}
           <div
             className="flex flex-col relative"
             style={{
-              width: 500,
-              minWidth: 400,
-              maxWidth: 600,
-              marginRight: 0,
-              flex: "0 0 auto",
+              width: "100%",
+              maxWidth: "600px",
+              minWidth: 0,
+              flex: "1 1 auto",
             }}
           >
-            <div
-              className="flex items-center bg-white rounded-2xl px-6 py-2 border transition-all"
-              style={{
-                borderColor: "#00695C",
-                borderWidth: 2,
-                height: 48,
-                boxShadow: "none",
-                fontSize: 18,
-                width: "100%",
-                borderRadius: 16,
-                fontWeight: 600,
-              }}
-              tabIndex={-1}
-            >
+            <div className="relative w-full">
+              <div
+                className="flex items-center bg-white rounded-xl md:rounded-2xl px-3 md:px-6 py-2 border transition-all"
+                style={{
+                  borderColor: "#00695C",
+                  borderWidth: 2,
+                  height: 44,
+                  boxShadow: "none",
+                  fontSize: "clamp(14px, 3vw, 18px)",
+                  width: "100%",
+                  borderRadius: "clamp(12px, 2vw, 16px)",
+                  fontWeight: 600,
+                }}
+                tabIndex={-1}
+              >
               <svg
-                className="w-6 h-6 text-[#00695C] mr-4"
+                className="w-5 h-5 md:w-6 md:h-6 text-[#00695C] mr-2 md:mr-4 flex-shrink-0"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2}
@@ -272,20 +303,14 @@ function Map() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onFocus={() => setKeyboardOpen(true)}
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter' && search.trim()) {
-                    setSearchDestination(search.trim());
-                    setKeyboardOpen(false);
-                  }
-                }}
-                placeholder="Search rooms, buildings, services..."
-                className="flex-1 bg-transparent outline-none text-lg text-[#00695C] placeholder-[#00695C]/60 font-semibold"
+                placeholder="Search rooms, buildings..."
+                className="flex-1 bg-transparent outline-none text-sm md:text-lg text-[#00695C] placeholder-[#00695C]/60 font-semibold min-w-0"
                 aria-label="Search for a room, building, or service"
                 autoComplete="off"
                 readOnly
                 style={{
-                  minHeight: 40,
-                  fontSize: 18,
+                  minHeight: 32,
+                  fontSize: "clamp(14px, 3vw, 18px)",
                   border: "none",
                   boxShadow: "none",
                   background: "transparent",
@@ -310,26 +335,27 @@ function Map() {
                 </button>
               )}
             </div>
+            </div>
           </div>
-          {/* Floor Selector as custom dropdown with icon and chevron */}
+          {/* Floor Selector as custom dropdown with icon and chevron - Mobile Responsive */}
           <div
-            className="relative flex items-bottom"
+            className="relative flex items-center"
             style={{
               minWidth: 0,
-              width: 200,
-              height: 48,
-              flex: "0 0 auto",
+              width: "100%",
+              maxWidth: "200px",
+              height: 44,
+              flex: "0 1 auto",
             }}
             ref={floorDropdownRef}
           >
             <button
               type="button"
-              className="flex items-center gap-2 pl-3 pr-8 py-2 bg-white rounded-2xl border border-[#00695C] text-[#00695C] font-bold text-base outline-none focus:ring-2 focus:ring-[#00695C] transition-all duration-200 cursor-pointer hover:bg-[#E0F2EF] focus:bg-[#E0F2EF] relative"
+              className="flex items-center justify-between gap-2 pl-3 pr-3 py-2 bg-white rounded-xl md:rounded-2xl border border-[#00695C] text-[#00695C] font-bold text-sm md:text-base outline-none focus:ring-2 focus:ring-[#00695C] transition-all duration-200 cursor-pointer hover:bg-[#E0F2EF] focus:bg-[#E0F2EF] relative w-full"
               style={{
-                width: 200,
-                height: 48,
-                borderRadius: 16,
-                fontSize: 16,
+                height: 44,
+                borderRadius: "clamp(12px, 2vw, 16px)",
+                fontSize: "clamp(14px, 2.5vw, 16px)",
                 boxShadow: "none",
                 borderWidth: 2,
                 fontWeight: 600,
@@ -343,16 +369,14 @@ function Map() {
               onClick={() => setFloorDropdownOpen((v) => !v)}
               tabIndex={0}
             >
-              <MdLayers size={22} className="text-[#00695C]" />
-              <span>
-                {FLOORS.find(f => f.value === selectedFloor)?.label}
-              </span>
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                <MdLayers size={20} className="text-[#00695C] flex-shrink-0" />
+                <span className="truncate flex-1">
+                  {FLOORS.find(f => f.value === selectedFloor)?.label}
+                </span>
+              </div>
               <span
-                className="absolute right-4 text-[#00695C] text-base pointer-events-none"
-                style={{
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                }}
+                className="text-[#00695C] text-sm flex-shrink-0"
                 aria-hidden="true"
               >
                 ▼
@@ -535,7 +559,7 @@ function Map() {
         />
       </div>
 
-      {/* On-Screen Keyboard */}
+      {/* On-Screen Keyboard - Mobile Optimized */}
       {keyboardOpen && createPortal(
         <div
           style={{
@@ -547,7 +571,7 @@ function Map() {
             justifyContent: 'center',
             background: 'linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.6) 100%)',
             animation: 'fadeIn 0.2s ease-out',
-            padding: '20px'
+            padding: '10px'
           }}
           onClick={(e) => {
             if (e.target === e.currentTarget) setKeyboardOpen(false);
@@ -569,11 +593,11 @@ function Map() {
               }
             }
           `}</style>
-          <div style={{ animation: 'slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}>
+          <div style={{ animation: 'slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1)', maxWidth: '100%' }}>
             <OnScreenKeyboard
               value={search}
               onChange={(v) => setSearch(v)}
-              suggestions={[]}
+              suggestions={searchSuggestions}
               onClose={() => setKeyboardOpen(false)}
               onEnter={() => {
                 if (search.trim()) {
@@ -581,7 +605,7 @@ function Map() {
                 }
                 setKeyboardOpen(false);
               }}
-              style={{ maxWidth: '900px', width: '95vw' }}
+              style={{ maxWidth: '900px', width: '100%' }}
               placeholder="Search rooms, buildings, services..."
             />
           </div>

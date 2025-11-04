@@ -2822,12 +2822,34 @@ const Admin = ({ setIsAuthenticated }) => {
     }
   };
 
+  // Mobile menu state
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+
   return (
     <div className="min-h-screen flex bg-gray-50">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-gray-200 hidden md:flex flex-col">
-        <div className="h-16 flex items-center px-6 border-b border-gray-200">
+      {/* Mobile Sidebar Overlay */}
+      {mobileMenuOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Sidebar - Responsive */}
+      <aside className={`fixed md:static inset-y-0 left-0 w-64 bg-white border-r border-gray-200 flex flex-col z-50 transform transition-transform duration-300 md:transform-none ${
+        mobileMenuOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+      }`}>
+        <div className="h-16 flex items-center justify-between px-6 border-b border-gray-200">
           <span className="text-lg font-semibold text-gray-900">Admin Panel</span>
+          {/* Close button for mobile */}
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            className="md:hidden p-2 rounded-md hover:bg-gray-100 transition"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
           {navLinks.map((link) => (
@@ -2839,7 +2861,11 @@ const Admin = ({ setIsAuthenticated }) => {
                   ? "bg-[#00594A] text-white"
                   : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
               }`}
-              onClick={(e) => { e.preventDefault(); handleNavClick(link.name); }}
+              onClick={(e) => { 
+                e.preventDefault(); 
+                handleNavClick(link.name);
+                setMobileMenuOpen(false); // Close mobile menu after selection
+              }}
             >
               {link.name}
             </a>
@@ -2855,14 +2881,24 @@ const Admin = ({ setIsAuthenticated }) => {
       <main className="flex-1 flex flex-col overflow-hidden">
         {/* Header */}
         <header className="bg-white border-b border-gray-200">
-          <div className="h-16 flex items-center px-6 justify-between">
-            <div className="flex items-center gap-4">
-              <h1 className="text-xl font-semibold text-gray-900">{activeNav}</h1>
+          <div className="h-16 flex items-center px-4 md:px-6 justify-between">
+            <div className="flex items-center gap-2 md:gap-4">
+              {/* Hamburger Menu Button for Mobile */}
+              <button
+                onClick={() => setMobileMenuOpen(true)}
+                className="md:hidden p-2 rounded-md hover:bg-gray-100 transition -ml-2"
+                aria-label="Open menu"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+              <h1 className="text-lg md:text-xl font-semibold text-gray-900">{activeNav}</h1>
               {error && <span className="px-2 py-1 bg-red-50 text-red-600 rounded text-xs font-medium border border-red-200">Error</span>}
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 md:gap-3">
               {/* Global search bar */}
-              <div className="relative hidden sm:block">
+              <div className="relative hidden lg:block">
                 <input
                   type="text"
                   value={globalSearch}
@@ -2891,12 +2927,12 @@ const Admin = ({ setIsAuthenticated }) => {
                 )}
               </div>
               {/* User profile */}
-              <div className="flex items-center gap-3 pl-3 border-l border-gray-200">
-                <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 md:gap-3 pl-2 md:pl-3 border-l border-gray-200">
+                <div className="hidden sm:flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-[#00594A] flex items-center justify-center text-white text-sm font-medium">
                     A
                   </div>
-                  <div className="text-sm">
+                  <div className="text-sm hidden md:block">
                     <p className="font-medium text-gray-900">Admin</p>
                   </div>
                 </div>
@@ -2944,13 +2980,13 @@ const Admin = ({ setIsAuthenticated }) => {
                       }
                     });
                   }}
-                  className="inline-flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition"
+                  className="inline-flex items-center gap-1 md:gap-2 px-2 md:px-3 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 hover:bg-gray-100 rounded-md transition"
                   title="Logout"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                   </svg>
-                  Logout
+                  <span className="hidden sm:inline">Logout</span>
                 </button>
               </div>
             </div>
@@ -3483,14 +3519,14 @@ const Admin = ({ setIsAuthenticated }) => {
 
         {/* Toast Notification */}
         {toast.isVisible && (
-          <div className="fixed top-6 right-6 z-[70] animate-slide-in max-w-md">
-            <div className={`px-6 py-4 rounded-lg shadow-2xl border-l-[6px] ${
+          <div className="fixed top-4 md:top-6 right-4 md:right-6 left-4 md:left-auto z-[70] animate-slide-in max-w-md">
+            <div className={`px-4 md:px-6 py-3 md:py-4 rounded-lg shadow-2xl border-l-[6px] ${
               toast.type === 'success' ? 'bg-white border-[#00594A]' :
               toast.type === 'error' ? 'bg-white border-red-500' :
               toast.type === 'delete' ? 'bg-white border-red-500' :
               'bg-white border-[#007763]'
-            } min-w-[360px] ring-1 ring-gray-200`}>
-              <div className="flex items-start justify-between gap-4">
+            } min-w-0 md:min-w-[360px] ring-1 ring-gray-200`}>
+              <div className="flex items-start justify-between gap-3 md:gap-4">
                 {/* Message */}
                 <div className="flex-1">
                   <p className={`font-bold text-base mb-2 tracking-wide ${

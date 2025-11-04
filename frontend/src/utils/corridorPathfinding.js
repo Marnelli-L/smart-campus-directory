@@ -16,20 +16,49 @@ export class CorridorPathfinding {
   /**
    * Initialize pathfinding with GeoJSON data
    * Builds navigation graph from LineString features only
+   * UPDATED: Now supports multi-floor navigation
    */
-  initialize(geojsonData, floorLevel = 'ground') {
+  initialize(geojsonData, currentFloor = 'ground') {
     if (!geojsonData || !geojsonData.features) {
       console.error('❌ Invalid GeoJSON data');
       return false;
     }
 
-    // Extract all LineString features (walkable paths/corridors)
-    this.corridors = geojsonData.features.filter(
-      feature => feature.geometry && feature.geometry.type === 'LineString'
+    // Extract all LineString AND MultiLineString features (walkable paths/corridors)
+    const lineFeatures = geojsonData.features.filter(
+      feature => feature.geometry && (
+        feature.geometry.type === 'LineString' || 
+        feature.geometry.type === 'MultiLineString'
+      )
     );
 
+    if (lineFeatures.length === 0) {
+      console.error('❌ No LineString or MultiLineString paths found in GeoJSON');
+      return false;
+    }
+
+    // Convert MultiLineStrings to individual LineStrings
+    this.corridors = [];
+    lineFeatures.forEach(feature => {
+      if (feature.geometry.type === 'LineString') {
+        this.corridors.push(feature);
+      } else if (feature.geometry.type === 'MultiLineString') {
+        // Split MultiLineString into separate LineStrings
+        feature.geometry.coordinates.forEach((lineCoords) => {
+          this.corridors.push({
+            type: 'Feature',
+            properties: { ...feature.properties },
+            geometry: {
+              type: 'LineString',
+              coordinates: lineCoords
+            }
+          });
+        });
+      }
+    });
+
     if (this.corridors.length === 0) {
-      console.error('❌ No LineString paths found in GeoJSON');
+      console.error('❌ No valid corridor paths after processing');
       return false;
     }
 
@@ -39,14 +68,28 @@ export class CorridorPathfinding {
         corridor.properties = {};
       }
       // Use provided floor or extract from properties
-      corridor.properties.floor = corridor.properties.Floor || corridor.properties.floor || floorLevel;
+      corridor.properties.floor = corridor.properties.Floor || corridor.properties.floor || currentFloor;
       
       // Detect if this is a stair/elevator connector
       const name = (corridor.properties.Name || corridor.properties.name || '').toLowerCase();
       corridor.properties.isFloorConnector = name.includes('stair') || name.includes('elevator') || name.includes('lift');
+      
+      if (corridor.properties.isFloorConnector) {
+        console.log(`🔄 Found floor connector: ${corridor.properties.Name || corridor.properties.name} on floor ${corridor.properties.floor}`);
+      }
     });
 
-    console.log(`✅ Found ${this.corridors.length} walkable path segments on floor: ${floorLevel}`);
+    // Count corridors per floor
+    const floorCounts = {};
+    this.corridors.forEach(c => {
+      const floor = c.properties.floor;
+      floorCounts[floor] = (floorCounts[floor] || 0) + 1;
+    });
+    
+    console.log(`✅ Found ${this.corridors.length} walkable path segments across multiple floors:`);
+    Object.keys(floorCounts).forEach(floor => {
+      console.log(`   📍 Floor ${floor}: ${floorCounts[floor]} corridors`);
+    });
 
     // Build navigation graph with Turf.js precision
     this.buildGraphWithTurf();
@@ -136,15 +179,18 @@ export class CorridorPathfinding {
       }
     });
 
-    // Add proximity connections between nearby corridor endpoints
+    // Add proximity connections between nearby corridor endpoints ON SAME FLOOR
     // This helps connect disconnected corridor segments
-  const maxProximityDistance = 6; // tighten to 6m to only connect near-touching corridors
+    const maxProximityDistance = 20; // Increased to 20m to connect more corridors
     const nodesArray = Array.from(this.nodes.values());
     
     for (let i = 0; i < nodesArray.length; i++) {
       for (let j = i + 1; j < nodesArray.length; j++) {
         const node1 = nodesArray[i];
         const node2 = nodesArray[j];
+        
+        // Only connect nodes on the same floor
+        if (node1.floor !== node2.floor) continue;
         
         const dist = turf.distance(node1.point, node2.point, { units: 'meters' });
         
@@ -166,6 +212,7 @@ export class CorridorPathfinding {
               path: [node1.coord, node2.coord],
               segment: segment,
               bearing: turf.bearing(node1.point, node2.point),
+              floor: node1.floor,
               isProximity: true
             });
             
@@ -176,8 +223,75 @@ export class CorridorPathfinding {
               path: [node2.coord, node1.coord],
               segment: turf.lineString([node2.coord, node1.coord]),
               bearing: turf.bearing(node2.point, node1.point),
+              floor: node2.floor,
               isProximity: true
             });
+          }
+        }
+      }
+    }
+    
+    // Add cross-floor connections at stair/elevator locations
+    // Find nodes that are at similar coordinates but on different floors
+    console.log('🔄 Connecting floors via stairs/elevators...');
+    let crossFloorConnections = 0;
+    const maxCrossFloorDistance = 30; // Very close nodes (within 30m) on different floors
+    
+    for (let i = 0; i < nodesArray.length; i++) {
+      for (let j = i + 1; j < nodesArray.length; j++) {
+        const node1 = nodesArray[i];
+        const node2 = nodesArray[j];
+        
+        // Only connect nodes on DIFFERENT floors
+        if (node1.floor === node2.floor) continue;
+        
+        const dist = turf.distance(node1.point, node2.point, { units: 'meters' });
+        
+        // Connect if very close (stairway/elevator location)
+        if (dist <= maxCrossFloorDistance) {
+          const edges1 = this.graph.get(node1.id) || [];
+          const alreadyConnected = edges1.some(e => e.to === node2.id);
+          
+            if (!alreadyConnected) {
+              const segment = turf.lineString([node1.coord, node2.coord]);
+              
+              if (!this.graph.has(node1.id)) this.graph.set(node1.id, []);
+              if (!this.graph.has(node2.id)) this.graph.set(node2.id, []);
+              
+              // Add vertical connection with slight penalty to prefer same-floor routes
+              const verticalDistance = dist + 2; // Add 2m penalty for floor changes (reduced from 5m)
+              
+              this.graph.get(node1.id).push({
+              to: node2.id,
+              distance: verticalDistance,
+              segmentLength: dist,
+              path: [node1.coord, node2.coord],
+              segment: segment,
+              bearing: turf.bearing(node1.point, node2.point),
+              fromFloor: node1.floor,
+              toFloor: node2.floor,
+              isFloorConnector: true,
+              isCrossFloor: true
+            });
+            
+            this.graph.get(node2.id).push({
+              to: node1.id,
+              distance: verticalDistance,
+              segmentLength: dist,
+              path: [node2.coord, node1.coord],
+              segment: turf.lineString([node2.coord, node1.coord]),
+              bearing: turf.bearing(node2.point, node1.point),
+              fromFloor: node2.floor,
+              toFloor: node1.floor,
+              isFloorConnector: true,
+              isCrossFloor: true
+            });
+            
+            crossFloorConnections++;
+            // Log only first few connections to avoid performance issues
+            if (crossFloorConnections <= 5) {
+              console.log(`   🔗 Connected floor ${node1.floor} ↔️ floor ${node2.floor} at [${node1.coord[0].toFixed(6)}, ${node1.coord[1].toFixed(6)}]`);
+            }
           }
         }
       }
@@ -188,7 +302,8 @@ export class CorridorPathfinding {
     console.log(`%c   📍 ${this.nodes.size} nodes`, 'color: #2196F3;');
     console.log(`%c   🛤️ ${this.corridorLines.length} corridor lines`, 'color: #2196F3;');
     console.log(`%c   🔗 ${totalEdges} edges (including proximity connections)`, 'color: #2196F3;');
-    console.log(`%c   ⚡ Ready for pathfinding!`, 'color: #4CAF50; font-weight: bold;');
+    console.log(`%c   🔄 ${crossFloorConnections} cross-floor connections`, 'color: #FF9800;');
+    console.log(`%c   ⚡ Ready for multi-floor pathfinding!`, 'color: #4CAF50; font-weight: bold;');
   }
 
   /**
@@ -276,8 +391,8 @@ export class CorridorPathfinding {
    * This ensures temporary start/end nodes can reach the entire navigation graph
    */
   connectNodeToCorridor(node) {
-    const maxConnectionDistance = 10; // Connect to any node within 10 meters for accuracy
-    const maxConnections = 5; // Connect to up to 5 nearest nodes
+    const maxConnectionDistance = 50; // Connect to any node within 50 meters
+    const maxConnections = 10; // Connect to up to 10 nearest nodes
     
     // Find ALL nearby nodes in the entire graph
     let nearbyNodes = [];
@@ -295,7 +410,7 @@ export class CorridorPathfinding {
     nearbyNodes.sort((a, b) => a.distance - b.distance);
     nearbyNodes = nearbyNodes.slice(0, maxConnections);
     
-    console.log(`🔗 Connecting temporary node to ${nearbyNodes.length} nearby graph nodes`);
+    console.log(`🔗 Connecting temporary node to ${nearbyNodes.length} nearby graph nodes (within ${maxConnectionDistance}m)`);
     
     // Create graph edges (bidirectional)
     if (!this.graph.has(node.id)) {
@@ -357,6 +472,17 @@ export class CorridorPathfinding {
     console.log(`   Start: ${startSnapDist.toFixed(1)}m away (node ${startNode.id})`);
     console.log(`   End: ${endSnapDist.toFixed(1)}m away (node ${endNode.id})`);
     
+    // CRITICAL FIX: Connect temporary nodes to the main graph
+    if (startNode.isTemporary) {
+      console.log('🔗 Connecting temporary start node to graph...');
+      this.connectNodeToCorridor(startNode);
+    }
+    
+    if (endNode.isTemporary) {
+      console.log('🔗 Connecting temporary end node to graph...');
+      this.connectNodeToCorridor(endNode);
+    }
+    
     // Check if start and end are the same node
     if (startNode.id === endNode.id) {
       console.log('⚠️ Start and end are at same node, using direct corridor path');
@@ -395,12 +521,12 @@ export class CorridorPathfinding {
     const nodeById = new Map();
     this.nodes.forEach(node => nodeById.set(node.id, node));
     
-    // Use weighted A* (weight = 1.2) to guide search more aggressively toward goal
+    // Use standard A* (weight = 1.0) for optimal pathfinding
     const heuristic = (nodeId) => {
       const node = nodeById.get(nodeId);
       if (!node) return Infinity;
       const h = turf.distance(node.point, endNode.point, { units: 'meters' });
-      return h * 1.2; // Weighted heuristic for faster convergence
+      return h * 1.0; // Standard A* heuristic
     };
 
     // A* algorithm
@@ -414,20 +540,18 @@ export class CorridorPathfinding {
     fScore.set(startNode.id, heuristic(startNode.id));
 
     let iterations = 0;
-    const maxIterations = 50000; // Increased from 10,000 to allow more complex paths
+    const maxIterations = 100000; // Increased from 50,000 to allow complex paths
 
     while (openSet.size > 0) {
       iterations++;
       
-      // Log progress every 5000 iterations
-      if (iterations % 5000 === 0) {
+      // Reduced logging - only log every 25000 iterations to prevent performance issues
+      if (iterations % 25000 === 0) {
         console.log(`⏳ A* iteration ${iterations}, openSet: ${openSet.size}, closedSet: ${closedSet.size}`);
       }
       
       if (iterations > maxIterations) {
         console.error(`❌ A* exceeded maximum iterations (${maxIterations})`);
-        console.error(`   OpenSet size: ${openSet.size}`);
-        console.error(`   ClosedSet size: ${closedSet.size}`);
         return null;
       }
 
@@ -492,26 +616,31 @@ export class CorridorPathfinding {
     const nodeIds = [current];
     const floors = new Set();
     const floorTransitions = [];
-    let currentFloor = null;
 
     // Backtrack through cameFrom
     while (cameFrom.has(current)) {
       const step = cameFrom.get(current);
       pathSegments.unshift(step.edge.path);
       
-      // Track floor information
-      const edgeFloor = step.edge.floor || 'ground';
-      floors.add(edgeFloor);
-      
-      // Detect floor transitions
-      if (currentFloor !== null && currentFloor !== edgeFloor) {
-        floorTransitions.push({
-          from: currentFloor,
-          to: edgeFloor,
-          isFloorConnector: step.edge.isFloorConnector
+      // Track floor information - handle both single floor and cross-floor edges
+      if (step.edge.isCrossFloor) {
+        // For cross-floor edges, track both floors
+        floors.add(step.edge.fromFloor);
+        floors.add(step.edge.toFloor);
+        
+        // Record the floor transition
+        floorTransitions.unshift({
+          from: step.edge.fromFloor,
+          to: step.edge.toFloor,
+          isFloorConnector: true,
+          location: step.edge.path[0] // Transition point coordinates
         });
+        
+        console.log(`🔄 Floor transition detected: ${step.edge.fromFloor} → ${step.edge.toFloor}`);
+      } else {
+        const edgeFloor = step.edge.floor || 'ground';
+        floors.add(edgeFloor);
       }
-      currentFloor = edgeFloor;
       
       current = step.from;
       nodeIds.unshift(current);
@@ -533,7 +662,7 @@ export class CorridorPathfinding {
     const pathLine = turf.lineString(fullPath);
     const totalDistance = turf.length(pathLine, { units: 'meters' });
 
-    const floorsArray = Array.from(floors);
+    const floorsArray = Array.from(floors).sort();
     console.log(`📊 Path reconstruction complete:`);
     console.log(`   ${fullPath.length} waypoints`);
     console.log(`   ${totalDistance.toFixed(1)}m total distance`);
@@ -542,7 +671,7 @@ export class CorridorPathfinding {
     if (floorTransitions.length > 0) {
       console.log(`   🔄 Floor transitions: ${floorTransitions.length}`);
       floorTransitions.forEach((t, i) => {
-        console.log(`      ${i+1}. ${t.from} → ${t.to} ${t.isFloorConnector ? '(via stairs/elevator)' : ''}`);
+        console.log(`      ${i+1}. Floor ${t.from} → Floor ${t.to} (via stairs/elevator)`);
       });
     }
 

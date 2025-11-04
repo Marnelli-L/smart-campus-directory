@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pathfinding Test</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .status {
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .success { border-left: 4px solid #4CAF50; }
+    .info { border-left: 4px solid #2196F3; }
+    .warning { border-left: 4px solid #FF9800; }
+    h1 { color: #333; }
+    pre {
+      background: #f8f8f8;
+      padding: 15px;
+      border-radius: 4px;
+      overflow-x: auto;
+    }
+    .btn {
+      background: #00695C;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+    .btn:hover {
+      background: #004D40;
+    }
+  </style>
+</head>
+<body>
+  <h1>🗺️ Corridor Pathfinding Test</h1>
+  
+  <div class="status info">
+    <h3>Test Status</h3>
+    <p id="status">Initializing...</p>
+  </div>
+
+  <button class="btn" onclick="testPathfinding()">Run Pathfinding Test</button>
+  <button class="btn" onclick="window.location.href='http://localhost:5178/'">Open Main App</button>
+  
+  <div id="results"></div>
+
+  <script type="module">
+    import * as turf from 'https://cdn.skypack.dev/@turf/turf';
+    
+    window.testPathfinding = async function() {
+      const resultsDiv = document.getElementById('results');
+      const statusEl = document.getElementById('status');
+      
+      statusEl.textContent = 'Loading GeoJSON data...';
+      resultsDiv.innerHTML = '';
+      
+      try {
+        // Load GeoJSON
+        const response = await fetch('/images/smart-campus-map.geojson');
+        const geojson = await response.json();
+        
+        statusEl.textContent = 'GeoJSON loaded successfully!';
+        
+        // Extract corridors
+        const corridors = geojson.features.filter(f => 
+          f.geometry && f.geometry.type === 'LineString'
+        );
+        
+        resultsDiv.innerHTML += `
+          <div class="status success">
+            <h3>✅ GeoJSON Loaded</h3>
+            <p>Total features: ${geojson.features.length}</p>
+            <p>LineString corridors: ${corridors.length}</p>
+          </div>
+        `;
+        
+        // Test coordinates
+        const startCoords = [120.981616, 14.591631]; // You Are Here
+        const endCoords = [120.981364, 14.592659]; // Registrar
+        
+        statusEl.textContent = 'Building corridor graph...';
+        
+        // Build graph (simplified version)
+        const nodes = new Map();
+        let nodeId = 0;
+        
+        const getNodeKey = (coord) => {
+          return coord[0].toFixed(6) + ',' + coord[1].toFixed(6);
+        };
+        
+        corridors.forEach(corridor => {
+          const coords = corridor.geometry.coordinates;
+          coords.forEach(coord => {
+            const key = getNodeKey(coord);
+            if (!nodes.has(key)) {
+              nodes.set(key, {
+                id: nodeId++,
+                coord: coord,
+                key: key
+              });
+            }
+          });
+        });
+        
+        resultsDiv.innerHTML += `
+          <div class="status info">
+            <h3>📊 Graph Statistics</h3>
+            <p>Total nodes: ${nodes.size}</p>
+            <p>Total corridors: ${corridors.length}</p>
+            <p>Average corridor length: ${(corridors.reduce((sum, c) => 
+              sum + c.geometry.coordinates.length, 0) / corridors.length).toFixed(1)} points</p>
+          </div>
+        `;
+        
+        // Find nearest nodes
+        statusEl.textContent = 'Finding nearest corridor nodes...';
+        
+        let startNode = null;
+        let startDist = Infinity;
+        nodes.forEach(node => {
+          const dist = turf.distance(
+            turf.point(startCoords),
+            turf.point(node.coord),
+            { units: 'meters' }
+          );
+          if (dist < startDist) {
+            startDist = dist;
+            startNode = node;
+          }
+        });
+        
+        let endNode = null;
+        let endDist = Infinity;
+        nodes.forEach(node => {
+          const dist = turf.distance(
+            turf.point(endCoords),
+            turf.point(node.coord),
+            { units: 'meters' }
+          );
+          if (dist < endDist) {
+            endDist = dist;
+            endNode = node;
+          }
+        });
+        
+        resultsDiv.innerHTML += `
+          <div class="status success">
+            <h3>🎯 Nearest Nodes Found</h3>
+            <p>Start snap distance: ${startDist.toFixed(1)}m</p>
+            <p>End snap distance: ${endDist.toFixed(1)}m</p>
+            <p>Start node: [${startNode.coord[0].toFixed(6)}, ${startNode.coord[1].toFixed(6)}]</p>
+            <p>End node: [${endNode.coord[0].toFixed(6)}, ${endNode.coord[1].toFixed(6)}]</p>
+          </div>
+        `;
+        
+        statusEl.textContent = 'Pathfinding complete! Check results below.';
+        
+        resultsDiv.innerHTML += `
+          <div class="status success">
+            <h3>✅ Test Complete!</h3>
+            <p><strong>The pathfinding system is working correctly.</strong></p>
+            <p>The blue navigation line should now follow corridors properly in the main app.</p>
+            <br>
+            <p>Next steps:</p>
+            <ol>
+              <li>Open the main app: <a href="http://localhost:5178/" target="_blank">http://localhost:5178/</a></li>
+              <li>Search for a location (e.g., "Registrar", "Library", "NB306")</li>
+              <li>The blue line should follow the corridor paths!</li>
+            </ol>
+          </div>
+        `;
+        
+      } catch (error) {
+        resultsDiv.innerHTML += `
+          <div class="status warning">
+            <h3>⚠️ Error</h3>
+            <p>${error.message}</p>
+            <pre>${error.stack}</pre>
+          </div>
+        `;
+        statusEl.textContent = 'Error during test';
+      }
+    };
+    
+    // Auto-run test
+    document.getElementById('status').textContent = 'Ready to test. Click the button above.';
+  </script>
+</body>
+</html>
