@@ -696,15 +696,9 @@ function Directory() {
                       src={
                         d.image
                           ? `${API_URL}${d.image}`
-                          : d.name === "Registrar"
-                          ? "/images/sample directory image.jpg"
                           : d.name === "Library"
                           ? "/images/library.jpg"
-                          : d.name === "Guidance Office"
-                          ? "/images/guidance.png"
-                          : d.name === "IT Department"
-                          ? "/images/it.png"
-                          : "/images/default.png"
+                          : "/images/UDM_PICTURE.jpg"
                       }
                       alt={d.name}
                       style={{
@@ -714,7 +708,7 @@ function Directory() {
                       }}
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = "/images/default.png";
+                        e.target.src = "/images/UDM_PICTURE.jpg";
                       }}
                     />
                   </Box>
