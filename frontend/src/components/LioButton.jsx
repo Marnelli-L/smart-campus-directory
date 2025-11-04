@@ -11,6 +11,7 @@ function LioButton() {
   const { language } = useLanguage();
   const [open, setOpen] = useState(false);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const audioRef = useRef(null);
   const [chatMessages, setChatMessages] = useState([
     {
       from: "lio",
@@ -98,11 +99,29 @@ function LioButton() {
 
   // Handle Lio image click
   const handleLioClick = () => {
+    if (!open) {
+      // Opening Lio - play audio
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0; // Reset to start
+        audioRef.current.play().catch(err => console.log('Audio play failed:', err));
+      }
+    } else {
+      // Closing Lio - stop audio
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.currentTime = 0;
+      }
+    }
     setOpen((prev) => !prev);
   };
 
   // Handle close button click
   const handleCloseClick = () => {
+    // Stop audio when closing
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
     setOpen(false);
   };
 
@@ -124,19 +143,21 @@ function LioButton() {
     );
 
     if (found) {
+      const response = found.answer[language] || found.answer["EN"];
       setChatMessages((prev) => [
         ...prev,
-        { from: "lio", text: found.answer[language] || found.answer["EN"] }
+        { from: "lio", text: response }
       ]);
     } else {
+      const fallbackResponse = language === "EN"
+        ? "Sorry, I didn't quite get that. Try 'library', 'events', 'map', 'services', 'history', or 'admin'."
+        : "Paumanhin, hindi ko naintindihan. Subukan ang 'aklatan', 'kaganapan', 'mapa', 'serbisyo', 'kasaysayan', o 'pamunuan'.";
+      
       setChatMessages((prev) => [
         ...prev,
         {
           from: "lio",
-          text:
-            language === "EN"
-              ? "Sorry, I didn’t quite get that. Try 'library', 'events', 'map', 'services', 'history', or 'admin'."
-              : "Paumanhin, hindi ko naintindihan. Subukan ang 'aklatan', 'kaganapan', 'mapa', 'serbisyo', 'kasaysayan', o 'pamunuan'."
+          text: fallbackResponse
         }
       ]);
     }
@@ -417,6 +438,13 @@ function LioButton() {
         </div>,
         document.body
       )}
+
+      {/* Hidden audio element for Lio's voice */}
+      <audio 
+        ref={audioRef} 
+        src="/images/lio.mp3"
+        preload="auto"
+      />
     </>
   );
 }

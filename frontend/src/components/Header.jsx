@@ -66,7 +66,7 @@ function Header() {
     }
   };
 
-  const currentAnnouncement = announcements[location.pathname] || announcements["/"];
+  const _currentAnnouncement = announcements[location.pathname] || announcements["/"];
 
   return (
     <header className="w-full bg-[#00332E] text-white shadow-lg z-[1000] relative">
