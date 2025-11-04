@@ -42,7 +42,31 @@ function Header() {
     { path: "/mobile-version", icon: <MdPhoneIphone size={20} />, label: { EN: "Mobile", TL: "Mobile" } },
   ];
 
-  // Example announcement (replace with your logic or props)
+  // Announcements based on current page
+  const announcements = {
+    "/": { 
+      EN: "🎓 Welcome to UDM Smart Campus! Navigate easily with our interactive directory and maps.",
+      TL: "🎓 Maligayang pagdating sa UDM Smart Campus! Mag-navigate nang madali gamit ang aming interactive directory at mga mapa."
+    },
+    "/map": { 
+      EN: "🗺️ Tap any location to view details. Use the blue navigation line to find your way.",
+      TL: "🗺️ I-tap ang kahit anong lokasyon upang tingnan ang mga detalye. Gamitin ang asul na linya para sa direksyon."
+    },
+    "/directory": { 
+      EN: "📖 Search for faculty, staff, offices, and departments. Find contact information instantly.",
+      TL: "📖 Maghanap ng faculty, staff, opisina, at mga departamento. Makita ang contact information kaagad."
+    },
+    "/feedback-report": { 
+      EN: "💬 Your feedback helps us improve! Report issues or share suggestions.",
+      TL: "💬 Ang inyong feedback ay nakakatulong sa amin! Mag-report ng mga isyu o magbahagi ng mga suhestiyon."
+    },
+    "/mobile-version": { 
+      EN: "📱 Access UDM Campus Directory on your mobile device for navigation on-the-go.",
+      TL: "📱 I-access ang UDM Campus Directory sa inyong mobile device para sa navigation kahit nasaan."
+    }
+  };
+
+  const currentAnnouncement = announcements[location.pathname] || announcements["/"];
 
   return (
     <header className="w-full bg-[#00332E] text-white shadow-lg z-[1000] relative">
@@ -164,6 +188,13 @@ function Header() {
           ))}
         </nav>
       )}
+
+      {/* Announcement Banner */}
+      <div className="w-full bg-gradient-to-r from-[#00594A] to-[#007B6A] px-4 py-2 text-center border-t border-[#00332E]/20">
+        <p className="text-xs md:text-sm text-white/95 animate-fade-in">
+          {currentAnnouncement[language]}
+        </p>
+      </div>
     </header>
   );
 }
