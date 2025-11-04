@@ -228,7 +228,7 @@ function LioButton() {
             >
               <span className="font-semibold text-[15px] tracking-wide flex items-center gap-2">
                 <img
-                  src="\public\images\Chathead.png"
+                  src="/images/Chathead.png"
                   alt="Lio"
                   className="w-7 h-7 rounded-full border border-white shadow"
                 />
