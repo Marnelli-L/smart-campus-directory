@@ -188,13 +188,6 @@ function Header() {
           ))}
         </nav>
       )}
-
-      {/* Announcement Banner */}
-      <div className="w-full bg-gradient-to-r from-[#00594A] to-[#007B6A] px-4 py-2 text-center border-t border-[#00332E]/20">
-        <p className="text-xs md:text-sm text-white/95 animate-fade-in">
-          {currentAnnouncement[language]}
-        </p>
-      </div>
     </header>
   );
 }
