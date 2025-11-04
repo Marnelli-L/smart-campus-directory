@@ -17,7 +17,7 @@ export class CorridorPathfinding {
    * Initialize pathfinding with GeoJSON data
    * Builds navigation graph from LineString features only
    */
-  initialize(geojsonData) {
+  initialize(geojsonData, floorLevel = 'ground') {
     if (!geojsonData || !geojsonData.features) {
       console.error('❌ Invalid GeoJSON data');
       return false;
@@ -33,7 +33,20 @@ export class CorridorPathfinding {
       return false;
     }
 
-    console.log(`✅ Found ${this.corridors.length} walkable path segments`);
+    // Store floor level information for each corridor
+    this.corridors.forEach(corridor => {
+      if (!corridor.properties) {
+        corridor.properties = {};
+      }
+      // Use provided floor or extract from properties
+      corridor.properties.floor = corridor.properties.Floor || corridor.properties.floor || floorLevel;
+      
+      // Detect if this is a stair/elevator connector
+      const name = (corridor.properties.Name || corridor.properties.name || '').toLowerCase();
+      corridor.properties.isFloorConnector = name.includes('stair') || name.includes('elevator') || name.includes('lift');
+    });
+
+    console.log(`✅ Found ${this.corridors.length} walkable path segments on floor: ${floorLevel}`);
 
     // Build navigation graph with Turf.js precision
     this.buildGraphWithTurf();
@@ -70,10 +83,18 @@ export class CorridorPathfinding {
       const line = turf.lineString(coordinates);
       this.corridorLines.push(line);
       
+      // Extract floor and connector info
+      const floor = corridor.properties?.floor || 'ground';
+      const isFloorConnector = corridor.properties?.isFloorConnector || false;
+      
       // Create nodes and edges for each segment
       for (let i = 0; i < coordinates.length - 1; i++) {
         const startNode = getNodeId(coordinates[i]);
         const endNode = getNodeId(coordinates[i + 1]);
+        
+        // Add floor information to nodes
+        if (!startNode.floor) startNode.floor = floor;
+        if (!endNode.floor) endNode.floor = floor;
         
         // Use Turf for accurate distance calculation
         const distance = turf.distance(startNode.point, endNode.point, { units: 'meters' });
@@ -90,14 +111,16 @@ export class CorridorPathfinding {
           this.graph.set(endNode.id, []);
         }
 
-        // Store edge with Turf segment
+        // Store edge with Turf segment and floor info
         this.graph.get(startNode.id).push({
           to: endNode.id,
           distance: distance,
           segmentLength: segmentLength,
           path: [startNode.coord, endNode.coord],
           segment: segment,
-          bearing: turf.bearing(startNode.point, endNode.point)
+          bearing: turf.bearing(startNode.point, endNode.point),
+          floor: floor,
+          isFloorConnector: isFloorConnector
         });
 
         this.graph.get(endNode.id).push({
@@ -106,7 +129,9 @@ export class CorridorPathfinding {
           segmentLength: segmentLength,
           path: [endNode.coord, startNode.coord],
           segment: turf.lineString([endNode.coord, startNode.coord]),
-          bearing: turf.bearing(endNode.point, startNode.point)
+          bearing: turf.bearing(endNode.point, startNode.point),
+          floor: floor,
+          isFloorConnector: isFloorConnector
         });
       }
     });
@@ -159,77 +184,91 @@ export class CorridorPathfinding {
     }
 
     const totalEdges = Array.from(this.graph.values()).reduce((sum, edges) => sum + edges.length, 0);
-    console.log(`✅ Graph built with Turf precision:`);
-    console.log(`   ${this.nodes.size} nodes`);
-    console.log(`   ${this.corridorLines.length} corridor lines`);
-    console.log(`   ${totalEdges} edges (including proximity connections)`);
+    console.log(`%c✅ Graph built with Turf precision:`, 'color: #4CAF50; font-weight: bold;');
+    console.log(`%c   📍 ${this.nodes.size} nodes`, 'color: #2196F3;');
+    console.log(`%c   🛤️ ${this.corridorLines.length} corridor lines`, 'color: #2196F3;');
+    console.log(`%c   🔗 ${totalEdges} edges (including proximity connections)`, 'color: #2196F3;');
+    console.log(`%c   ⚡ Ready for pathfinding!`, 'color: #4CAF50; font-weight: bold;');
   }
 
   /**
    * Find nearest node using Turf's accurate geometric calculations
    * Snaps to nearest point on any LineString corridor
+   * ENHANCED: Better snapping with corridor segment detection
    */
   findNearestNodeWithTurf(targetCoord) {
     const targetPoint = turf.point(targetCoord);
     let minDistance = Infinity;
     let nearestNode = null;
     let nearestSnapPoint = null;
+    let bestSnapInfo = null;
 
-    // First pass: Check existing nodes
-    this.nodes.forEach(node => {
-      const distance = turf.distance(targetPoint, node.point, { units: 'meters' });
-      if (distance < minDistance) {
-        minDistance = distance;
-        nearestNode = node;
-      }
-    });
-
-    console.log(`📍 Nearest existing node: ${minDistance.toFixed(1)}m away`);
-
-    // Second pass: Use Turf's nearestPointOnLine to snap to corridor segments
+    // First pass: Find nearest point on ALL corridors using Turf's nearestPointOnLine
     this.corridorLines.forEach((line, lineIndex) => {
       const snapped = turf.nearestPointOnLine(line, targetPoint, { units: 'meters' });
       const snapDistance = snapped.properties.dist * 1000; // Convert km to meters
 
       if (snapDistance < minDistance) {
         minDistance = snapDistance;
-        nearestSnapPoint = {
-          coord: snapped.geometry.coordinates,
+        const snapCoord = snapped.geometry.coordinates;
+        
+        // Store complete snap information
+        bestSnapInfo = {
+          coord: snapCoord,
           distance: snapDistance,
           lineIndex: lineIndex,
-          line: line
+          line: line,
+          snappedPoint: snapped
         };
+        
+        nearestSnapPoint = bestSnapInfo;
+
+        // Find or create a node at this snapped location
+        const snapKey = `${snapCoord[0].toFixed(7)},${snapCoord[1].toFixed(7)}`;
+        
+        // Check if we already have a node at this location
+        if (this.nodes.has(snapKey)) {
+          nearestNode = this.nodes.get(snapKey);
+        } else {
+          // Create a temporary node for this snap point
+          nearestNode = {
+            id: -1, // Temporary ID
+            coord: snapCoord,
+            key: snapKey,
+            point: turf.point(snapCoord),
+            isTemporary: true,
+            lineIndex: lineIndex
+          };
+        }
       }
     });
 
-    // If we found a better snap point on a line, create a temporary node
-    if (nearestSnapPoint && nearestSnapPoint.distance < minDistance) {
-      console.log(`✅ Better snap point found on corridor: ${nearestSnapPoint.distance.toFixed(1)}m away`);
-      
-      const snapKey = `${nearestSnapPoint.coord[0].toFixed(7)},${nearestSnapPoint.coord[1].toFixed(7)}`;
-      
-      if (!this.nodes.has(snapKey)) {
-        const tempNode = {
-          id: this.nodes.size,
-          coord: nearestSnapPoint.coord,
-          key: snapKey,
-          point: turf.point(nearestSnapPoint.coord),
-          isTemporary: true
-        };
-        this.nodes.set(snapKey, tempNode);
-        
-        // Connect temp node to nearby graph nodes
-        this.connectNodeToCorridor(tempNode);
-        
-        nearestNode = tempNode;
-        minDistance = nearestSnapPoint.distance;
-      } else {
-        nearestNode = this.nodes.get(snapKey);
+    // Second pass: Also check existing graph nodes for very close matches
+    this.nodes.forEach(node => {
+      const distance = turf.distance(targetPoint, node.point, { units: 'meters' });
+      // If existing node is closer than snap point, use it
+      if (distance < minDistance) {
+        minDistance = distance;
+        nearestNode = node;
+        nearestSnapPoint = null; // Clear snap info since we're using exact node
       }
+    });
+
+    if (!nearestNode) {
+      console.error('❌ Could not find nearest node or snap point');
+      return { node: null, distance: Infinity, snap: null };
     }
 
-    // Return snap metadata for higher-level logic (e.g., same-corridor slicing)
-    return { node: nearestNode, distance: minDistance, snap: nearestSnapPoint };
+    console.log(`📍 Nearest point: ${minDistance.toFixed(2)}m away`);
+    if (nearestSnapPoint) {
+      console.log(`   Snapped to corridor line #${nearestSnapPoint.lineIndex}`);
+    }
+
+    return { 
+      node: nearestNode, 
+      distance: minDistance, 
+      snap: nearestSnapPoint
+    };
   }
 
   /**
@@ -300,9 +339,9 @@ export class CorridorPathfinding {
    * Returns path that ONLY follows LineString corridors
    */
   findPath(startCoord, endCoord) {
-    console.log('🎯 Starting A* pathfinding with Turf precision...');
-    console.log('📍 Start:', startCoord);
-    console.log('📍 End:', endCoord);
+    console.log('%c🎯 Starting A* pathfinding with Turf precision...', 'color: #FF9800; font-weight: bold;');
+    console.log('%c📍 Start:', 'color: #4CAF50;', startCoord);
+    console.log('%c📍 End:', 'color: #F44336;', endCoord);
 
     // Find nearest graph nodes using Turf
     const { node: startNode, distance: startSnapDist } = this.findNearestNodeWithTurf(startCoord);
@@ -451,11 +490,29 @@ export class CorridorPathfinding {
   reconstructPath(cameFrom, current, startCoord, endCoord) {
     const pathSegments = [];
     const nodeIds = [current];
+    const floors = new Set();
+    const floorTransitions = [];
+    let currentFloor = null;
 
     // Backtrack through cameFrom
     while (cameFrom.has(current)) {
       const step = cameFrom.get(current);
       pathSegments.unshift(step.edge.path);
+      
+      // Track floor information
+      const edgeFloor = step.edge.floor || 'ground';
+      floors.add(edgeFloor);
+      
+      // Detect floor transitions
+      if (currentFloor !== null && currentFloor !== edgeFloor) {
+        floorTransitions.push({
+          from: currentFloor,
+          to: edgeFloor,
+          isFloorConnector: step.edge.isFloorConnector
+        });
+      }
+      currentFloor = edgeFloor;
+      
       current = step.from;
       nodeIds.unshift(current);
     }
@@ -476,10 +533,18 @@ export class CorridorPathfinding {
     const pathLine = turf.lineString(fullPath);
     const totalDistance = turf.length(pathLine, { units: 'meters' });
 
+    const floorsArray = Array.from(floors);
     console.log(`📊 Path reconstruction complete:`);
     console.log(`   ${fullPath.length} waypoints`);
     console.log(`   ${totalDistance.toFixed(1)}m total distance`);
     console.log(`   ${nodeIds.length} corridor nodes traversed`);
+    console.log(`   🏢 Floors: ${floorsArray.join(', ')}`);
+    if (floorTransitions.length > 0) {
+      console.log(`   🔄 Floor transitions: ${floorTransitions.length}`);
+      floorTransitions.forEach((t, i) => {
+        console.log(`      ${i+1}. ${t.from} → ${t.to} ${t.isFloorConnector ? '(via stairs/elevator)' : ''}`);
+      });
+    }
 
     return {
       path: fullPath,
@@ -487,7 +552,10 @@ export class CorridorPathfinding {
       waypoints: fullPath.length,
       nodeCount: nodeIds.length,
       valid: true,
-      line: pathLine // Include Turf LineString for further processing
+      line: pathLine, // Include Turf LineString for further processing
+      floors: floorsArray,
+      floorTransitions: floorTransitions,
+      isMultiFloor: floors.size > 1
     };
   }
 

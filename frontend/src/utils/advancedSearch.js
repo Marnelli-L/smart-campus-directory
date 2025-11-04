@@ -203,10 +203,14 @@ class AdvancedSearchEngine {
   // Build search index from data sources
   buildIndex(dataSources) {
     this.searchIndex.clear();
+    this.floorIndex = new Map(); // Track items by floor
     
     const indexItem = (item, type, priority = 1) => {
       const searchableText = this.extractSearchableText(item, type);
       const normalizedText = this.normalizeText(searchableText);
+      
+      // Extract and normalize floor information
+      const floor = this.normalizeFloor(item.floor || item.Floor);
       
       const indexEntry = {
         id: item.id || item.name || item.title,
@@ -216,10 +220,21 @@ class AdvancedSearchEngine {
         searchableText,
         normalizedText,
         keywords: this.extractKeywords(searchableText),
-        synonyms: this.getSynonyms(searchableText)
+        synonyms: this.getSynonyms(searchableText),
+        floor: floor,
+        building: item.building || item.Building,
+        coordinates: item.coordinates
       };
 
       this.searchIndex.set(indexEntry.id, indexEntry);
+      
+      // Add to floor index for cross-floor search
+      if (floor) {
+        if (!this.floorIndex.has(floor)) {
+          this.floorIndex.set(floor, []);
+        }
+        this.floorIndex.get(floor).push(indexEntry);
+      }
     };
 
     // Index different data types
@@ -243,7 +258,32 @@ class AdvancedSearchEngine {
       dataSources.people.forEach(person => indexItem(person, 'person', 0.8));
     }
 
-    console.log(`Search index built with ${this.searchIndex.size} entries`);
+    console.log(`Search index built with ${this.searchIndex.size} entries across ${this.floorIndex.size} floors`);
+    
+    // Log floor distribution
+    this.floorIndex.forEach((items, floor) => {
+      console.log(`  Floor ${floor}: ${items.length} locations`);
+    });
+  }
+  
+  // Normalize floor designations to consistent format
+  normalizeFloor(floor) {
+    if (!floor) return null;
+    const floorStr = String(floor).toLowerCase().trim();
+    
+    // Ground floor variations
+    if (floorStr === 'ground' || floorStr === 'g' || floorStr === 'gf' || 
+        floorStr === '1' || floorStr === 'f1' || floorStr === 'ground floor') {
+      return 'ground';
+    }
+    
+    // Extract numeric floor
+    const match = floorStr.match(/(\d+)/);
+    if (match) {
+      return match[1]; // Return as string '2', '3', '4'
+    }
+    
+    return floorStr;
   }
 
   // Extract searchable text from different item types
@@ -305,13 +345,17 @@ class AdvancedSearchEngine {
     return [...new Set(synonyms)];
   }
 
-  // Main search function
+  // Main search function with floor awareness
   search(query, options = {}) {
-    const searchOptions = { ...this.options, ...options };
+    const searchOptions = { 
+      ...this.options, 
+      ...options,
+      currentFloor: options.currentFloor // Track what floor user is viewing
+    };
     const normalizedQuery = this.normalizeText(query);
     
     // Check cache first
-    const cacheKey = `${normalizedQuery}:${JSON.stringify(searchOptions)}`;
+    const cacheKey = `${normalizedQuery}:${searchOptions.currentFloor || 'all'}:${JSON.stringify(searchOptions)}`;
     if (this.options.cacheResults && this.resultCache.has(cacheKey)) {
       return this.resultCache.get(cacheKey);
     }
@@ -319,7 +363,7 @@ class AdvancedSearchEngine {
     // Update analytics
     this.updateSearchAnalytics(query);
 
-    // Perform search
+    // Perform search with floor intelligence
     const results = this.performSearch(normalizedQuery, searchOptions);
     
     // Cache results
@@ -330,34 +374,139 @@ class AdvancedSearchEngine {
     return results;
   }
 
-  // Core search algorithm
+  // Core search algorithm with floor-aware scoring
   performSearch(query, options) {
     const results = [];
     const queryTerms = query.split(/\s+/).filter(term => term.length > 0);
+    const currentFloor = this.normalizeFloor(options.currentFloor);
     
     for (const [, item] of this.searchIndex) {
       const score = this.calculateRelevanceScore(queryTerms, item, options);
       
       if (score > 0) {
+        // Boost score for items on current floor
+        let adjustedScore = score;
+        if (currentFloor && item.floor === currentFloor) {
+          adjustedScore *= 1.5; // 50% boost for current floor matches
+        }
+        
         results.push({
           ...item.originalItem,
-          searchScore: score,
+          searchScore: adjustedScore,
+          baseScore: score,
           type: item.type,
+          floor: item.floor,
+          floorLabel: this.getFloorLabel(item.floor),
+          isCurrentFloor: currentFloor && item.floor === currentFloor,
           matchedText: this.getMatchedText(queryTerms, item)
         });
       }
     }
 
-    // Sort by relevance score and apply limits
-    results.sort((a, b) => b.searchScore - a.searchScore);
+    // Sort by relevance score, prioritizing current floor
+    results.sort((a, b) => {
+      // Prioritize current floor results
+      if (a.isCurrentFloor && !b.isCurrentFloor) return -1;
+      if (!a.isCurrentFloor && b.isCurrentFloor) return 1;
+      // Then by score
+      return b.searchScore - a.searchScore;
+    });
+    
+    // Generate floor-aware suggestions
+    const crossFloorResults = this.getCrossFloorSuggestions(query, currentFloor);
     
     return {
       results: results.slice(0, options.maxResults || 20),
-      suggestions: this.generateSuggestions(query, results),
+      suggestions: this.generateSuggestions(query, results, currentFloor),
+      crossFloorSuggestions: crossFloorResults,
       correctedQuery: this.getSpellCorrection(query),
       totalFound: results.length,
+      currentFloor: currentFloor,
+      floorsWithResults: this.getFloorsWithResults(results),
       query: query
     };
+  }
+  
+  // Get human-readable floor label
+  getFloorLabel(floor) {
+    if (!floor) return '';
+    if (floor === 'ground' || floor === '1') return 'Ground Floor';
+    if (floor === '2') return '2nd Floor';
+    if (floor === '3') return '3rd Floor';
+    if (floor === '4') return '4th Floor';
+    return `Floor ${floor}`;
+  }
+  
+  // Get cross-floor suggestions - show ALL matching results from other floors
+  getCrossFloorSuggestions(query, currentFloor) {
+    const suggestions = [];
+    const normalizedQuery = this.normalizeText(query);
+    const queryTerms = normalizedQuery.split(/\s+/).filter(term => term.length > 0);
+    
+    if (!this.floorIndex) return suggestions;
+    
+    // Search through ALL floors for matches
+    this.floorIndex.forEach((items, floor) => {
+      // Include all floors, not just others
+      items.forEach(item => {
+        const itemFloor = floor;
+        const isCurrentFloor = currentFloor && itemFloor === currentFloor;
+        
+        // Check if item matches query
+        let matches = false;
+        
+        // Direct substring match
+        if (item.normalizedText.includes(normalizedQuery)) {
+          matches = true;
+        }
+        
+        // Keyword match
+        if (!matches && item.keywords) {
+          matches = item.keywords.some(kw => 
+            queryTerms.some(qt => kw.includes(qt) || qt.includes(kw))
+          );
+        }
+        
+        // Fuzzy match on name
+        if (!matches && item.originalItem && item.originalItem.name) {
+          const similarity = jaroWinklerSimilarity(
+            normalizedQuery,
+            this.normalizeText(item.originalItem.name)
+          );
+          if (similarity > 0.6) {
+            matches = true;
+          }
+        }
+        
+        if (matches) {
+          suggestions.push({
+            name: item.originalItem.name || item.originalItem.Name,
+            floor: itemFloor,
+            floorLabel: this.getFloorLabel(itemFloor),
+            type: item.type,
+            isCurrentFloor: isCurrentFloor,
+            coordinates: item.coordinates
+          });
+        }
+      });
+    });
+    
+    return suggestions;
+  }
+  
+  // Get all floors that have results
+  getFloorsWithResults(results) {
+    const floors = new Set();
+    results.forEach(result => {
+      if (result.floor) {
+        floors.add({
+          value: result.floor,
+          label: result.floorLabel || this.getFloorLabel(result.floor),
+          count: results.filter(r => r.floor === result.floor).length
+        });
+      }
+    });
+    return Array.from(floors);
   }
 
   // Calculate relevance score for search results

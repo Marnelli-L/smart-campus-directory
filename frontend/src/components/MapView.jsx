@@ -19,6 +19,7 @@ const MapView = forwardRef(({
   const addCampusRef = useRef(null);
   const [routeInfo, setRouteInfo] = useState(null);
   const animatedRouteRef = useRef(null); // Ref for animated route function
+  const watchIdRef = useRef(null); // For tracking geolocation watch
   const destination = selectedDestination || searchDestination;
 
   // Expose methods to parent component
@@ -33,6 +34,155 @@ const MapView = forwardRef(({
           essential: true
         });
         console.log('🔄 Map view reset to default');
+      }
+    },
+    startLocationTracking: () => {
+      if (!navigator.geolocation) {
+        alert('Geolocation is not supported by your browser.');
+        return;
+      }
+
+      // Stop any existing tracking
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+      }
+
+      // Start continuous location tracking
+      watchIdRef.current = navigator.geolocation.watchPosition(
+        (position) => {
+          const userLocation = [position.coords.longitude, position.coords.latitude];
+          const accuracy = position.coords.accuracy;
+          
+          if (!mapRef.current) return;
+
+          // Add or update user location marker with accuracy circle
+          if (mapRef.current.getSource('user-location')) {
+            mapRef.current.getSource('user-location').setData({
+              type: 'Point',
+              coordinates: userLocation
+            });
+          } else {
+            mapRef.current.addSource('user-location', {
+              type: 'geojson',
+              data: {
+                type: 'Point',
+                coordinates: userLocation
+              }
+            });
+            
+            // Add accuracy circle
+            mapRef.current.addLayer({
+              id: 'user-location-accuracy',
+              type: 'circle',
+              source: 'user-location',
+              paint: {
+                'circle-radius': {
+                  stops: [
+                    [0, 0],
+                    [20, accuracy * 0.8]
+                  ],
+                  base: 2
+                },
+                'circle-color': '#007cbf',
+                'circle-opacity': 0.1,
+                'circle-stroke-color': '#007cbf',
+                'circle-stroke-width': 1,
+                'circle-stroke-opacity': 0.3
+              }
+            });
+            
+            // Add pulsing dot
+            mapRef.current.addLayer({
+              id: 'user-location-dot',
+              type: 'circle',
+              source: 'user-location',
+              paint: {
+                'circle-radius': 8,
+                'circle-color': '#007cbf',
+                'circle-stroke-color': '#fff',
+                'circle-stroke-width': 2
+              }
+            });
+
+            // Add outer pulse ring
+            mapRef.current.addLayer({
+              id: 'user-location-pulse',
+              type: 'circle',
+              source: 'user-location',
+              paint: {
+                'circle-radius': 12,
+                'circle-color': '#007cbf',
+                'circle-opacity': 0.3,
+                'circle-stroke-color': '#007cbf',
+                'circle-stroke-width': 1,
+                'circle-stroke-opacity': 0.5
+              }
+            });
+
+            // Fly to user location on first update
+            mapRef.current.flyTo({
+              center: userLocation,
+              zoom: 19,
+              essential: true,
+              duration: 1500
+            });
+          }
+          
+          console.log('📍 Location updated:', userLocation, 'Accuracy:', accuracy.toFixed(2), 'm');
+        },
+        (error) => {
+          console.error('❌ Error tracking location:', error);
+          let errorMessage = 'Unable to track your location. ';
+          switch(error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage += 'Please enable location permissions.';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage += 'Location information is unavailable.';
+              break;
+            case error.TIMEOUT:
+              errorMessage += 'Location request timed out.';
+              break;
+            default:
+              errorMessage += 'An unknown error occurred.';
+          }
+          alert(errorMessage);
+          
+          // Stop tracking on error
+          if (watchIdRef.current !== null) {
+            navigator.geolocation.clearWatch(watchIdRef.current);
+            watchIdRef.current = null;
+          }
+        },
+        { 
+          enableHighAccuracy: true, 
+          timeout: 10000, 
+          maximumAge: 0 
+        }
+      );
+      
+      console.log('🎯 Started real-time location tracking');
+    },
+    stopLocationTracking: () => {
+      // Stop watching location
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+        watchIdRef.current = null;
+        console.log('⏹️ Stopped location tracking');
+      }
+
+      // Remove location layers from map
+      if (mapRef.current) {
+        const layersToRemove = ['user-location-pulse', 'user-location-dot', 'user-location-accuracy'];
+        layersToRemove.forEach(layerId => {
+          if (mapRef.current.getLayer(layerId)) {
+            mapRef.current.removeLayer(layerId);
+          }
+        });
+        
+        if (mapRef.current.getSource('user-location')) {
+          mapRef.current.removeSource('user-location');
+        }
       }
     },
     locateUser: () => {
@@ -89,6 +239,17 @@ const MapView = forwardRef(({
       }
     }
   }));
+
+  // Cleanup location tracking on unmount
+  useEffect(() => {
+    return () => {
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current);
+        watchIdRef.current = null;
+        console.log('🧹 Cleaned up location tracking on unmount');
+      }
+    };
+  }, []);
 
   // When parent header/shell changes selectedFloor, load the corresponding floor GeoJSON
   useEffect(() => {
@@ -249,10 +410,10 @@ const MapView = forwardRef(({
         console.log('🗺️ Loaded GeoJSON data:', data);
         console.log('📍 Features count:', data.features.length);
 
-        // Initialize corridor-based A* pathfinding
-        const pathfindingInitialized = corridorPathfinder.initialize(data);
+        // Initialize corridor-based A* pathfinding with floor information
+        const pathfindingInitialized = corridorPathfinder.initialize(data, floorKey);
         if (pathfindingInitialized) {
-          console.log('✅ Corridor A* pathfinding initialized');
+          console.log(`✅ Corridor A* pathfinding initialized for floor: ${floorKey}`);
           
           // Add visualization of all walkable paths for debugging
           const walkablePaths = data.features.filter(f => f.geometry.type === 'LineString');
@@ -977,7 +1138,10 @@ const MapView = forwardRef(({
         estimatedTime: estimatedMinutes,
         destination: destinationInfo.name,
         building: destinationInfo.building,
-        floor: destinationInfo.floor
+        floor: destinationInfo.floor,
+        floors: pathfindingResult.floors || [destinationInfo.floor],
+        isMultiFloor: pathfindingResult.isMultiFloor || false,
+        floorTransitions: pathfindingResult.floorTransitions || []
       });
       
       if (pathfindingResult.valid) {
@@ -1016,62 +1180,136 @@ const MapView = forwardRef(({
       console.log('📍 Adding entrance marker at:', coords);
       
       try {
-        // Add "You Are Here" starting point marker with label
+        // Add modern "You Are Here" starting point marker matching system theme
         const entranceEl = document.createElement('div');
         entranceEl.id = 'entrance-marker';
         entranceEl.style.cssText = `
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          z-index: 1000;
+          position: relative;
+          cursor: pointer;
         `;
         
-        // Create the marker circle
+        // Create pin-style marker pointing downward
+        const pinContainer = document.createElement('div');
+        pinContainer.style.cssText = `
+          position: relative;
+          width: 44px;
+          height: 44px;
+        `;
+        
+        // Outer pulsing ring
+        const pulsingRing = document.createElement('div');
+        pulsingRing.style.cssText = `
+          position: absolute;
+          width: 44px;
+          height: 44px;
+          background: rgba(0, 105, 92, 0.2);
+          border-radius: 50%;
+          animation: pulse-ring 2s ease-out infinite;
+          top: 0;
+          left: 0;
+        `;
+        
+        // Main marker circle
         const markerCircle = document.createElement('div');
         markerCircle.style.cssText = `
-          width: 50px;
-          height: 50px;
-          background: #ff0000;
-          border: 4px solid white;
+          position: absolute;
+          width: 32px;
+          height: 32px;
+          background: linear-gradient(135deg, #00695C 0%, #004D40 100%);
+          border: 3px solid white;
           border-radius: 50%;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+          box-shadow: 
+            0 4px 12px rgba(0, 105, 92, 0.5),
+            0 2px 6px rgba(0, 0, 0, 0.3);
           display: flex;
           align-items: center;
           justify-content: center;
           color: white;
-          font-size: 24px;
-          font-weight: bold;
+          font-size: 16px;
+          top: 6px;
+          left: 6px;
         `;
-        markerCircle.innerHTML = '📍';
+        markerCircle.innerHTML = '●';
         
-        // Create the "You Are Here" label
+        // Point indicator (triangle pointing down)
+        const pointIndicator = document.createElement('div');
+        pointIndicator.style.cssText = `
+          position: absolute;
+          width: 0;
+          height: 0;
+          border-left: 6px solid transparent;
+          border-right: 6px solid transparent;
+          border-top: 8px solid #00695C;
+          bottom: -8px;
+          left: 50%;
+          transform: translateX(-50%);
+          filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        `;
+        
+        pinContainer.appendChild(pulsingRing);
+        pinContainer.appendChild(markerCircle);
+        pinContainer.appendChild(pointIndicator);
+        
+        // Add pulsing animation keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+          @keyframes pulse-ring {
+            0% {
+              transform: scale(0.8);
+              opacity: 1;
+            }
+            100% {
+              transform: scale(1.5);
+              opacity: 0;
+            }
+          }
+        `;
+        if (!document.getElementById('marker-pulse-style')) {
+          style.id = 'marker-pulse-style';
+          document.head.appendChild(style);
+        }
+        
+        // Create the "You Are Here" label with system theme (positioned above)
+        const labelContainer = document.createElement('div');
+        labelContainer.style.cssText = `
+          position: absolute;
+          bottom: 52px;
+          left: 50%;
+          transform: translateX(-50%);
+          white-space: nowrap;
+          pointer-events: none;
+        `;
+        
         const label = document.createElement('div');
         label.style.cssText = `
-          background: rgba(255, 0, 0, 0.9);
+          background: linear-gradient(135deg, #00695C 0%, #004D40 100%);
           color: white;
-          padding: 6px 12px;
+          padding: 8px 14px;
           border-radius: 20px;
-          font-family: 'Segoe UI', Arial, sans-serif;
+          font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
           font-size: 12px;
-          font-weight: bold;
-          margin-top: 8px;
-          white-space: nowrap;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+          font-weight: 600;
+          box-shadow: 
+            0 4px 12px rgba(0, 105, 92, 0.4),
+            0 2px 6px rgba(0, 0, 0, 0.2);
+          border: 2px solid white;
         `;
         label.textContent = 'You Are Here';
         
-        entranceEl.appendChild(markerCircle);
-        entranceEl.appendChild(label);
+        labelContainer.appendChild(label);
+        entranceEl.appendChild(pinContainer);
+        entranceEl.appendChild(labelContainer);
         
-        console.log('📍 Creating marker element');
+        console.log('📍 Creating marker element with precise positioning');
         const marker = new window.mapboxgl.Marker({ 
           element: entranceEl,
-          anchor: 'center'
+          anchor: 'bottom',
+          offset: [0, 8]
         })
         .setLngLat(coords)
         .addTo(mapRef.current);
         
-        console.log('✅ Entrance marker added successfully');
+        console.log('✅ Entrance marker added successfully with system theme');
         return marker;
         
       } catch (error) {
@@ -1090,108 +1328,143 @@ const MapView = forwardRef(({
           existingMarker.remove();
         }
 
-        // Create destination marker container (Google Maps style)
+        // Create destination marker container
         const destEl = document.createElement('div');
         destEl.id = 'destination-marker';
         destEl.style.cssText = `
-          display: flex;
-          flex-direction: column;
-          align-items: center;
-          z-index: 1001;
+          position: relative;
           cursor: pointer;
+          z-index: 100;
         `;
         
-        // Create the marker pin (red inverted teardrop)
+        // Create pin container
+        const pinContainer = document.createElement('div');
+        pinContainer.style.cssText = `
+          position: relative;
+          width: 42px;
+          height: 42px;
+          z-index: 102;
+        `;
+        
+        // Create the marker pin (professional teardrop style)
         const markerPin = document.createElement('div');
         markerPin.style.cssText = `
-          width: 40px;
-          height: 50px;
-          background: #EA4335;
+          position: absolute;
+          width: 42px;
+          height: 42px;
+          background: linear-gradient(135deg, #00695C 0%, #004D40 100%);
           border: 3px solid white;
           border-radius: 50% 50% 50% 0;
           transform: rotate(-45deg);
-          box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+          box-shadow: 
+            0 6px 20px rgba(0, 105, 92, 0.5),
+            0 2px 8px rgba(0, 0, 0, 0.3),
+            inset 0 -2px 4px rgba(0, 0, 0, 0.2);
           display: flex;
           align-items: center;
           justify-content: center;
-          position: relative;
+          z-index: 102;
         `;
         
         // Inner white circle
         const innerCircle = document.createElement('div');
         innerCircle.style.cssText = `
-          width: 20px;
-          height: 20px;
+          width: 14px;
+          height: 14px;
           background: white;
           border-radius: 50%;
           transform: rotate(45deg);
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         `;
         markerPin.appendChild(innerCircle);
+        pinContainer.appendChild(markerPin);
         
-        // Create the destination label
+        // Create the destination label (above the pin for better visibility)
+        const labelContainer = document.createElement('div');
+        labelContainer.style.cssText = `
+          position: absolute;
+          bottom: 50px;
+          left: 50%;
+          transform: translateX(-50%);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          gap: 6px;
+          pointer-events: none;
+          white-space: nowrap;
+          z-index: 101;
+        `;
+        
         const label = document.createElement('div');
         label.style.cssText = `
-          background: rgba(234, 67, 53, 0.95);
+          background: linear-gradient(135deg, #00695C 0%, #004D40 100%);
           color: white;
           padding: 8px 14px;
           border-radius: 20px;
-          font-family: 'Segoe UI', Arial, sans-serif;
+          font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
           font-size: 13px;
-          font-weight: bold;
-          margin-top: 35px;
-          white-space: nowrap;
-          box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-          max-width: 250px;
+          font-weight: 600;
+          box-shadow: 
+            0 4px 12px rgba(0, 105, 92, 0.4),
+            0 2px 6px rgba(0, 0, 0, 0.2);
+          max-width: 280px;
           overflow: hidden;
           text-overflow: ellipsis;
+          letter-spacing: 0.2px;
+          border: 2px solid white;
         `;
         label.textContent = destinationInfo.name || 'Destination';
         
         // Add building info sub-label
         const subLabel = document.createElement('div');
         subLabel.style.cssText = `
-          background: rgba(255, 255, 255, 0.95);
-          color: #EA4335;
-          padding: 4px 10px;
-          border-radius: 12px;
-          font-family: 'Segoe UI', Arial, sans-serif;
-          font-size: 10px;
+          background: white;
+          color: #00695C;
+          padding: 5px 11px;
+          border-radius: 14px;
+          font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+          font-size: 11px;
           font-weight: 600;
-          margin-top: 4px;
-          white-space: nowrap;
-          box-shadow: 0 1px 6px rgba(0,0,0,0.2);
-          max-width: 250px;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+          max-width: 280px;
           overflow: hidden;
           text-overflow: ellipsis;
+          border: 1px solid rgba(0, 105, 92, 0.2);
         `;
         subLabel.textContent = `${destinationInfo.building || 'Building'} • ${destinationInfo.floor || 'Floor'}`;
         
-        destEl.appendChild(markerPin);
-        destEl.appendChild(label);
-        destEl.appendChild(subLabel);
+        labelContainer.appendChild(label);
+        labelContainer.appendChild(subLabel);
         
-        // Add to map
-        const marker = new window.mapboxgl.Marker({ element: destEl, anchor: 'bottom' })
+        destEl.appendChild(pinContainer);
+        destEl.appendChild(labelContainer);
+        
+        // Add to map with proper anchor at the bottom point of the pin
+        const marker = new window.mapboxgl.Marker({ 
+          element: destEl, 
+          anchor: 'bottom',
+          offset: [0, 0]
+        })
           .setLngLat(coords)
           .addTo(mapRef.current);
         
-        // Add popup on click (Google Maps style)
+        // Add popup on click with system theme
         const popup = new window.mapboxgl.Popup({ 
           offset: 25,
           closeButton: true,
           closeOnClick: false
         })
           .setHTML(`
-            <div style="font-family: 'Segoe UI', Arial, sans-serif; padding: 8px;">
-              <h3 style="margin: 0 0 8px 0; color: #EA4335; font-size: 16px;">${destinationInfo.name || 'Destination'}</h3>
-              <p style="margin: 4px 0; color: #666; font-size: 13px;">
-                <strong>Building:</strong> ${destinationInfo.building || 'N/A'}
+            <div style="font-family: 'Segoe UI', 'Roboto', Arial, sans-serif; padding: 12px;">
+              <h3 style="margin: 0 0 12px 0; color: #00695C; font-size: 16px; font-weight: 600;">${destinationInfo.name || 'Destination'}</h3>
+              <p style="margin: 6px 0; color: #555; font-size: 13px;">
+                <strong style="color: #00695C;">Building:</strong> ${destinationInfo.building || 'N/A'}
               </p>
-              <p style="margin: 4px 0; color: #666; font-size: 13px;">
-                <strong>Floor:</strong> ${destinationInfo.floor || 'N/A'}
+              <p style="margin: 6px 0; color: #555; font-size: 13px;">
+                <strong style="color: #00695C;">Floor:</strong> ${destinationInfo.floor || 'N/A'}
               </p>
-              <p style="margin: 4px 0; color: #666; font-size: 13px;">
-                <strong>Type:</strong> ${destinationInfo.type || 'Location'}
+              <p style="margin: 6px 0; color: #555; font-size: 13px;">
+                <strong style="color: #00695C;">Type:</strong> ${destinationInfo.type || 'Location'}
               </p>
             </div>
           `);
@@ -1235,59 +1508,79 @@ const MapView = forwardRef(({
           }
         });
 
-        // Add animated route with gradient effect (like SM kiosk)
+        // Add outer glow effect (system theme color)
         mapRef.current.addLayer({
           id: 'route-glow',
           type: 'line',
           source: 'route-line',
           paint: {
-            'line-color': '#ff4444',
-            'line-width': 12,
-            'line-opacity': 0.4,
-            'line-blur': 4
+            'line-color': '#00695C',
+            'line-width': 14,
+            'line-opacity': 0.3,
+            'line-blur': 6
           }
         });
 
-        // Main route line with animation
+        // Add middle glow layer
+        mapRef.current.addLayer({
+          id: 'route-glow-mid',
+          type: 'line',
+          source: 'route-line',
+          paint: {
+            'line-color': '#00695C',
+            'line-width': 10,
+            'line-opacity': 0.5,
+            'line-blur': 3
+          }
+        });
+
+        // Main route line (bold and visible)
         mapRef.current.addLayer({
           id: 'route-line',
           type: 'line',
           source: 'route-line',
           paint: {
-            'line-color': '#ff0000',
+            'line-color': '#00695C',
             'line-width': 6,
-            'line-opacity': 1.0
+            'line-opacity': 0.95
+          },
+          layout: {
+            'line-cap': 'round',
+            'line-join': 'round'
           }
         });
 
-        // Add animated dots moving along the path (SM kiosk style)
+        // Add white inner line for contrast
+        mapRef.current.addLayer({
+          id: 'route-line-inner',
+          type: 'line',
+          source: 'route-line',
+          paint: {
+            'line-color': '#FFFFFF',
+            'line-width': 2,
+            'line-opacity': 0.6
+          },
+          layout: {
+            'line-cap': 'round',
+            'line-join': 'round'
+          }
+        });
+
+        // Add animated dots moving along the path
         let animationStep = 0;
         const animateMovingDot = () => {
           const step = (animationStep % 100) / 100;
           
-          mapRef.current.addSource('route-animation', {
-            type: 'geojson',
-            data: {
-              type: 'Feature',
-              properties: {},
-              geometry: {
-                type: 'Point',
-                coordinates: interpolateAlongPath(pathCoords, step)
-              }
-            }
-          });
-
-          if (!mapRef.current.getLayer('route-animation')) {
-            mapRef.current.addLayer({
-              id: 'route-animation',
-              type: 'circle',
-              source: 'route-animation',
-              paint: {
-                'circle-radius': 8,
-                'circle-color': '#ffffff',
-                'circle-stroke-color': '#ff0000',
-                'circle-stroke-width': 3,
-                'circle-opacity': 0.9
+          if (!mapRef.current.getSource('route-animation')) {
+            mapRef.current.addSource('route-animation', {
+              type: 'geojson',
+              data: {
+                type: 'Feature',
+                properties: {},
+                geometry: {
+                  type: 'Point',
+                  coordinates: interpolateAlongPath(pathCoords, step)
+                }
               }
             });
           } else {
@@ -1301,6 +1594,21 @@ const MapView = forwardRef(({
             });
           }
 
+          if (!mapRef.current.getLayer('route-animation')) {
+            mapRef.current.addLayer({
+              id: 'route-animation',
+              type: 'circle',
+              source: 'route-animation',
+              paint: {
+                'circle-radius': 8,
+                'circle-color': '#FFFFFF',
+                'circle-stroke-color': '#00695C',
+                'circle-stroke-width': 3,
+                'circle-opacity': 1
+              }
+            });
+          }
+
           animationStep += 2;
           if (mapRef.current.getLayer('route-animation')) {
             requestAnimationFrame(animateMovingDot);
@@ -1310,7 +1618,7 @@ const MapView = forwardRef(({
         // Start animation
         animateMovingDot();
 
-        console.log('✅ SM kiosk-style animated route created successfully');
+        console.log('✅ Professional animated route created with system theme');
 
       } catch (error) {
         console.error('❌ Error creating animated route:', error);
@@ -1341,7 +1649,7 @@ const MapView = forwardRef(({
       
       try {
         // Remove existing route layers safely
-        ['route-line', 'route-glow', 'route-animation'].forEach(layerId => {
+        ['route-line', 'route-line-inner', 'route-glow', 'route-glow-mid', 'route-animation'].forEach(layerId => {
           if (mapRef.current.getLayer && mapRef.current.getLayer(layerId)) {
             mapRef.current.removeLayer(layerId);
           }
@@ -1428,56 +1736,146 @@ const MapView = forwardRef(({
         </div>
       )}
 
-      {/* Enhanced Route Information Panel */}
+      {/* Modern Route Information Panel - Fixed Position */}
       {destination && routeInfo && (
-        <div style={{
-          position: 'absolute',
-          bottom: '120px',
-          right: '30px',
-          background: 'rgba(255, 255, 255, 0.95)',
-          padding: '16px 20px',
-          borderRadius: '12px',
-          fontSize: '12px',
-          zIndex: 1000,
-          boxShadow: '0 4px 16px rgba(0,0,0,0.2)',
-          minWidth: '200px',
-          fontFamily: 'Segoe UI, Arial, sans-serif'
-        }}>
-          <div style={{ fontWeight: 'bold', marginBottom: '8px', color: '#1565c0' }}>
-            📍 Route Information
+        <>
+          <style>
+            {`
+              @media (max-width: 768px) {
+                #route-info-panel {
+                  left: 20px !important;
+                  right: 20px !important;
+                  bottom: 20px !important;
+                  min-width: auto !important;
+                  max-width: calc(100vw - 40px) !important;
+                }
+                #route-info-content {
+                  flex-direction: row !important;
+                  flex-wrap: wrap !important;
+                  gap: 4px !important;
+                }
+                .route-info-item {
+                  flex: 1 1 calc(50% - 2px) !important;
+                  min-width: 100px !important;
+                }
+              }
+            `}
+          </style>
+          <div 
+            id="route-info-panel"
+            style={{
+              position: 'fixed',
+              bottom: '30px',
+              left: '210px',
+              background: 'rgba(255, 255, 255, 0.98)',
+              padding: '0',
+              borderRadius: '12px',
+              fontSize: '11px',
+              zIndex: 9999,
+              boxShadow: '0 4px 16px rgba(0, 105, 92, 0.1), 0 1px 4px rgba(0, 0, 0, 0.06)',
+              minWidth: '160px',
+              maxWidth: '200px',
+              fontFamily: 'Segoe UI, -apple-system, BlinkMacSystemFont, sans-serif',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(0, 105, 92, 0.12)',
+              transition: 'all 0.3s ease',
+              pointerEvents: 'auto',
+              overflow: 'hidden'
+            }}>
+
+            {/* Content Grid */}
+            <div id="route-info-content" style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+              {/* Distance */}
+              {routeInfo.distance && (
+                <div className="route-info-item" style={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '10px 12px',
+                  background: 'rgba(255, 255, 255, 1)',
+                  borderBottom: '1px solid rgba(0, 105, 92, 0.08)'
+                }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '6px',
+                    color: '#666',
+                    fontSize: '11px',
+                    fontWeight: '500'
+                  }}>
+                    <span style={{ fontSize: '14px' }}>📏</span>
+                    <span>Distance</span>
+                  </div>
+                  <span style={{ 
+                    color: '#00695C', 
+                    fontWeight: '700',
+                    fontSize: '13px'
+                  }}>{routeInfo.distance.toFixed(0)}m</span>
+                </div>
+              )}
+
+              {/* Walk Time */}
+              {routeInfo.estimatedTime && (
+                <div className="route-info-item" style={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '10px 12px',
+                  background: 'rgba(255, 255, 255, 1)',
+                  borderBottom: routeInfo.isMultiFloor ? '1px solid rgba(0, 105, 92, 0.08)' : 'none'
+                }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '6px',
+                    color: '#666',
+                    fontSize: '11px',
+                    fontWeight: '500'
+                  }}>
+                    <span style={{ fontSize: '14px' }}>⏱️</span>
+                    <span>Walk Time</span>
+                  </div>
+                  <span style={{ 
+                    color: '#00695C', 
+                    fontWeight: '700',
+                    fontSize: '13px'
+                  }}>~{Math.ceil(routeInfo.distance / 20)}s</span>
+                </div>
+              )}
+
+              {/* Floor Information - Multi-Floor Routes */}
+              {routeInfo.isMultiFloor && routeInfo.floors && (
+                <div className="route-info-item" style={{ 
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  padding: '10px 12px',
+                  background: 'rgba(0, 105, 92, 0.04)'
+                }}>
+                  <div style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '6px',
+                    color: '#666',
+                    fontSize: '11px',
+                    fontWeight: '500'
+                  }}>
+                    <span style={{ fontSize: '14px' }}>🏢</span>
+                    <span>Floors</span>
+                  </div>
+                  <span style={{ 
+                    color: '#00695C', 
+                    fontWeight: '700',
+                    fontSize: '11px'
+                  }}>{routeInfo.floors.map(f => {
+                    if (f === 'ground' || f === 'G' || f === '1') return 'GF';
+                    return f === '2' ? '2F' : f === '3' ? '3F' : f === '4' ? '4F' : f + 'F';
+                  }).join(' → ')}</span>
+                </div>
+              )}
+            </div>
           </div>
-          {routeInfo.distance && (
-            <div style={{ margin: '4px 0', color: '#555' }}>
-              📏 Distance: <strong>{routeInfo.distance.toFixed(0)}m</strong>
-            </div>
-          )}
-          {routeInfo.waypoints && (
-            <div style={{ margin: '4px 0', color: '#555' }}>
-              🛤️ Waypoints: <strong>{routeInfo.waypoints}</strong>
-            </div>
-          )}
-          {routeInfo.estimatedTime && (
-            <div style={{ margin: '4px 0', color: '#555' }}>
-              ⏱️ Walk Time: <strong>~{Math.ceil(routeInfo.distance / 20)}s</strong>
-            </div>
-          )}
-          <div style={{ 
-            margin: '8px 0 4px 0', 
-            padding: '4px 8px',
-            background: routeInfo.isOptimized ? '#e8f5e8' : 
-                       routeInfo.isStrict ? '#f3e5f5' : 
-                       routeInfo.isValid ? '#fff3e0' : '#ffebee',
-            borderRadius: '6px',
-            fontSize: '11px',
-            color: routeInfo.isOptimized ? '#2e7d32' : 
-                   routeInfo.isStrict ? '#7b1fa2' : 
-                   routeInfo.isValid ? '#f57c00' : '#d32f2f'
-          }}>
-            {routeInfo.isOptimized ? '🎯 OPTIMIZED A* - Detour minimized' : 
-             routeInfo.isStrict ? '🔒 STRICT A* - Only walkable paths' :
-             routeInfo.isValid ? '⚠️ Enhanced routing' : '❌ Direct connection'}
-          </div>
-        </div>
+        </>
       )}
 
       {/* Loading Indicator */}

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import OnScreenKeyboard from "../components/OnScreenKeyboard";
+import { staticDepartments } from "../data/departments";
 import {
   Box,
   Paper,
@@ -54,150 +55,6 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import WarningIcon from "@mui/icons-material/Warning";
 import NavigationIcon from "@mui/icons-material/Navigation";
 
-// Static fallback department data
-const staticDepartments = [
-  {
-    name: "Registrar",
-    location: "Main Building, 1st Floor",
-    contact: "123-4567",
-    email: "registrar@udm.edu.ph",
-    staff: "Ms. Maria Santos",
-    officeHours: "Mon-Fri 8:00am-5:00pm",
-    category: "Administrative",
-    accent: "#007763",
-    icon: <BusinessIcon />,
-    status: "open",
-    announcement: "",
-    mapLink: "/map?loc=registrar",
-  },
-  {
-    name: "Library",
-    location: "Library Building, 2nd Floor",
-    contact: "234-5678",
-    email: "library@udm.edu.ph",
-    staff: "Mr. Juan Dela Cruz",
-    officeHours: "Mon-Sat 8:00am-6:00pm",
-    category: "Support",
-    accent: "#4B8B3B",
-    icon: <LocalLibraryIcon />,
-    status: "open",
-    announcement: "",
-    mapLink: "/map?loc=library",
-  },
-  {
-    name: "Guidance Office",
-    location: "Annex, Room 101",
-    contact: "345-6789",
-    email: "guidance@udm.edu.ph",
-    staff: "Ms. Ana Reyes",
-    officeHours: "Mon-Fri 8:00am-5:00pm",
-    category: "Support",
-    accent: "#8B5CF6",
-    icon: <SupportAgentIcon />,
-    status: "open",
-    announcement: "",
-    mapLink: "/map?loc=guidance",
-  },
-  {
-    name: "IT Department",
-    location: "Main Building, 3rd Floor",
-    contact: "456-7890",
-    email: "it@udm.edu.ph",
-    staff: "Engr. Carlo Mendoza",
-    officeHours: "Mon-Fri 8:00am-5:00pm",
-    category: "Administrative",
-    accent: "#0288d1",
-    icon: <ComputerIcon />,
-    status: "open",
-    announcement: "",
-    mapLink: "/map?loc=it",
-  },
-  {
-    name: "Computer Laboratory",
-    location: "Amba Wing, 2nd Floor",
-    contact: "567-8901",
-    email: "",
-    staff: "Mr. Mark Lim",
-    officeHours: "Mon-Sat 8:00am-6:00pm",
-    category: "Support",
-    accent: "#00BFAE",
-    icon: <ComputerIcon />,
-    status: "open",
-    announcement: "",
-    mapLink: "/map?loc=comlab",
-  },
-  {
-    name: "CCS Department ",
-    location: "Villar Wing, 2nd Floor",
-    contact: "678-9012",
-    email: "ccs@udm.edu.ph",
-    staff: "Dr. Liza Cruz",
-    officeHours: "Mon-Fri 8:00am-5:00pm",
-    category: "Academic",
-    accent: "#F59E42",
-    icon: <SchoolIcon />,
-    status: "open",
-    announcement: "",
-    mapLink: "/map?loc=ccs",
-  },
-  {
-    name: "CCJ Department ",
-    location: "Villar Wing, 3rd Floor",
-    contact: "789-0123",
-    email: "ccj@udm.edu.ph",
-    staff: "Atty. Jose Ramos",
-    officeHours: "Mon-Fri 8:00am-5:00pm",
-    category: "Academic",
-    accent: "#E53935",
-    icon: <GavelIcon />,
-    status: "open",
-    announcement: "",
-    mapLink: "/map?loc=ccj",
-  },
-  {
-    name: "CAS Department",
-    location: "Villar Wing, 4th Floor",
-    contact: "890-1234",
-    email: "cas@udm.edu.ph",
-    staff: "Dr. Maria Lopez",
-    officeHours: "Mon-Fri 8:00am-5:00pm",
-    category: "Academic",
-    accent: "#3B82F6",
-    icon: <ScienceIcon />,
-    status: "open",
-    announcement: "",
-    mapLink: "/map?loc=cas",
-  },
-  {
-    name: "CBA Department ",
-    location: "Villar Wing, 6th Floor",
-    contact: "012-3456",
-    email: "cba@udm.edu.ph",
-    staff: "Dr. Ramon Santos",
-    officeHours: "Mon-Fri 8:00am-5:00pm",
-    category: "Academic",
-    accent: "#FFD600",
-    icon: <AccountBalanceIcon />,
-    status: "open",
-    announcement: "",
-    mapLink: "/map?loc=cba",
-  },
-  {
-    name: "Guidance and Counseling Center",
-    location: "Annex, Room 102",
-    contact: "234-5679",
-    email: "guidancecenter@udm.edu.ph",
-    staff: "Ms. Ana Reyes",
-    officeHours: "Mon-Fri 8:00am-5:00pm",
-    category: "Support",
-    accent: "#8B5CF6",
-    icon: <PsychologyIcon />,
-    status: "open",
-    announcement: "",
-    mapLink: "/map?loc=gcc",
-  },
-];
-
 const categories = [
   "All",
   "Administrative",
@@ -207,6 +64,22 @@ const categories = [
 ];
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+// Helper function to get icon for department category
+const getIconForCategory = (category) => {
+  switch (category) {
+    case 'Administrative':
+      return <BusinessIcon />;
+    case 'Support':
+      return <SupportAgentIcon />;
+    case 'Academic':
+      return <SchoolIcon />;
+    case 'Facility':
+      return <ComputerIcon />;
+    default:
+      return <BusinessIcon />;
+  }
+};
 
 function Directory() {
   const navigate = useNavigate();
@@ -255,18 +128,33 @@ function Directory() {
             setDepartments(formattedDepartments);
           } else {
             console.log('No data from API, using static fallback');
-            setDepartments(staticDepartments);
+            // Add icons to static departments
+            const departmentsWithIcons = staticDepartments.map(dept => ({
+              ...dept,
+              icon: getIconForCategory(dept.category)
+            }));
+            setDepartments(departmentsWithIcons);
             setError('No departments found in database. Showing default entries.');
           }
         } else {
           console.error('API response not ok:', response.status, response.statusText);
-          setDepartments(staticDepartments);
+          // Add icons to static departments
+          const departmentsWithIcons = staticDepartments.map(dept => ({
+            ...dept,
+            icon: getIconForCategory(dept.category)
+          }));
+          setDepartments(departmentsWithIcons);
           setError('Failed to connect to server. Showing cached data.');
         }
       } catch (error) {
         console.error('Failed to fetch departments:', error);
         // Always fallback to static data to ensure something displays
-        setDepartments(staticDepartments);
+        // Add icons to static departments
+        const departmentsWithIcons = staticDepartments.map(dept => ({
+          ...dept,
+          icon: getIconForCategory(dept.category)
+        }));
+        setDepartments(departmentsWithIcons);
         setError('Unable to connect to server. Showing cached data.');
       } finally {
         setLoading(false);
@@ -301,19 +189,6 @@ function Directory() {
       'General': '#0288d1'
     };
     return colors[category] || '#0288d1';
-  };
-
-  const getIconForCategory = (category) => {
-    switch (category) {
-      case 'Administrative':
-        return <BusinessIcon />;
-      case 'Support':
-        return <SupportAgentIcon />;
-      case 'Academic':
-        return <SchoolIcon />;
-      default:
-        return <BusinessIcon />;
-    }
   };
 
   // Initialize search engine with departments data
@@ -425,102 +300,54 @@ function Directory() {
   const filtered = getFilteredAndSortedResults;
 
   return (
-    <Box sx={{ maxWidth: 1200, mx: "auto", mt: 6, mb: 6, px: 2 }}>
-      {/* Header Bar */}
-      <Box
-        sx={{
-          background: "linear-gradient(90deg, #00594A 0%, #007763 100%)",
-          color: "#fff",
-          borderRadius: 2,
-          mb: 3,
-          px: { xs: 2, md: 4 },
-          py: { xs: 2, md: 3 },
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
-        }}
-      >
-        <Typography variant="h5" fontWeight="bold" sx={{ letterSpacing: 1 }}>
-          University Directory
-        </Typography>
-        <Typography variant="subtitle2" sx={{ opacity: 0.85 }}>
-          Find departments, offices, and contact information
-        </Typography>
-      </Box>
-
-      {/* Category Filter */}
-      <Stack direction="row" spacing={1} sx={{ mb: 2, flexWrap: "wrap" }}>
-        {categories.map((cat) => (
-          <Chip
-            key={cat}
-            label={cat}
-            color={selectedCategory === cat ? "primary" : "default"}
-            onClick={() => setSelectedCategory(cat)}
-            sx={{
-              fontWeight: selectedCategory === cat ? "bold" : "normal",
-              bgcolor: selectedCategory === cat ? "#00594A" : "#e5e5e5",
-              color: selectedCategory === cat ? "#fff" : "#222",
-              mb: 1,
-              cursor: "pointer",
-              transition: "background 0.2s, color 0.2s",
-              "&:hover": {
-                bgcolor: selectedCategory === cat ? "#00594A" : "#d1d5db",
-                color: selectedCategory === cat ? "#fff" : "#222",
-              },
-              "&.Mui-focusVisible": {
-                bgcolor: "#00594A",
-                color: "#fff",
-              },
-              boxShadow: "none",
-              border: 0,
-            }}
-            tabIndex={0}
-            aria-label={`Filter by ${cat}`}
-            onKeyPress={(e) => {
-              if (e.key === "Enter" || e.key === " ") setSelectedCategory(cat);
-            }}
-          />
-        ))}
-      </Stack>
+    <Box sx={{ maxWidth: 1400, mx: "auto", mt: { xs: 2, md: 4 }, mb: { xs: 4, md: 6 }, px: { xs: 1.5, sm: 2, md: 4 } }}>
+      {/* Search and Category Filter - Combined in one row */}
       <Paper
-        elevation={2}
+        elevation={3}
         sx={{
-          mb: 3,
-          px: { xs: 2, md: 4 },
-          py: { xs: 2, md: 3 },
-          borderRadius: 2,
+          mb: { xs: 2, md: 4 },
+          px: { xs: 1.5, sm: 2, md: 3 },
+          py: { xs: 2, md: 2.5 },
+          borderRadius: { xs: 2, md: 3 },
           display: "flex",
           alignItems: "center",
-          flexWrap: "wrap",
-          gap: 2,
-          boxShadow: "none",
+          gap: { xs: 1.5, md: 2 },
+          boxShadow: { xs: "0 2px 10px rgba(0,0,0,0.08)", md: "0 4px 20px rgba(0,0,0,0.08)" },
+          flexDirection: "column",
+          background: "#ffffff",
         }}
         component="form"
         onSubmit={handleSearch}
       >
+        {/* Search Field */}
+        <Box sx={{ flex: 1, display: "flex", gap: { xs: 1, md: 2 }, width: "100%", flexDirection: { xs: "column", sm: "row" }, position: "relative" }}>
+        <Box sx={{ position: "relative", flex: 1, width: "100%" }}>
         <TextField
-          placeholder="Search department, office, location, or contact"
+          placeholder="Search department, office, location..."
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onFocus={() => setKeyboardOpen(true)}
+          onChange={(e) => {
+            setSearch(e.target.value);
+          }}
+          onFocus={() => {
+            setKeyboardOpen(true);
+          }}
           fullWidth
-          size="small"
+          size="medium"
           variant="outlined"
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <SearchIcon sx={{ color: "#00695C" }} />
+                <SearchIcon sx={{ color: "#00594A", fontSize: { xs: 20, md: 24 } }} />
               </InputAdornment>
             ),
-            readOnly: true, // Read-only for kiosk mode
+            readOnly: true,
             sx: {
-              borderRadius: 3,
-              background: "#fff",
-              fontSize: 15,
-              minHeight: 38,
-              height: 38,
+              borderRadius: { xs: 2, md: 3 },
+              background: "#f8f9fa",
+              fontSize: { xs: 14, md: 16 },
+              height: { xs: 44, md: 48 },
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "#00695C",
+                borderColor: "#e0e0e0",
                 borderWidth: 2,
               },
               "&:hover .MuiOutlinedInput-notchedOutline": {
@@ -528,16 +355,18 @@ function Directory() {
               },
               "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
                 borderColor: "#00594A",
+                borderWidth: 2,
               },
             },
             inputProps: {
               "aria-label": "Search directory",
               style: {
-                paddingTop: 8,
-                paddingBottom: 8,
+                paddingTop: 12,
+                paddingBottom: 12,
                 paddingLeft: 0,
                 color: "#222",
                 cursor: "pointer",
+                fontWeight: 500,
               },
             },
           }}
@@ -552,7 +381,7 @@ function Directory() {
             "& .MuiInputBase-input::placeholder": {
               color: "#888",
               opacity: 1,
-              fontSize: 15,
+              fontSize: { xs: 13, md: 15 },
             },
             flex: 1,
             minWidth: 0,
@@ -563,96 +392,169 @@ function Directory() {
           style={{
             minWidth: 0,
             width: "100%",
-            maxWidth: 450,
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleSearch(e);
           }}
         />
+        </Box>
         <Button
           type="submit"
           variant="contained"
+          startIcon={<SearchIcon sx={{ fontSize: { xs: 18, md: 20 } }} />}
           sx={{
-            ml: 1,
-            background: "#00695C",
+            background: "linear-gradient(135deg, #00594A 0%, #007763 100%)",
             color: "#fff",
             fontWeight: 700,
-            borderRadius: 2,
-            minWidth: 64,
-            minHeight: 38,
-            px: 3,
-            boxShadow: "none",
-            fontSize: "1rem",
-            '&:hover': { background: "#00594A" },
+            borderRadius: { xs: 2, md: 3 },
+            minWidth: { xs: "100%", sm: 100, md: 120 },
+            height: { xs: 44, md: 48 },
+            px: { xs: 3, md: 4 },
+            boxShadow: "0 4px 12px rgba(0,89,74,0.3)",
+            fontSize: { xs: "0.9rem", md: "1rem" },
+            '&:hover': { 
+              background: "linear-gradient(135deg, #004d3d 0%, #006654 100%)",
+              boxShadow: "0 6px 20px rgba(0,89,74,0.4)",
+              transform: "translateY(-2px)",
+            },
             textTransform: "none",
             flexShrink: 0,
+            transition: "all 0.3s",
           }}
           aria-label="Search"
         >
           Search
         </Button>
-      </Paper>
-
-      {/* Loading State */}
-      {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
         </Box>
-      )}
+
+        {/* Category Filter Chips */}
+        <Stack 
+          direction="row" 
+          spacing={{ xs: 0.75, md: 1.5 }} 
+          sx={{ 
+            flexWrap: "wrap", 
+            gap: { xs: 0.75, md: 1.5 },
+            justifyContent: { xs: "center", md: "flex-start" },
+            width: "100%",
+          }}
+        >
+          {categories.map((cat) => (
+            <Chip
+              key={cat}
+              label={cat}
+              onClick={() => setSelectedCategory(cat)}
+              sx={{
+                fontWeight: 600,
+                bgcolor: selectedCategory === cat ? "linear-gradient(135deg, #00594A 0%, #007763 100%)" : "#ffffff",
+                background: selectedCategory === cat ? "linear-gradient(135deg, #00594A 0%, #007763 100%)" : "#ffffff",
+                color: selectedCategory === cat ? "#fff" : "#555",
+                cursor: "pointer",
+                transition: "all 0.3s",
+                border: selectedCategory === cat ? "none" : "2px solid #e0e0e0",
+                boxShadow: selectedCategory === cat ? "0 4px 12px rgba(0,89,74,0.3)" : "0 2px 6px rgba(0,0,0,0.05)",
+                "&:hover": {
+                  bgcolor: selectedCategory === cat ? "#004d3d" : "#f0f0f0",
+                  background: selectedCategory === cat ? "linear-gradient(135deg, #004d3d 0%, #006654 100%)" : "#f0f0f0",
+                  transform: "translateY(-2px)",
+                  boxShadow: selectedCategory === cat ? "0 6px 16px rgba(0,89,74,0.4)" : "0 4px 10px rgba(0,0,0,0.1)",
+                },
+                height: { xs: 30, md: 36 },
+                fontSize: { xs: "0.75rem", md: "0.875rem" },
+              }}
+              tabIndex={0}
+              aria-label={`Filter by ${cat}`}
+            />
+          ))}
+        </Stack>
+      </Paper>
 
       {/* Error State */}
       {error && (
-        <Paper elevation={0} sx={{ p: 4, mb: 3, bgcolor: '#fff3cd', border: '1px solid #ffeaa7' }}>
-          <Typography color="#856404">{error}</Typography>
+        <Paper 
+          elevation={0} 
+          sx={{ 
+            p: { xs: 1.5, md: 2 },
+            mb: { xs: 2, md: 3 },
+            bgcolor: '#e8f5f3', 
+            border: '2px solid #00594A',
+            borderRadius: { xs: 1.5, md: 2 },
+            display: "flex",
+            alignItems: "center",
+            gap: { xs: 1, md: 1.5 },
+            boxShadow: "0 2px 8px rgba(0,89,74,0.15)",
+          }}
+        >
+          <WarningIcon sx={{ color: "#00594A", fontSize: { xs: 20, md: 24 } }} />
+          <Typography variant="body2" color="#00594A" sx={{ fontWeight: 500, fontSize: { xs: "0.8rem", md: "0.875rem" } }}>
+            {error}
+          </Typography>
         </Paper>
       )}
 
       {/* Directory Cards */}
       {!loading && filtered.length === 0 ? (
-        <Paper elevation={0} sx={{ p: 4, textAlign: "center", color: "#888" }}>
+        <Paper elevation={0} sx={{ p: { xs: 3, md: 4 }, textAlign: "center", color: "#888", fontSize: { xs: "0.9rem", md: "1rem" } }}>
           No results found.
         </Paper>
       ) : (
-        <Grid container spacing={3} justifyContent="center" alignItems="stretch">
-          {filtered.map((d, idx) => (
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              md={4}
-              lg={3}
-              key={idx}
-              sx={{ display: "flex", justifyContent: "center", alignItems: "stretch" }}
-            >
+        <Box sx={{ position: "relative", width: "100%", pb: { xs: 2, md: 4 } }}>
+          {/* Modern Horizontal Slider */}
+          <Box
+            sx={{
+              display: "flex",
+              overflowX: "auto",
+              gap: { xs: 2, sm: 2.5, md: 3.5 },
+              px: { xs: 1.5, sm: 2, md: 3 },
+              py: { xs: 2, md: 3 },
+              scrollBehavior: "smooth",
+              scrollSnapType: "x mandatory",
+              "&::-webkit-scrollbar": {
+                height: { xs: 6, md: 10 },
+              },
+              "&::-webkit-scrollbar-track": {
+                background: "#e0e0e0",
+                borderRadius: 10,
+              },
+              "&::-webkit-scrollbar-thumb": {
+                background: "linear-gradient(135deg, #00594A 0%, #007763 100%)",
+                borderRadius: 10,
+                "&:hover": {
+                  background: "linear-gradient(135deg, #004d3d 0%, #006654 100%)",
+                },
+              },
+            }}
+          >
+            {filtered.map((d, idx) => (
               <Card
-                elevation={3}
+                key={idx}
+                elevation={6}
                 role="button"
                 tabIndex={0}
                 aria-label={`View details for ${d.name}`}
                 sx={{
-                  borderRadius: 3,
-                  minWidth: 270,
-                  maxWidth: 270,
-                  minHeight: 330,
-                  maxHeight: 330,
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
+                  borderRadius: { xs: 3, md: 4 },
+                  minWidth: { xs: 260, sm: 280, md: 360 },
+                  maxWidth: { xs: 260, sm: 280, md: 360 },
+                  flexShrink: 0,
+                  scrollSnapAlign: "center",
                   position: "relative",
-                  transition: "transform 0.15s, box-shadow 0.15s",
-                  boxShadow: d.status === "closed" ? 0 : 3,
-                  border: d.status === "closed" ? "2px solid #E53935" : undefined,
-                  opacity: d.status === "closed" ? 0.7 : 1,
-                  "&:hover, &:focus": {
-                    transform: "translateY(-4px) scale(1.03)",
-                    boxShadow: 6,
+                  transition: "all 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+                  boxShadow: d.status === "closed" 
+                    ? "0 4px 12px rgba(229,57,53,0.2)" 
+                    : { xs: "0 4px 16px rgba(0,0,0,0.1)", md: "0 8px 24px rgba(0,0,0,0.12)" },
+                  border: d.status === "closed" ? "3px solid #E53935" : "1px solid #f0f0f0",
+                  opacity: d.status === "closed" ? 0.85 : 1,
+                  background: "linear-gradient(to bottom, #ffffff 0%, #fafafa 100%)",
+                  "&:hover": {
+                    transform: { xs: "translateY(-6px) scale(1.02)", md: "translateY(-12px) scale(1.03)" },
+                    boxShadow: d.status === "closed"
+                      ? "0 12px 32px rgba(229,57,53,0.3)"
+                      : { xs: "0 8px 24px rgba(0,89,74,0.2)", md: "0 16px 48px rgba(0,89,74,0.25)" },
                     cursor: "pointer",
-                    outline: "2px solid #00594A",
                   },
-                  m: "auto",
+                  "&:focus": {
+                    outline: "3px solid #00594A",
+                    outlineOffset: "2px",
+                  },
                   bgcolor: "#fff",
-                  p: 0,
+                  overflow: "hidden",
                 }}
                 onClick={() => handleOpenModal(d)}
                 onKeyPress={(e) => {
@@ -665,24 +567,27 @@ function Directory() {
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "flex-start",
-                    gap: 1,
-                    p: 2,
+                    gap: { xs: 0.75, md: 1 },
+                    p: { xs: 2, md: 3 },
+                    pb: { xs: 8, md: 9 },
                     width: "100%",
-                    height: "100%",
+                    minHeight: { xs: 340, md: 400 },
                     position: "relative",
-                    paddingBottom: "60px", // Reserve space for button
                   }}
                 >
-                  {/* Icon Container with extra space at the top */}
-                  {/* Image for department (falls back to default) */}
+                  {/* Image for department */}
                   <Box
                     sx={{
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       width: "100%",
-                      height: 100,
-                      mb: 1,
+                      height: { xs: 100, md: 120 },
+                      mb: { xs: 1.5, md: 2 },
+                      overflow: "hidden",
+                      borderRadius: { xs: 2, md: 3 },
+                      boxShadow: "0 4px 16px rgba(0,0,0,0.1)",
+                      background: "#f0f0f0",
                     }}
                   >
                     <img
@@ -701,13 +606,9 @@ function Directory() {
                       }
                       alt={d.name}
                       style={{
-                        width: "90%",
-                        maxWidth: 250,
-                        height: 100,
+                        width: "100%",
+                        height: "100%",
                         objectFit: "cover",
-                        borderRadius: 8,
-                        boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
-                        background: "#f5f5f5",
                       }}
                       onError={(e) => {
                         e.target.onerror = null;
@@ -717,49 +618,53 @@ function Directory() {
                   </Box>
                   <Typography
                     variant="h6"
-                    fontWeight="bold"
+                    fontWeight="700"
                     align="center"
                     sx={{
-                      color: "#007763",
-                      mb: 1,
-                      fontSize: "1.1rem",
-                      width: "90%",
-                      maxWidth: "90%",
+                      color: "#00594A",
+                      mb: { xs: 0.75, md: 1 },
+                      fontSize: { xs: "1rem", md: "1.125rem" },
+                      width: "100%",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
-                      textAlign: "center",
+                      px: { xs: 0.5, md: 1 },
+                      letterSpacing: "-0.5px",
                     }}
                     title={d.name}
                   >
                     {d.name}
                   </Typography>
-                  <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
+                  <Stack direction="row" spacing={{ xs: 0.5, md: 1 }} sx={{ mb: { xs: 0.75, md: 1 }, justifyContent: "center", flexWrap: "wrap" }}>
                     <Chip
                       label={d.category}
                       size="small"
                       sx={{
-                        bgcolor: "#007763",
+                        background: "linear-gradient(135deg, #00594A 0%, #007763 100%)",
                         color: "#fff",
-                        fontWeight: "bold",
-                        fontSize: "0.75rem",
-                        maxWidth: 100,
+                        fontWeight: "700",
+                        fontSize: { xs: "0.7rem", md: "0.75rem" },
+                        maxWidth: { xs: 100, md: 120 },
                         overflow: "hidden",
                         textOverflow: "ellipsis",
+                        boxShadow: "0 2px 8px rgba(0,89,74,0.3)",
+                        height: { xs: 24, md: 28 },
                       }}
                       aria-label={`Category: ${d.category}`}
                     />
                     {d.status === "closed" && (
                         <Tooltip title="Temporarily Closed">
                           <Chip
-                            icon={<WarningIcon sx={{ color: "#fff" }} />}
+                            icon={<WarningIcon sx={{ color: "#fff", fontSize: { xs: 14, md: 16 } }} />}
                             label="Closed"
                             size="small"
                             sx={{
                               bgcolor: "#E53935",
                               color: "#fff",
-                              fontWeight: "bold",
-                              fontSize: "0.75rem",
+                              fontWeight: "700",
+                              fontSize: { xs: "0.7rem", md: "0.75rem" },
+                              boxShadow: "0 2px 8px rgba(229,57,53,0.3)",
+                              height: { xs: 24, md: 28 },
                             }}
                           />
                         </Tooltip>
@@ -769,57 +674,69 @@ function Directory() {
                     variant="body2"
                     align="center"
                     sx={{
-                      color: "#00332E",
-                      mb: 0.5,
-                      width: "90%",
-                      maxWidth: "90%",
+                      color: "#333",
+                      mb: { xs: 0.5, md: 0.75 },
+                      width: "100%",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
+                      px: { xs: 0.5, md: 1 },
+                      fontSize: { xs: "0.8rem", md: "0.9rem" },
+                      fontWeight: 500,
                     }}
                     title={d.location}
                   >
-                    <strong>Location:</strong> {d.location}
+                    <strong style={{ color: "#00594A" }}>Location:</strong> {d.location}
                   </Typography>
                   <Typography
                     variant="body2"
                     align="center"
                     sx={{
-                      color: "#00332E",
-                      width: "90%",
-                      maxWidth: "90%",
+                      color: "#333",
+                      mb: { xs: 2, md: 3 },
+                      width: "100%",
                       overflow: "hidden",
                       textOverflow: "ellipsis",
                       whiteSpace: "nowrap",
+                      px: { xs: 0.5, md: 1 },
+                      fontSize: { xs: "0.8rem", md: "0.9rem" },
+                      fontWeight: 500,
                     }}
                     title={d.contact}
                   >
-                    <strong>Contact:</strong> {d.contact}
+                    <strong style={{ color: "#00594A" }}>Contact:</strong> {d.contact}
                   </Typography>
                   
                   {/* Button positioned at bottom */}
                   <Box
                     sx={{
                       position: "absolute",
-                      bottom: 16,
+                      bottom: { xs: 12, md: 16 },
                       left: "50%",
                       transform: "translateX(-50%)",
-                      width: "calc(100% - 32px)",
+                      width: "calc(100% - 24px)",
                     }}
                   >
                     <Button
-                      variant="outlined"
-                      size="small"
-                      startIcon={<MapIcon />}
+                      variant="contained"
+                      size="medium"
+                      startIcon={<MapIcon sx={{ fontSize: { xs: 16, md: 18 } }} />}
                       sx={{
-                        borderColor: "#007763",
-                        color: "#007763",
-                        "&:hover": { borderColor: "#00594A", bgcolor: "#00776311" },
-                        fontWeight: "bold",
-                        fontSize: "0.85rem",
+                        background: "linear-gradient(135deg, #00594A 0%, #007763 100%)",
+                        color: "#fff",
+                        "&:hover": { 
+                          background: "linear-gradient(135deg, #004d3d 0%, #006654 100%)",
+                          transform: "translateY(-2px)",
+                          boxShadow: "0 6px 16px rgba(0,89,74,0.4)",
+                        },
+                        fontWeight: "700",
+                        fontSize: { xs: "0.8rem", md: "0.875rem" },
                         width: "100%",
-                        borderRadius: 2,
-                        boxShadow: 0,
+                        borderRadius: { xs: 2, md: 3 },
+                        boxShadow: "0 4px 12px rgba(0,89,74,0.3)",
+                        py: { xs: 0.75, md: 1 },
+                        textTransform: "none",
+                        transition: "all 0.3s",
                       }}
                       href={d.mapLink}
                       target="_blank"
@@ -831,9 +748,9 @@ function Directory() {
                   </Box>
                 </CardContent>
               </Card>
-            </Grid>
-          ))}
-        </Grid>
+            ))}
+          </Box>
+        </Box>
       )}
 
       {/* Department Detail Modal */}
@@ -843,13 +760,15 @@ function Directory() {
         aria-labelledby="dept-detail-title"
         maxWidth="sm"
         fullWidth
+        fullScreen={false}
         PaperProps={{
           sx: {
-            borderRadius: 2,
+            borderRadius: { xs: 2, md: 2 },
             fontFamily: "inherit",
             maxWidth: "480px",
-            margin: 2,
-            maxHeight: "90vh",
+            margin: { xs: 1, md: 2 },
+            maxHeight: { xs: "95vh", md: "90vh" },
+            width: { xs: "calc(100% - 16px)", md: "100%" },
             animation: "slideUp 0.25s ease-out",
             "@keyframes slideUp": {
               "0%": { transform: "translateY(50px)", opacity: 0 },
@@ -874,20 +793,20 @@ function Directory() {
               sx={{
                 bgcolor: "#fff",
                 color: "#0b3d36",
-                borderTopLeftRadius: 8,
-                borderTopRightRadius: 8,
+                borderTopLeftRadius: { xs: 8, md: 8 },
+                borderTopRightRadius: { xs: 8, md: 8 },
                 fontFamily: "inherit",
-                py: 1.5,
-                px: 2,
+                py: { xs: 1.25, md: 1.5 },
+                px: { xs: 1.5, md: 2 },
                 borderBottom: "1px solid #e5e7eb",
               }}
             >
-              <Stack direction="row" alignItems="center" spacing={1.5}>
-                <Avatar sx={{ bgcolor: "#e6f3f1", color: "#00594A", width: 36, height: 36 }}>
+              <Stack direction="row" alignItems="center" spacing={{ xs: 1, md: 1.5 }}>
+                <Avatar sx={{ bgcolor: "#e6f3f1", color: "#00594A", width: { xs: 32, md: 36 }, height: { xs: 32, md: 36 } }}>
                   {modalDept.icon}
                 </Avatar>
-                <Box sx={{ minWidth: 0 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 0, lineHeight: 1.2 }} noWrap>
+                <Box sx={{ minWidth: 0, flex: 1 }}>
+                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 0, lineHeight: 1.2, fontSize: { xs: "1rem", md: "1.25rem" } }} noWrap>
                     {modalDept.name}
                   </Typography>
                   <Chip
@@ -897,36 +816,37 @@ function Directory() {
                       bgcolor: "#e6f3f1",
                       color: "#00594A",
                       fontWeight: 600,
-                      fontSize: "0.7rem",
-                      height: 22,
+                      fontSize: { xs: "0.65rem", md: "0.7rem" },
+                      height: { xs: 20, md: 22 },
+                      mt: 0.5,
                     }}
                   />
                 </Box>
               </Stack>
             </DialogTitle>
-            <DialogContent dividers sx={{ pt: 2, pb: 2, fontFamily: "inherit" }}>
-              <Stack spacing={2.5}>
-                <Stack direction="row" spacing={1.25} alignItems="center">
-                  <BusinessIcon fontSize="small" sx={{ color: "#00594A" }} />
-                  <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+            <DialogContent dividers sx={{ pt: { xs: 1.5, md: 2 }, pb: { xs: 1.5, md: 2 }, px: { xs: 1.5, md: 2 }, fontFamily: "inherit" }}>
+              <Stack spacing={{ xs: 2, md: 2.5 }}>
+                <Stack direction="row" spacing={{ xs: 1, md: 1.25 }} alignItems="center">
+                  <BusinessIcon fontSize="small" sx={{ color: "#00594A", fontSize: { xs: 18, md: 20 } }} />
+                  <Typography variant="body2" sx={{ fontSize: { xs: "0.8rem", md: "0.9rem" } }}>
                     <strong>Location:</strong> {modalDept.location}
                   </Typography>
                 </Stack>
-                <Stack direction="row" spacing={1.25} alignItems="center">
-                  <AccessTimeIcon fontSize="small" sx={{ color: "#00594A" }} />
-                  <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                <Stack direction="row" spacing={{ xs: 1, md: 1.25 }} alignItems="center">
+                  <AccessTimeIcon fontSize="small" sx={{ color: "#00594A", fontSize: { xs: 18, md: 20 } }} />
+                  <Typography variant="body2" sx={{ fontSize: { xs: "0.8rem", md: "0.9rem" } }}>
                     <strong>Office Hours:</strong> {modalDept.officeHours}
                   </Typography>
                 </Stack>
-                <Stack direction="row" spacing={1.25} alignItems="center">
-                  <PersonIcon fontSize="small" sx={{ color: "#00594A" }} />
-                  <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                <Stack direction="row" spacing={{ xs: 1, md: 1.25 }} alignItems="center">
+                  <PersonIcon fontSize="small" sx={{ color: "#00594A", fontSize: { xs: 18, md: 20 } }} />
+                  <Typography variant="body2" sx={{ fontSize: { xs: "0.8rem", md: "0.9rem" } }}>
                     <strong>Staff-in-Charge:</strong> {modalDept.staff}
                   </Typography>
                 </Stack>
-                <Stack direction="row" spacing={1.25} alignItems="center">
-                  <EmailIcon fontSize="small" sx={{ color: "#00594A" }} />
-                  <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                <Stack direction="row" spacing={{ xs: 1, md: 1.25 }} alignItems="center">
+                  <EmailIcon fontSize="small" sx={{ color: "#00594A", fontSize: { xs: 18, md: 20 } }} />
+                  <Typography variant="body2" sx={{ fontSize: { xs: "0.8rem", md: "0.9rem" } }}>
                     <strong>Email:</strong>{" "}
                     {modalDept.email ? (
                       <a
@@ -940,13 +860,13 @@ function Directory() {
                     )}
                   </Typography>
                 </Stack>
-                <Stack direction="row" spacing={1.25} alignItems="center">
-                  <SupportAgentIcon fontSize="small" sx={{ color: "#00594A" }} />
-                  <Typography variant="body2" sx={{ fontSize: "0.9rem" }}>
+                <Stack direction="row" spacing={{ xs: 1, md: 1.25 }} alignItems="center">
+                  <SupportAgentIcon fontSize="small" sx={{ color: "#00594A", fontSize: { xs: 18, md: 20 } }} />
+                  <Typography variant="body2" sx={{ fontSize: { xs: "0.8rem", md: "0.9rem" } }}>
                     <strong>Contact:</strong> {modalDept.contact}
                   </Typography>
                 </Stack>
-                <Stack direction="row" spacing={1.5} alignItems="center" sx={{ mt: 1 }}>
+                <Stack direction="row" spacing={{ xs: 1, md: 1.5 }} alignItems="center" sx={{ mt: { xs: 0.5, md: 1 } }}>
                   <Chip
                     label={modalDept.category}
                     size="small"
@@ -1003,17 +923,18 @@ function Directory() {
             <DialogActions
               sx={{
                 justifyContent: "flex-end",
-                px: 2,
-                py: 1.25,
-                gap: 1,
+                px: { xs: 1.5, md: 2 },
+                py: { xs: 1, md: 1.25 },
+                gap: { xs: 0.75, md: 1 },
                 borderTop: "1px solid #e5e7eb",
                 background: "#fff",
+                flexWrap: { xs: "wrap", sm: "nowrap" },
               }}
             >
               <Button
                 variant="text"
                 size="small"
-                sx={{ color: "#6b7280" }}
+                sx={{ color: "#6b7280", fontSize: { xs: "0.8rem", md: "0.875rem" } }}
                 onClick={handleCloseModal}
               >
                 Close
@@ -1021,8 +942,14 @@ function Directory() {
               <Button
                 variant="outlined"
                 size="small"
-                sx={{ borderColor: "#00594A", color: "#00594A", textTransform: "none" }}
-                startIcon={<MapIcon />}
+                sx={{ 
+                  borderColor: "#00594A", 
+                  color: "#00594A", 
+                  textTransform: "none",
+                  fontSize: { xs: "0.8rem", md: "0.875rem" },
+                  minWidth: { xs: 70, md: 80 },
+                }}
+                startIcon={<MapIcon sx={{ fontSize: { xs: 16, md: 18 } }} />}
                 href={modalDept.mapLink}
                 target="_blank"
                 aria-label={`View ${modalDept.name} on map`}
@@ -1032,8 +959,14 @@ function Directory() {
               <Button
                 variant="contained"
                 size="small"
-                sx={{ bgcolor: "#00594A", '&:hover': { bgcolor: "#00473f" }, textTransform: "none" }}
-                startIcon={<NavigationIcon />}
+                sx={{ 
+                  bgcolor: "#00594A", 
+                  '&:hover': { bgcolor: "#00473f" }, 
+                  textTransform: "none",
+                  fontSize: { xs: "0.8rem", md: "0.875rem" },
+                  minWidth: { xs: 90, md: 100 },
+                }}
+                startIcon={<NavigationIcon sx={{ fontSize: { xs: 16, md: 18 } }} />}
                 onClick={() => handleNavigateHere(modalDept)}
                 aria-label={`Navigate to ${modalDept.name}`}
               >
@@ -1082,7 +1015,7 @@ function Directory() {
             <OnScreenKeyboard
               value={search}
               onChange={(v) => setSearch(v)}
-              suggestions={filtered.slice(0, 8).map(d => d.name)}
+              suggestions={[]}
               onClose={() => setKeyboardOpen(false)}
               onEnter={() => setKeyboardOpen(false)}
               style={{ maxWidth: '900px', width: '95vw' }}

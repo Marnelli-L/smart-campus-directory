@@ -21,60 +21,14 @@ const FLOORS = [
   { label: "4th Floor", value: "F4", image: "/images/F4.svg" },
 ];
 
-const essentialButtons = [
-  {
-    label: "Reset View",
-    action: "reset",
-    icon: (
-      <svg
-        className="w-6 h-6 mr-2"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        aria-label="Reset View"
-      >
-        <path
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth={2}
-          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
-        />
-      </svg>
-    ),
-    color: "#00695C",
-  },
-  {
-    label: "Locate Me",
-    action: "locate",
-    icon: (
-      <svg
-        className="w-6 h-6 mr-2"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-        aria-label="Locate Me"
-      >
-        <circle cx="12" cy="12" r="10" stroke="#00695C" strokeWidth="2" fill="none" />
-        <circle cx="12" cy="12" r="4" stroke="#00695C" strokeWidth="2" fill="#00695C" />
-      </svg>
-    ),
-    color: "#00695C",
-  },
-];
-
 function Map() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const [search, setSearch] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
   const [selectedFloor, setSelectedFloor] = useState(FLOORS[0].value);
   const [searchDestination, setSearchDestination] = useState(null);
-  const [multiStopMode, setMultiStopMode] = useState(false);
-  const [selectedStops, setSelectedStops] = useState([]);
-  const [recentSearches, setRecentSearches] = useState([]);
-  const [searchResults, setSearchResults] = useState(null);
-  const [_geoData, setGeoData] = useState(null);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
+  const [locationTracking, setLocationTracking] = useState(false);
   const searchInputRef = useRef(null);
   const mapViewRef = useRef(null);
 
@@ -93,65 +47,100 @@ function Map() {
     }
   }, [searchParams]);
 
-  // Load GeoJSON data and initialize search engine
+  // Load GeoJSON data and initialize search engine with all floors
   useEffect(() => {
     const loadGeoJSONData = async () => {
       try {
-        const response = await fetch('/images/smart-campus-map.geojson');
-        if (response.ok) {
-          const data = await response.json();
-          setGeoData(data);
-          
-          // Extract data for search engine
-          const buildings = [];
-          const rooms = [];
-          const services = [];
+        // Load all floor data for comprehensive search
+        const floorFiles = [
+          { path: '/images/smart-campus-map.geojson', floor: 'ground' },
+          { path: '/images/2nd-floor-map.geojson', floor: '2' },
+          { path: '/images/3rd-floor-map.geojson', floor: '3' },
+          { path: '/images/4th-floor-map.geojson', floor: '4' }
+        ];
+        
+        const allBuildings = [];
+        const allRooms = [];
+        const allServices = [];
+        let allFeatures = [];
+        
+        // Load all floors in parallel
+        const floorDataPromises = floorFiles.map(async ({ path, floor }) => {
+          try {
+            const response = await fetch(path);
+            if (response.ok) {
+              const data = await response.json();
+              return { data, floor };
+            }
+          } catch (err) {
+            console.warn(`Could not load ${path}:`, err);
+          }
+          return null;
+        });
+        
+        const floorDataResults = await Promise.all(floorDataPromises);
+        
+        // Process all floor data
+        floorDataResults.forEach(result => {
+          if (!result) return;
+          const { data, floor } = result;
           
           data.features.forEach(feature => {
             const props = feature.properties || {};
             const name = (props.Name || props.name || props.Building || props.building || '').toString().trim();
             const type = (props.Type || props.type || '').toString().toLowerCase();
             
+            // Add floor information to feature
+            if (!props.floor && !props.Floor) {
+              props.floor = floor;
+              props.Floor = floor;
+            }
+            
+            allFeatures.push(feature);
+            
             if (name) {
               const item = {
-                id: feature.id || name,
+                id: feature.id || `${name}-${floor}`,
                 name: name,
                 type: type,
                 building: props.Building || props.building,
                 description: props.Description || props.description || '',
                 category: props.Category || props.category || '',
-                floor: props.Floor || props.floor,
+                floor: props.Floor || props.floor || floor,
                 coordinates: feature.geometry?.coordinates
               };
 
               if (type.includes('building') || type.includes('hall')) {
-                buildings.push(item);
+                allBuildings.push(item);
               } else if (type.includes('room') || type.includes('office')) {
-                rooms.push(item);
-              } else {
-                services.push(item);
+                allRooms.push(item);
+              } else if (name) {
+                allServices.push(item);
               }
             }
           });
+        });
 
-          // Initialize search engine
-          campusSearchEngine.buildIndex({
-            buildings,
-            rooms,
-            services
-          });
+        // Initialize search engine with all floors
+        campusSearchEngine.buildIndex({
+          buildings: allBuildings,
+          rooms: allRooms,
+          services: allServices
+        });
+        
+        console.log(`✅ Search engine initialized with data from ${floorDataResults.filter(r => r).length} floors`);
+        console.log(`   Buildings: ${allBuildings.length}, Rooms: ${allRooms.length}, Services: ${allServices.length}`);
 
-          // Update ALL_ROOMS for legacy compatibility
-          const roomNames = data.features
-            .filter(f => f.geometry.type === 'Point' && (f.properties.Name || f.properties.name))
-            .map(f => f.properties.Name || f.properties.name)
-            .filter(name => name && name.trim())
-            .sort();
-          
-          if (roomNames.length > 0) {
-            ALL_ROOMS = roomNames;
-            console.log('📍 Loaded rooms from GeoJSON:', roomNames.length);
-          }
+        // Update ALL_ROOMS for legacy compatibility
+        const roomNames = allFeatures
+          .filter(f => f.geometry?.type === 'Point' && (f.properties?.Name || f.properties?.name))
+          .map(f => f.properties.Name || f.properties.name)
+          .filter(name => name && name.trim())
+          .sort();
+        
+        if (roomNames.length > 0) {
+          ALL_ROOMS = [...new Set(roomNames)]; // Remove duplicates
+          console.log('📍 Loaded rooms from all floors:', ALL_ROOMS.length);
         }
       } catch (error) {
         console.warn('Could not load GeoJSON data:', error);
@@ -168,8 +157,21 @@ function Map() {
         mapViewRef.current.resetView();
       }
     } else if (action === "locate") {
-      if (mapViewRef.current && mapViewRef.current.locateUser) {
-        mapViewRef.current.locateUser();
+      const newTrackingState = !locationTracking;
+      setLocationTracking(newTrackingState);
+      
+      if (mapViewRef.current) {
+        if (newTrackingState) {
+          // Start location tracking
+          if (mapViewRef.current.startLocationTracking) {
+            mapViewRef.current.startLocationTracking();
+          }
+        } else {
+          // Stop location tracking
+          if (mapViewRef.current.stopLocationTracking) {
+            mapViewRef.current.stopLocationTracking();
+          }
+        }
       }
     }
   };
@@ -181,57 +183,6 @@ function Map() {
       searchInputRef.current.focus();
     }
   }, [location.state]);
-
-  // Enhanced search with advanced search engine
-  useEffect(() => {
-    if (search.length > 1) {
-      // Use advanced search engine
-      const advancedResults = campusSearchEngine.search(search, {
-        maxResults: 8,
-        fuzzyThreshold: 0.6
-      });
-
-      setSearchResults(advancedResults);
-
-      // Legacy fallback search
-      const legacyFiltered = ALL_ROOMS.filter(room => 
-        room.toLowerCase().includes(search.toLowerCase())
-      ).slice(0, 5);
-      
-      // Combine suggestions and remove duplicates (case-insensitive)
-      const seenLowerCase = new Set();
-      const uniqueSuggestions = [];
-      
-      // Process all suggestions
-      const allSuggestions = [...advancedResults.suggestions, ...legacyFiltered];
-      
-      for (const name of allSuggestions) {
-        const lowerName = name.toLowerCase();
-        if (!seenLowerCase.has(lowerName)) {
-          seenLowerCase.add(lowerName);
-          uniqueSuggestions.push(name);
-        }
-      }
-      
-      // Convert to final format and limit to 8 results
-      const finalSuggestions = uniqueSuggestions
-        .slice(0, 8)
-        .map((name, index) => ({ id: `suggestion-${index}`, name }));
-
-      setSuggestions(finalSuggestions);
-
-      // Update recent searches
-      if (search.trim().length > 2) {
-        setRecentSearches(prev => {
-          const newRecent = [search.trim(), ...prev.filter(s => s !== search.trim())].slice(0, 5);
-          return newRecent;
-        });
-      }
-    } else {
-      setSuggestions([]);
-      setSearchResults(null);
-    }
-  }, [search]);
 
   // Custom dropdown open state for floor selector
   const [floorDropdownOpen, setFloorDropdownOpen] = useState(false);
@@ -324,7 +275,6 @@ function Map() {
                 onKeyPress={(e) => {
                   if (e.key === 'Enter' && search.trim()) {
                     setSearchDestination(search.trim());
-                    setSuggestions([]);
                     setKeyboardOpen(false);
                   }
                 }}
@@ -345,13 +295,6 @@ function Map() {
                 }}
               />
               
-              {/* Search Analytics Display */}
-              {searchResults && (
-                <div className="flex items-center mr-3 text-sm text-[#00695C]/70">
-                  {searchResults.totalFound} result{searchResults.totalFound !== 1 ? 's' : ''}
-                </div>
-              )}
-              
               {searchDestination && (
                 <button
                   onClick={() => {
@@ -367,64 +310,6 @@ function Map() {
                 </button>
               )}
             </div>
-
-            {/* Enhanced Autocomplete Suggestions */}
-            {suggestions.length > 0 && (
-              <div className="absolute left-0 right-0 top-full bg-white border border-[#00695C] rounded-b-2xl shadow-lg z-40 max-h-64 overflow-y-auto">
-                {/* Recent searches */}
-                {recentSearches.length > 0 && search.length === 0 && (
-                  <div className="px-4 py-2 border-b border-gray-100">
-                    <div className="text-xs text-gray-500 mb-2">Recent Searches</div>
-                    {recentSearches.slice(0, 3).map((recent, index) => (
-                      <button
-                        key={`recent-${index}`}
-                        className="w-full text-left px-2 py-1 text-sm text-gray-600 hover:bg-gray-50 rounded"
-                        onClick={() => {
-                          setSearch(recent);
-                          setSearchDestination(recent);
-                          setSuggestions([]);
-                        }}
-                      >
-                        🕐 {recent}
-                      </button>
-                    ))}
-                  </div>
-                )}
-                
-                {/* Search suggestions */}
-                {suggestions.map((s) => (
-                  <button
-                    key={s.id}
-                    className="w-full text-left px-6 py-3 hover:bg-[#E0F2EF] text-[#00695C] font-semibold flex justify-between items-center transition-colors"
-                    onClick={() => {
-                      if (multiStopMode) {
-                        // Add to multi-stop list
-                        if (!selectedStops.some(stop => stop.name === s.name)) {
-                          setSelectedStops([...selectedStops, { name: s.name, id: s.id }]);
-                        }
-                        setSearch('');
-                        setSuggestions([]);
-                      } else {
-                        // Normal single destination
-                        setSearch(s.name);
-                        setSearchDestination(s.name);
-                        setSuggestions([]);
-                      }
-                    }}
-                    tabIndex={0}
-                  >
-                    <span className="flex items-center">
-                      {s.name}
-                    </span>
-                    {multiStopMode && (
-                      <span className="text-xs text-[#9c27b0]">
-                        {selectedStops.some(stop => stop.name === s.name) ? '✓ Added' : '+ Add Stop'}
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
           </div>
           {/* Floor Selector as custom dropdown with icon and chevron */}
           <div
@@ -522,41 +407,10 @@ function Map() {
               </ul>
             )}
           </div>
-          {/* Map Action Buttons (Reset View, Locate Me) */}
-          {essentialButtons.map((btn, idx) => (
-            <button
-              key={btn.action}
-              className="flex items-center gap-2 px-4 py-2 border border-[#00695C] bg-white text-[#00695C] font-bold text-sm transition-all duration-200 hover:bg-[#E0F2EF] focus:outline-none focus:ring-2 focus:ring-[#00695C]"
-              style={{
-                fontSize: 14,
-                width: 140,
-                minWidth: 110,
-                borderRadius: 16,
-                boxShadow: "none",
-                height: 48,
-                flex: "0 0 auto",
-                whiteSpace: "nowrap",
-                borderWidth: 2,
-                fontWeight: 600,
-                marginRight: idx === essentialButtons.length - 1 ? 0 : 0,
-              }}
-              onClick={() => handleEssential(btn.action)}
-              aria-label={btn.label}
-            >
-              <span style={{ color: "#00695C", display: "flex", alignItems: "center" }}>
-                {btn.icon}
-              </span>
-              <span>{btn.label}</span>
-            </button>
-          ))}
           
-          {/* Multi-Stop Routing Button */}
+          {/* Reset View Button */}
           <button
-            className={`flex items-center gap-2 px-4 py-2 border-2 font-bold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#00695C] ${
-              multiStopMode 
-                ? 'bg-[#9c27b0] border-[#9c27b0] text-white hover:bg-[#7b1fa2]' 
-                : 'border-[#9c27b0] bg-white text-[#9c27b0] hover:bg-[#f3e5f5]'
-            }`}
+            className="flex items-center gap-2 px-4 py-2 border-2 border-[#00695C] bg-white text-[#00695C] font-bold text-sm transition-all duration-200 hover:bg-[#E0F2EF] focus:outline-none focus:ring-2 focus:ring-[#00695C]"
             style={{
               fontSize: 14,
               width: 140,
@@ -568,19 +422,66 @@ function Map() {
               whiteSpace: "nowrap",
               fontWeight: 600,
             }}
-            onClick={() => setMultiStopMode(!multiStopMode)}
-            aria-label={multiStopMode ? "Exit Multi-Stop Mode" : "Multi-Stop Routing"}
-            title={multiStopMode ? "Click to exit multi-stop mode" : "Plan route with multiple destinations"}
+            onClick={() => handleEssential("reset")}
+            aria-label="Reset View"
+            title="Reset map to default view"
           >
-            <span style={{ display: "flex", alignItems: "center" }}>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4" />
+            <span style={{ color: "#00695C", display: "flex", alignItems: "center" }}>
+              <svg
+                className="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                />
               </svg>
             </span>
-            <span>{multiStopMode ? "Exit Multi" : "Multi-Stop"}</span>
+            <span>Reset View</span>
           </button>
 
+          {/* Locate Me Button - Toggle for Location Tracking */}
+          <button
+            className={`flex items-center gap-2 px-4 py-2 border-2 font-bold text-sm transition-all duration-200 focus:outline-none focus:ring-2 ${
+              locationTracking
+                ? 'bg-[#00695C] border-[#00695C] text-white hover:bg-[#004D40] focus:ring-[#004D40]'
+                : 'border-[#00695C] bg-white text-[#00695C] hover:bg-[#E0F2EF] focus:ring-[#00695C]'
+            }`}
+            style={{
+              fontSize: 14,
+              width: 140,
+              minWidth: 110,
+              borderRadius: 16,
+              boxShadow: locationTracking ? "0 4px 12px rgba(0, 105, 92, 0.3)" : "none",
+              height: 48,
+              flex: "0 0 auto",
+              whiteSpace: "nowrap",
+              fontWeight: 600,
+            }}
+            onClick={() => handleEssential("locate")}
+            aria-label={locationTracking ? "Stop Location Tracking" : "Start Location Tracking"}
+            title={locationTracking ? "Click to stop tracking your location" : "Track your real-time location on campus"}
+          >
+            <span style={{ display: "flex", alignItems: "center" }}>
+              {locationTracking ? (
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" opacity="0.7" />
+                </svg>
+              ) : (
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                  <circle cx="12" cy="12" r="4" strokeWidth="2" />
+                </svg>
+              )}
+            </span>
+            <span>{locationTracking ? "Stop" : "Locate Me"}</span>
+          </button>
+          
           {/* Emergency Exit Button */}
           <button
             className="flex items-center gap-2 px-4 py-2 border-2 border-[#f44336] bg-white text-[#f44336] hover:bg-[#ffebee] font-bold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#f44336]"
@@ -597,8 +498,6 @@ function Map() {
             }}
             onClick={() => {
               setSearchDestination("EMERGENCY_EXIT");
-              setMultiStopMode(false);
-              setSelectedStops([]);
             }}
             aria-label="Emergency Exit Route"
             title="Find fastest route to nearest emergency exit"
@@ -614,35 +513,7 @@ function Map() {
 
         </div>
       </div>
-      
-      {/* Multi-Stop Mode Instructions */}
-      {multiStopMode && (
-        <div className="w-full flex justify-center mb-4">
-          <div className="bg-[#f3e5f5] border-l-4 border-[#9c27b0] p-4 rounded-r-lg shadow-sm max-w-4xl">
-            <div className="flex">
-              <div className="ml-3">
-                <p className="text-sm text-[#9c27b0] font-semibold">
-                  🚶‍♂️ Multi-Stop Mode Active - Search and add multiple destinations to plan your route
-                </p>
-                <p className="text-xs text-gray-600 mt-1">
-                  Selected stops: {selectedStops.length > 0 ? selectedStops.map(s => s.name).join(' → ') : 'None yet'}
-                </p>
-                {selectedStops.length > 1 && (
-                  <button
-                    className="mt-2 px-3 py-1 bg-[#9c27b0] text-white text-xs rounded-lg hover:bg-[#7b1fa2] transition-colors"
-                    onClick={() => setSelectedStops([])}
-                  >
-                    Clear All Stops
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
-
-      
       {/* Full Screen Mapbox Container */}
       <div 
         id="mapbox-map-container" 
@@ -702,12 +573,11 @@ function Map() {
             <OnScreenKeyboard
               value={search}
               onChange={(v) => setSearch(v)}
-              suggestions={suggestions.slice(0, 8).map(s => s.name)}
+              suggestions={[]}
               onClose={() => setKeyboardOpen(false)}
               onEnter={() => {
                 if (search.trim()) {
                   setSearchDestination(search.trim());
-                  setSuggestions([]);
                 }
                 setKeyboardOpen(false);
               }}
