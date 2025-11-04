@@ -1206,34 +1206,37 @@ const MapView = forwardRef(({
   const legend = document.createElement('div');
   legend.id = 'legend-box';
 
+      // Detect mobile for legend sizing
+      const isMobileLegend = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      
       legend.style.cssText = `
         position: fixed;
-        bottom: 30px;
-        left: 30px;
+        bottom: ${isMobileLegend ? '15px' : '30px'};
+        left: ${isMobileLegend ? '10px' : '30px'};
         background: white;
-        padding: 16px;
-        border-radius: 8px;
+        padding: ${isMobileLegend ? '10px' : '16px'};
+        border-radius: ${isMobileLegend ? '6px' : '8px'};
         box-shadow: 0 4px 12px rgba(0,0,0,0.25);
         font-family: 'Segoe UI', Arial, sans-serif;
-        font-size: 12px;
+        font-size: ${isMobileLegend ? '10px' : '12px'};
         z-index: 9999;
-        min-width: 150px;
+        min-width: ${isMobileLegend ? '110px' : '150px'};
         pointer-events: auto;
       `;
       
       legend.innerHTML = `
-        <div style="font-weight: bold; margin-bottom: 12px; color: #333; font-size: 14px;">LEGEND</div>
-        <div style="display: flex; align-items: center; margin: 6px 0;">
-          <div style="width: 16px; height: 16px; background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 3px; margin-right: 8px;"></div>
+        <div style="font-weight: bold; margin-bottom: ${isMobileLegend ? '8px' : '12px'}; color: #333; font-size: ${isMobileLegend ? '11px' : '14px'};">LEGEND</div>
+        <div style="display: flex; align-items: center; margin: ${isMobileLegend ? '4px' : '6px'} 0;">
+          <div style="width: ${isMobileLegend ? '12px' : '16px'}; height: ${isMobileLegend ? '12px' : '16px'}; background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 3px; margin-right: ${isMobileLegend ? '6px' : '8px'};"></div>
           <span style="color: #555;">Buildings</span>
         </div>
-        <div style="display: flex; align-items: center; margin: 6px 0;">
-          <div style="width: 16px; height: 16px; background: #4CAF50; border: 1px solid #388E3C; border-radius: 3px; margin-right: 8px;"></div>
+        <div style="display: flex; align-items: center; margin: ${isMobileLegend ? '4px' : '6px'} 0;">
+          <div style="width: ${isMobileLegend ? '12px' : '16px'}; height: ${isMobileLegend ? '12px' : '16px'}; background: #4CAF50; border: 1px solid #388E3C; border-radius: 3px; margin-right: ${isMobileLegend ? '6px' : '8px'};"></div>
           <span style="color: #555;">Gardens</span>
         </div>
-        <div style="display: flex; align-items: center; margin: 8px 0 4px 0;">
-          <div style="width: 16px; height: 3px; background: #ffffff; border: 1px solid #757575; margin-right: 8px;"></div>
-          <span style="color: #555; font-size: 11px;">Pathways</span>
+        <div style="display: flex; align-items: center; margin: ${isMobileLegend ? '6px' : '8px'} 0 ${isMobileLegend ? '2px' : '4px'} 0;">
+          <div style="width: ${isMobileLegend ? '12px' : '16px'}; height: ${isMobileLegend ? '2px' : '3px'}; background: #ffffff; border: 1px solid #757575; margin-right: ${isMobileLegend ? '6px' : '8px'};"></div>
+          <span style="color: #555; font-size: ${isMobileLegend ? '9px' : '11px'};">Pathways</span>
         </div>
       `;
       

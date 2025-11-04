@@ -12,6 +12,10 @@ function LioButton() {
   const [open, setOpen] = useState(false);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const audioRef = useRef(null);
+  
+  // Detect if the device is mobile
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
   const [chatMessages, setChatMessages] = useState([
     {
       from: "lio",
@@ -193,12 +197,14 @@ function LioButton() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 300 }}
             transition={{ type: "spring", stiffness: 80, damping: 15 }}
-            className="fixed bottom-36 right-6 flex flex-col overflow-hidden border border-gray-200 shadow-lg"
+            className="fixed flex flex-col overflow-hidden border border-gray-200 shadow-lg"
               style={{
-                width: 370,
+                width: isMobile ? 300 : 370,
                 maxWidth: "95vw",
-                height: keyboardOpen ? "min(20rem,45vh)" : "min(32rem,80vh)",
-                maxHeight: keyboardOpen ? "45vh" : "80vh",
+                height: keyboardOpen ? "min(18rem,40vh)" : isMobile ? "min(28rem,70vh)" : "min(32rem,80vh)",
+                maxHeight: keyboardOpen ? "40vh" : isMobile ? "70vh" : "80vh",
+                bottom: isMobile ? "5rem" : "9rem",
+                right: isMobile ? "0.75rem" : "1.5rem",
                 borderRadius: "1.25rem",
                 background: "#fff",
                 boxShadow: "0 4px 24px 0 rgba(31, 38, 135, 0.08)",
@@ -309,9 +315,9 @@ function LioButton() {
                 placeholder="Type a message..."
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onFocus={() => setKeyboardOpen(true)}
+                onFocus={() => !isMobile && setKeyboardOpen(true)}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
-                readOnly
+                readOnly={!isMobile}
                 className="flex-1 text-[15px] border-none rounded-full px-3 py-2 focus:outline-none bg-white/80 shadow-inner transition-all cursor-pointer"
                 style={{
                   boxShadow: "0 1px 4px 0 rgba(0,185,148,0.06)",
@@ -373,7 +379,7 @@ function LioButton() {
         <motion.img
           src="/images/LioPicture.png"
           alt="Lio Chatbot"
-          className="w-28 h-28 cursor-pointer"
+          className={isMobile ? "w-20 h-20" : "w-28 h-28"}
           animate={{
             scale: [1, 1.08, 1]
           }}
@@ -388,13 +394,14 @@ function LioButton() {
             position: "relative",
             zIndex: 100002,
             transform: open ? "translateY(10px)" : "translateY(0)",
-            objectFit: "contain"
+            objectFit: "contain",
+            cursor: "pointer"
           }}
         />
       </motion.div>
 
-      {/* On-Screen Keyboard for Chat */}
-      {keyboardOpen && open && createPortal(
+      {/* On-Screen Keyboard for Chat - Only show on non-mobile devices */}
+      {!isMobile && keyboardOpen && open && createPortal(
         <div
           style={{
             position: 'fixed',

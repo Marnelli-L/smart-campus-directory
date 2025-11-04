@@ -31,8 +31,12 @@ function Map() {
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [locationTracking, setLocationTracking] = useState(false);
   const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const searchInputRef = useRef(null);
   const mapViewRef = useRef(null);
+  
+  // Detect if the device is mobile
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   // Check for destination parameter in URL and set it
   useEffect(() => {
@@ -261,9 +265,9 @@ function Map() {
             minWidth: 0,
           }}
         >
-          {/* Enhanced Search Bar with category filter */}
+          {/* Enhanced Search Bar with hamburger menu on mobile */}
           <div
-            className="flex flex-col relative"
+            className="flex items-center gap-2"
             style={{
               width: "100%",
               maxWidth: "600px",
@@ -271,6 +275,25 @@ function Map() {
               flex: "1 1 auto",
             }}
           >
+            {/* Hamburger Menu Button - Only on Mobile */}
+            {isMobile && (
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="flex items-center justify-center p-2 border-2 border-[#00695C] rounded-lg bg-white text-[#00695C] hover:bg-[#E0F2EF] transition-all"
+                style={{
+                  width: 44,
+                  height: 44,
+                  flexShrink: 0,
+                }}
+                aria-label="Toggle menu"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              </button>
+            )}
+            
+            <div className="flex flex-col relative flex-1">
             <div className="relative w-full">
               <div
                 className="flex items-center bg-white rounded-xl md:rounded-2xl px-3 md:px-6 py-2 border transition-all"
@@ -302,12 +325,12 @@ function Map() {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                onFocus={() => setKeyboardOpen(true)}
+                onFocus={() => !isMobile && setKeyboardOpen(true)}
                 placeholder="Search rooms, buildings..."
                 className="flex-1 bg-transparent outline-none text-sm md:text-lg text-[#00695C] placeholder-[#00695C]/60 font-semibold min-w-0"
                 aria-label="Search for a room, building, or service"
                 autoComplete="off"
-                readOnly
+                readOnly={!isMobile}
                 style={{
                   minHeight: 32,
                   fontSize: "clamp(14px, 3vw, 18px)",
@@ -336,7 +359,12 @@ function Map() {
               )}
             </div>
             </div>
+            </div>
           </div>
+          
+          {/* Desktop Buttons - Hidden on Mobile */}
+          {!isMobile && (
+            <>
           {/* Floor Selector as custom dropdown with icon and chevron - Mobile Responsive */}
           <div
             className="relative flex items-center"
@@ -533,10 +561,126 @@ function Map() {
             </span>
             <span>Emergency</span>
           </button>
-
+          </>
+          )}
 
         </div>
       </div>
+
+      {/* Mobile Slide-out Menu */}
+      {isMobile && mobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-[60]"
+          onClick={() => setMobileMenuOpen(false)}
+        >
+          <div
+            className="fixed right-0 top-0 h-full w-80 max-w-[85vw] bg-white shadow-2xl z-[70] flex flex-col"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Menu Header */}
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-[#00695C]">
+              <h2 className="text-white font-bold text-lg">Menu</h2>
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="text-white p-2 hover:bg-white/20 rounded-lg transition-all"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Menu Content */}
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              {/* Floor Selector */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700">Select Floor</label>
+                <div className="space-y-1">
+                  {FLOORS.map((floor) => (
+                    <button
+                      key={floor.value}
+                      onClick={() => {
+                        setSelectedFloor(floor.value);
+                        setMobileMenuOpen(false);
+                      }}
+                      className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all ${
+                        selectedFloor === floor.value
+                          ? 'bg-[#00695C] text-white'
+                          : 'bg-gray-100 text-[#00695C] hover:bg-gray-200'
+                      }`}
+                    >
+                      <MdLayers size={20} />
+                      <span className="font-semibold">{floor.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Divider */}
+              <div className="border-t border-gray-200 my-4"></div>
+
+              {/* Action Buttons */}
+              <div className="space-y-2">
+                <label className="text-sm font-semibold text-gray-700">Actions</label>
+                
+                {/* Reset View Button */}
+                <button
+                  onClick={() => {
+                    handleEssential("reset");
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg bg-gray-100 text-[#00695C] hover:bg-gray-200 transition-all"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                  </svg>
+                  <span className="font-semibold">Reset View</span>
+                </button>
+
+                {/* Locate Me Button */}
+                <button
+                  onClick={() => {
+                    handleEssential("locate");
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all ${
+                    locationTracking
+                      ? 'bg-[#00695C] text-white'
+                      : 'bg-gray-100 text-[#00695C] hover:bg-gray-200'
+                  }`}
+                >
+                  {locationTracking ? (
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="3" />
+                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" opacity="0.7" />
+                    </svg>
+                  ) : (
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                      <circle cx="12" cy="12" r="4" strokeWidth="2" />
+                    </svg>
+                  )}
+                  <span className="font-semibold">{locationTracking ? "Stop Tracking" : "Locate Me"}</span>
+                </button>
+
+                {/* Emergency Button */}
+                <button
+                  onClick={() => {
+                    setSearchDestination("EMERGENCY_EXIT");
+                    setMobileMenuOpen(false);
+                  }}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg bg-red-50 text-[#f44336] hover:bg-red-100 transition-all border-2 border-[#f44336]"
+                >
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                  </svg>
+                  <span className="font-semibold">Emergency Exit</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Full Screen Mapbox Container */}
       <div 

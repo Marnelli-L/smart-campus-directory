@@ -1,50 +1,59 @@
 // Service Worker for UDM Smart Campus Directory PWA
 // Provides offline functionality and caching
 
-const CACHE_NAME = 'udm-campus-v1.0.0';
-const STATIC_CACHE = 'udm-static-v1';
-const DYNAMIC_CACHE = 'udm-dynamic-v1';
+const CACHE_NAME = 'udm-campus-v1.1.0';
+const STATIC_CACHE = 'udm-static-v1.1';
+const DYNAMIC_CACHE = 'udm-dynamic-v1.1';
+const MAP_CACHE = 'udm-maps-v1';
 
 // Files to cache for offline use
 const STATIC_FILES = [
   '/',
   '/index.html',
-  '/src/main.jsx',
-  '/src/App.jsx',
-  '/src/App.css',
-  '/src/index.css',
+  '/manifest.json',
   '/images/UDM_LOGO.png',
+  '/images/UDM_PICTURE.jpg',
   '/images/F1.svg',
   '/images/F2.svg',
   '/images/F3.svg',
   '/images/F4.svg',
-  // Add your essential files here
+  '/images/Chathead.png',
+  '/images/LioPicture.png',
+  '/images/lio.mp3'
 ];
 
-// API endpoints to cache
-const API_ENDPOINTS = [
-  '/api/announcements',
-  '/api/buildings',
-  '/api/admin'
+// Map files to cache for offline navigation
+const MAP_FILES = [
+  '/images/smart-campus-map.geojson',
+  '/images/2nd-floor-map.geojson',
+  '/images/3rd-floor-map.geojson',
+  '/images/4th-floor-map.geojson'
 ];
 
-// Install event - cache static files
+// Install event - cache static files and maps
 self.addEventListener('install', (event) => {
   console.log('📦 Service Worker: Installing...');
   
   event.waitUntil(
-    caches.open(STATIC_CACHE)
-      .then(cache => {
+    Promise.all([
+      // Cache static files
+      caches.open(STATIC_CACHE).then(cache => {
         console.log('📦 Service Worker: Caching static files');
-        return cache.addAll(STATIC_FILES);
+        return cache.addAll(STATIC_FILES.map(url => new Request(url, { cache: 'reload' })));
+      }),
+      // Cache map files
+      caches.open(MAP_CACHE).then(cache => {
+        console.log('🗺️ Service Worker: Caching map files');
+        return cache.addAll(MAP_FILES.map(url => new Request(url, { cache: 'reload' })));
       })
-      .then(() => {
-        console.log('✅ Service Worker: Static files cached');
-        return self.skipWaiting();
-      })
-      .catch(error => {
-        console.error('❌ Service Worker: Error caching static files:', error);
-      })
+    ])
+    .then(() => {
+      console.log('✅ Service Worker: All files cached successfully');
+      return self.skipWaiting();
+    })
+    .catch(error => {
+      console.error('❌ Service Worker: Error caching files:', error);
+    })
   );
 });
 
@@ -52,12 +61,14 @@ self.addEventListener('install', (event) => {
 self.addEventListener('activate', (event) => {
   console.log('🔄 Service Worker: Activating...');
   
+  const currentCaches = [STATIC_CACHE, DYNAMIC_CACHE, MAP_CACHE];
+  
   event.waitUntil(
     caches.keys()
       .then(cacheNames => {
         return Promise.all(
           cacheNames.map(cacheName => {
-            if (cacheName !== STATIC_CACHE && cacheName !== DYNAMIC_CACHE) {
+            if (!currentCaches.includes(cacheName)) {
               console.log('🗑️ Service Worker: Deleting old cache:', cacheName);
               return caches.delete(cacheName);
             }

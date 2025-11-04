@@ -7,18 +7,50 @@ import Login from "./pages/Login";
 import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
 import "./index.css";
 
-// Service Worker completely disabled to prevent caching issues during development
-console.log('🚫 Service Worker disabled - no caching during development');
-
-// Also unregister any existing service workers
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.getRegistrations().then(function(registrations) {
-    for(let registration of registrations) {
-      registration.unregister().then(() => {
-        console.log('🗑️ Unregistered existing service worker');
+// Register Service Worker for offline functionality
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', async () => {
+    try {
+      const registration = await navigator.serviceWorker.register('/sw.js', {
+        scope: '/'
       });
+      
+      console.log('✅ Service Worker registered successfully:', registration.scope);
+      
+      // Check for updates
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        console.log('🔄 Service Worker update found');
+        
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // New service worker available, prompt user to refresh
+            console.log('🆕 New version available! Please refresh.');
+            
+            // Show update notification
+            if (window.confirm('A new version is available! Click OK to update.')) {
+              newWorker.postMessage({ type: 'SKIP_WAITING' });
+              window.location.reload();
+            }
+          }
+        });
+      });
+      
+      // Handle updates
+      let refreshing = false;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (!refreshing) {
+          refreshing = true;
+          window.location.reload();
+        }
+      });
+      
+    } catch (error) {
+      console.error('❌ Service Worker registration failed:', error);
     }
   });
+} else {
+  console.log('🚫 Service Worker not registered (development mode or not supported)');
 }
 
 // eslint-disable-next-line react-refresh/only-export-components

@@ -92,6 +92,9 @@ function Directory() {
   const [error, setError] = useState(null);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [searchSuggestions, setSearchSuggestions] = useState([]);
+  
+  // Detect if the device is mobile
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   // Generate suggestions from directory entries
   const getDirectorySuggestions = useCallback((query) => {
@@ -428,7 +431,7 @@ function Directory() {
             setSearch(e.target.value);
           }}
           onFocus={() => {
-            setKeyboardOpen(true);
+            !isMobile && setKeyboardOpen(true);
           }}
           fullWidth
           size="medium"
@@ -439,7 +442,7 @@ function Directory() {
                 <SearchIcon sx={{ color: "#00594A", fontSize: { xs: 20, md: 24 } }} />
               </InputAdornment>
             ),
-            readOnly: true,
+            readOnly: !isMobile,
             sx: {
               borderRadius: { xs: 2, md: 3 },
               background: "#f8f9fa",
@@ -1076,8 +1079,8 @@ function Directory() {
         )}
       </Dialog>
 
-      {/* On-Screen Keyboard */}
-      {keyboardOpen && createPortal(
+      {/* On-Screen Keyboard - Only show on non-mobile devices */}
+      {!isMobile && keyboardOpen && createPortal(
         <div
           style={{
             position: 'fixed',

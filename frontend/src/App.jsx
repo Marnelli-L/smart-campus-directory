@@ -10,11 +10,13 @@ import { LanguageProvider } from "./context/LanguageContext";
 import Header from "./components/Header";
 import LioButton from "./components/LioButton";
 import Announcements from "./components/Announcements";
+import OfflineIndicator from "./components/OfflineIndicator";
 import { Routes, Route } from "react-router-dom";
 
 function App() {
   return (
     <LanguageProvider>
+      <OfflineIndicator />
       <Header />
       <Announcements />
       <LioButton />

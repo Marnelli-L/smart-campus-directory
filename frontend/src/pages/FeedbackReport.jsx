@@ -19,6 +19,9 @@ function FeedbackReport() {
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [activeField, setActiveField] = useState(null); // {type: 'visitor'|'feedback'|'report', field: string}
   
+  // Detect if the device is mobile
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  
   // Visitor Feedback state
   const [visitor, setVisitor] = useState({
     name: "",
@@ -232,13 +235,15 @@ function FeedbackReport() {
                   value={feedback.name}
                   onChange={handleFeedbackChange}
                   onFocus={() => {
-                    setActiveField({ type: 'feedback', field: 'name' });
-                    setKeyboardOpen(true);
+                    if (!isMobile) {
+                      setActiveField({ type: 'feedback', field: 'name' });
+                      setKeyboardOpen(true);
+                    }
                   }}
                   variant="outlined"
                   size="small"
                   fullWidth
-                  InputProps={{ readOnly: true }}
+                  InputProps={{ readOnly: !isMobile }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 2,
@@ -264,7 +269,7 @@ function FeedbackReport() {
                   size="small"
                   fullWidth
                   type="email"
-                  InputProps={{ readOnly: true }}
+                  InputProps={{ readOnly: !isMobile }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 2,
@@ -292,7 +297,7 @@ function FeedbackReport() {
                   required
                   multiline
                   minRows={3}
-                  InputProps={{ readOnly: true }}
+                  InputProps={{ readOnly: !isMobile }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 2,
@@ -358,7 +363,7 @@ function FeedbackReport() {
                   variant="outlined"
                   size="small"
                   fullWidth
-                  InputProps={{ readOnly: true }}
+                  InputProps={{ readOnly: !isMobile }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 2,
@@ -384,7 +389,7 @@ function FeedbackReport() {
                   size="small"
                   fullWidth
                   type="email"
-                  InputProps={{ readOnly: true }}
+                  InputProps={{ readOnly: !isMobile }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 2,
@@ -437,7 +442,7 @@ function FeedbackReport() {
                   required
                   multiline
                   minRows={3}
-                  InputProps={{ readOnly: true }}
+                  InputProps={{ readOnly: !isMobile }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 2,
@@ -503,7 +508,7 @@ function FeedbackReport() {
                   size="small"
                   fullWidth
                   required
-                  InputProps={{ readOnly: true }}
+                  InputProps={{ readOnly: !isMobile }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 2,
@@ -529,7 +534,7 @@ function FeedbackReport() {
                   size="small"
                   fullWidth
                   required
-                  InputProps={{ readOnly: true }}
+                  InputProps={{ readOnly: !isMobile }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 2,
@@ -555,7 +560,7 @@ function FeedbackReport() {
                   size="small"
                   fullWidth
                   required
-                  InputProps={{ readOnly: true }}
+                  InputProps={{ readOnly: !isMobile }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 2,
@@ -644,7 +649,7 @@ function FeedbackReport() {
                   fullWidth
                   multiline
                   minRows={2}
-                  InputProps={{ readOnly: true }}
+                  InputProps={{ readOnly: !isMobile }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 2,
@@ -671,7 +676,7 @@ function FeedbackReport() {
                   fullWidth
                   multiline
                   minRows={1}
-                  InputProps={{ readOnly: true }}
+                  InputProps={{ readOnly: !isMobile }}
                   sx={{
                     "& .MuiOutlinedInput-root": {
                       borderRadius: 2,
@@ -734,8 +739,8 @@ function FeedbackReport() {
         )}
       </Paper>
 
-      {/* On-Screen Keyboard */}
-      {keyboardOpen && createPortal(
+      {/* On-Screen Keyboard - Only show on non-mobile devices */}
+      {!isMobile && keyboardOpen && createPortal(
         <div
           style={{
             position: 'fixed',
@@ -787,3 +792,4 @@ function FeedbackReport() {
 }
 
 export default FeedbackReport;
+

@@ -27,6 +27,9 @@ export default function Home() {
   const [searchText, setSearchText] = React.useState('');
   const [geoData, setGeoData] = React.useState(null);
   const [suggestions, setSuggestions] = React.useState([]);
+  
+  // Detect if the device is mobile
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
   // Prevent scrolling when this component is mounted
   React.useEffect(() => {
@@ -177,7 +180,7 @@ export default function Home() {
               placeholder="Search for buildings, rooms, or services…"
               className="flex-1 bg-transparent outline-none text-base sm:text-lg text-[#00695C] placeholder-[#00695C]/60 font-semibold min-w-0"
               style={{ color: "#00695C", fontWeight: 600 }}
-              onFocus={() => setKeyboardOpen(true)}
+              onFocus={() => !isMobile && setKeyboardOpen(true)}
               onBlur={(e) => {
                 // Don't close if clicking on keyboard
                 const relatedTarget = e.relatedTarget;
@@ -193,7 +196,7 @@ export default function Home() {
                   handleSearch(searchText);
                 }
               }}
-              readOnly // Make it read-only so physical keyboard doesn't interfere in kiosk mode
+              readOnly={!isMobile} // Make it read-only on non-mobile so physical keyboard doesn't interfere in kiosk mode
               aria-haspopup="dialog"
               aria-expanded={keyboardOpen}
             />
@@ -224,8 +227,8 @@ export default function Home() {
             ))}
           </div>
         </motion.div>
-        {/* Portal injected keyboard */}
-        {keyboardOpen && createPortal(
+        {/* Portal injected keyboard - Only show on non-mobile devices */}
+        {!isMobile && keyboardOpen && createPortal(
           <div
             style={{
               position: 'fixed',

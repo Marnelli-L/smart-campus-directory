@@ -1783,11 +1783,12 @@ const Admin = ({ setIsAuthenticated }) => {
                             {/* Feedback Table */}
                             {(feedbackFilter.type === 'feedback' || !feedbackFilter.type) && (
                               <div className="bg-white/70 backdrop-blur rounded-xl shadow-sm border border-[#E0F2EF] overflow-hidden">
+                                <div className="overflow-x-auto">
                                 <table className="w-full">
                                   <thead>
                                     <tr className="bg-[#E0F2EF] border-b border-[#E0F2EF]">
                                       {isSelectingFeedback && (
-                                        <th className="p-4 text-left font-semibold text-[#00332E] w-12">
+                                        <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] w-12">
                                           {/* Checkbox for select all in selection mode */}
                                           <input
                                             type="checkbox"
@@ -1803,11 +1804,11 @@ const Admin = ({ setIsAuthenticated }) => {
                                           />
                                         </th>
                                       )}
-                                      <th className="p-4 text-left font-semibold text-[#00332E]">Name</th>
-                                      <th className="p-4 text-left font-semibold text-[#00332E]">Email</th>
-                                      <th className="p-4 text-left font-semibold text-[#00332E]">Message</th>
-                                      <th className="p-4 text-left font-semibold text-[#00332E]">Date</th>
-                                      <th className="p-4 text-left font-semibold text-[#00332E]">Status</th>
+                                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Name</th>
+                                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Email</th>
+                                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Message</th>
+                                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Date</th>
+                                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Status</th>
                                       {!isSelectingFeedback && (
                                         <th className="p-4 text-left font-semibold text-[#00332E]">Actions</th>
                                       )}
@@ -1885,6 +1886,7 @@ const Admin = ({ setIsAuthenticated }) => {
                                       })}
                                   </tbody>
                                 </table>
+                                </div>
                                 {feedback.length === 0 && (
                                   <div className="p-8 text-center text-gray-500">
                                     <p className="text-lg">No feedback received yet</p>
@@ -1896,11 +1898,12 @@ const Admin = ({ setIsAuthenticated }) => {
         {/* Reports Table */}
         {feedbackFilter.type === 'reports' && (
               <div className="bg-white/70 backdrop-blur rounded-xl shadow-sm border border-[#E0F2EF] overflow-hidden">
+                <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="bg-[#E0F2EF] border-b border-[#E0F2EF]">
                       {isSelectingReports && (
-                        <th className="p-4 text-left font-semibold text-[#00332E] w-12">
+                        <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] w-12">
                           <input
                             type="checkbox"
                             checked={selectedReports.length === reports.length && reports.length > 0}
@@ -1915,13 +1918,13 @@ const Admin = ({ setIsAuthenticated }) => {
                           />
                         </th>
                       )}
-                      <th className="p-4 text-left font-semibold text-[#00332E]">Name</th>
-                      <th className="p-4 text-left font-semibold text-[#00332E]">Type</th>
-                      <th className="p-4 text-left font-semibold text-[#00332E]">Description</th>
-                      <th className="p-4 text-left font-semibold text-[#00332E]">Severity</th>
-                      <th className="p-4 text-left font-semibold text-[#00332E]">Status</th>
+                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Name</th>
+                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Type</th>
+                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Description</th>
+                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Severity</th>
+                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Status</th>
                       {!isSelectingReports && (
-                        <th className="p-4 text-left font-semibold text-[#00332E]">Actions</th>
+                        <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Actions</th>
                       )}
                     </tr>
                   </thead>
@@ -2040,6 +2043,7 @@ const Admin = ({ setIsAuthenticated }) => {
                       })}
                   </tbody>
                 </table>
+                </div>
                 {reports.length === 0 && (
                   <div className="p-8 text-center text-gray-500">
                     <p className="text-lg">No reports received yet</p>
@@ -2051,11 +2055,12 @@ const Admin = ({ setIsAuthenticated }) => {
             {/* Visitor Feedback Table */}
             {feedbackFilter.type === 'visitors' && (
               <div className="bg-white/70 backdrop-blur rounded-xl shadow-sm border border-[#E0F2EF] overflow-hidden">
+                <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="bg-[#E0F2EF] border-b border-[#E0F2EF]">
                       {isSelectingVisitorFeedback && (
-                        <th className="p-4 text-left font-semibold text-[#00332E] w-12">
+                        <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] w-12">
                           <input
                             type="checkbox"
                             checked={selectedVisitorFeedback.length === visitorFeedback.length && visitorFeedback.length > 0}
@@ -2070,12 +2075,12 @@ const Admin = ({ setIsAuthenticated }) => {
                           />
                         </th>
                       )}
-                      <th className="p-4 text-left font-semibold text-[#00332E]">Name</th>
-                      <th className="p-4 text-left font-semibold text-[#00332E]">Contact</th>
-                      <th className="p-4 text-left font-semibold text-[#00332E]">Services Visited</th>
-                      <th className="p-4 text-left font-semibold text-[#00332E]">Feedback</th>
-                      <th className="p-4 text-left font-semibold text-[#00332E]">Rating</th>
-                      <th className="p-4 text-left font-semibold text-[#00332E]">Date</th>
+                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Name</th>
+                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Contact</th>
+                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Services Visited</th>
+                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Feedback</th>
+                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Rating</th>
+                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Date</th>
                       {!isSelectingVisitorFeedback && (
                         <th className="p-4 text-left font-semibold text-[#00332E]">Actions</th>
                       )}
@@ -2167,6 +2172,7 @@ const Admin = ({ setIsAuthenticated }) => {
                       })}
                   </tbody>
                 </table>
+                </div>
                 {visitorFeedback.length === 0 && (
                   <div className="p-8 text-center text-gray-500">
                     <p className="text-lg">No visitor feedback received yet</p>
@@ -2724,11 +2730,11 @@ const Admin = ({ setIsAuthenticated }) => {
                 <table className="w-full">
                   <thead>
                     <tr className="bg-[#E0F2EF] border-b border-[#E0F2EF]">
-                      <th className="p-4 text-left font-semibold text-[#00332E]">Timestamp</th>
-                      <th className="p-4 text-left font-semibold text-[#00332E]">User</th>
-                      <th className="p-4 text-left font-semibold text-[#00332E]">Action</th>
-                      <th className="p-4 text-left font-semibold text-[#00332E]">Entity</th>
-                      <th className="p-4 text-left font-semibold text-[#00332E]">Description</th>
+                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Timestamp</th>
+                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">User</th>
+                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Action</th>
+                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Entity</th>
+                      <th className="p-2 md:p-4 text-left font-semibold text-[#00332E] text-xs md:text-sm whitespace-nowrap">Description</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -2751,17 +2757,17 @@ const Admin = ({ setIsAuthenticated }) => {
                         };
                         return (
                           <tr key={log.id || index} className="border-t border-[#E0F2EF] hover:bg-[#F5FAF9] transition">
-                            <td className="p-4 text-sm text-gray-600 whitespace-nowrap">
+                            <td className="p-2 md:p-4 text-xs md:text-sm text-gray-600 whitespace-nowrap">
                               {log.created_at ? new Date(log.created_at).toLocaleString() : log.timestamp}
                             </td>
-                            <td className="p-4 text-sm font-medium">{log.user_name || log.user || 'Admin'}</td>
-                            <td className="p-4">
-                              <span className={`border rounded px-2 py-1 text-sm font-medium ${actionColors[log.action] || 'bg-gray-50 border-gray-200 text-gray-700'}`}>
+                            <td className="p-2 md:p-4 text-xs md:text-sm font-medium">{log.user_name || log.user || 'Admin'}</td>
+                            <td className="p-2 md:p-4">
+                              <span className={`border rounded px-2 py-1 text-xs font-medium ${actionColors[log.action] || 'bg-gray-50 border-gray-200 text-gray-700'}`}>
                                 {log.action}
                               </span>
                             </td>
-                            <td className="p-4 text-sm font-medium text-[#00594A]">{log.entity}</td>
-                            <td className="p-4 text-sm text-gray-700">{log.description}</td>
+                            <td className="p-2 md:p-4 text-xs md:text-sm font-medium text-[#00594A]">{log.entity}</td>
+                            <td className="p-2 md:p-4 text-xs md:text-sm text-gray-700">{log.description}</td>
                           </tr>
                         );
                       })}

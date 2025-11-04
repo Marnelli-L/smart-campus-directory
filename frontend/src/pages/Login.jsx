@@ -82,7 +82,7 @@ const Login = ({ setIsAuthenticated }) => {
     };
 
     return (
-        <div className="relative h-screen w-screen">
+        <div className="relative h-screen w-screen overflow-hidden">
             {/* Image Background */}
             <div
                 className="absolute top-0 left-0 w-full h-full bg-cover bg-center"
@@ -95,21 +95,21 @@ const Login = ({ setIsAuthenticated }) => {
             <div className="absolute top-0 left-0 w-full h-full bg-black/50"></div>
 
             {/* Login Form */}
-            <div className="relative flex items-center justify-center h-full">
-                <div className="bg-white shadow-lg rounded-lg p-8 w-96">
-                    <div className="text-center mb-6">
+            <div className="relative flex items-center justify-center h-full px-4">
+                <div className="bg-white shadow-lg rounded-lg p-6 sm:p-8 w-full max-w-md sm:max-w-96">
+                    <div className="text-center mb-4 sm:mb-6">
                         <img
                             src="/images/UDM_LOGO.png"
                             alt="UDM Logo"
-                            className="w-32 mx-auto mb-4"
+                            className="w-24 sm:w-32 mx-auto mb-3 sm:mb-4"
                         />
-                        <h1 className="text-2xl font-bold text-[#00332E]">
+                        <h1 className="text-xl sm:text-2xl font-bold text-[#00332E]">
                             Admin Login
                         </h1>
-                        <p className="text-[#00332E]">Access the admin dashboard</p>
+                        <p className="text-sm sm:text-base text-[#00332E]">Access the admin dashboard</p>
                     </div>
                     
-                    <form onSubmit={handleLogin} className="space-y-4">
+                    <form onSubmit={handleLogin} className="space-y-3 sm:space-y-4">
                         <div>
                             <input
                                 type="text"
@@ -117,7 +117,7 @@ const Login = ({ setIsAuthenticated }) => {
                                 value={username}
                                 onChange={(e) => setUsername(e.target.value)}
                                 disabled={loading}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00332E] disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00332E] disabled:opacity-50 disabled:cursor-not-allowed"
                                 autoComplete="username"
                             />
                         </div>
@@ -129,13 +129,13 @@ const Login = ({ setIsAuthenticated }) => {
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 disabled={loading}
-                                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00332E] disabled:opacity-50 disabled:cursor-not-allowed"
+                                className="w-full px-3 sm:px-4 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#00332E] disabled:opacity-50 disabled:cursor-not-allowed"
                                 autoComplete="current-password"
                             />
                         </div>
 
                         {error && (
-                            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded text-sm">
+                            <div className="bg-red-50 border border-red-200 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded text-xs sm:text-sm">
                                 {error}
                             </div>
                         )}
@@ -143,7 +143,7 @@ const Login = ({ setIsAuthenticated }) => {
                         <button
                             type="submit"
                             disabled={loading}
-                            className={`w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200
+                            className={`w-full flex items-center justify-center gap-2 px-3 sm:px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200
                                 bg-[#00594A] text-white shadow-md hover:bg-[#00594A]/80 hover:shadow-sm disabled:opacity-60 disabled:cursor-not-allowed`}
                         >
                             {loading ? (
