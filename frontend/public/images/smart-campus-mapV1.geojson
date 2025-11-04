@@ -3768,6 +3768,2530 @@
         "type": "Point"
       },
       "id": "fcc24edd1b933ef5ee376879bfb9a62a"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          0,
+          5
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981614,
+            14.59163
+          ],
+          [
+            120.981616,
+            14.591631
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-0-10"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          1,
+          18
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.980888,
+            14.59302
+          ],
+          [
+            120.980884,
+            14.593032
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-2-36"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          1,
+          18
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.980861,
+            14.593011
+          ],
+          [
+            120.980884,
+            14.593032
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-3-36"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          1,
+          46
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.980861,
+            14.593011
+          ],
+          [
+            120.980847,
+            14.592983
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-3-91"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          2,
+          15
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981422,
+            14.592476
+          ],
+          [
+            120.98146,
+            14.592453
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-4-30"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          2,
+          20
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981422,
+            14.592476
+          ],
+          [
+            120.981393,
+            14.592509
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-4-39"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          2,
+          32
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981422,
+            14.592476
+          ],
+          [
+            120.981433,
+            14.592444
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-4-63"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          2,
+          32
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981422,
+            14.592476
+          ],
+          [
+            120.981449,
+            14.592484
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-4-64"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          3,
+          28
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981277,
+            14.592096
+          ],
+          [
+            120.981276,
+            14.592096
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-6-56"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          4,
+          37
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.980998,
+            14.593056
+          ],
+          [
+            120.980996,
+            14.593067
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-8-74"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          4,
+          18
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.980941,
+            14.59305
+          ],
+          [
+            120.980945,
+            14.593039
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-9-35"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          5,
+          25
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981565,
+            14.591865
+          ],
+          [
+            120.981545,
+            14.591858
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-11-49"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          6,
+          19
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981356,
+            14.591714
+          ],
+          [
+            120.981343,
+            14.591753
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-13-37"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          6,
+          19
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981356,
+            14.591714
+          ],
+          [
+            120.981327,
+            14.591748
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-13-38"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          6,
+          33
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981356,
+            14.591714
+          ],
+          [
+            120.981353,
+            14.591721
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-13-65"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          6,
+          33
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981356,
+            14.591714
+          ],
+          [
+            120.981338,
+            14.591716
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-13-66"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          6,
+          40
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981356,
+            14.591714
+          ],
+          [
+            120.98139,
+            14.591728
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-13-79"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          7,
+          23
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981423,
+            14.592261
+          ],
+          [
+            120.981436,
+            14.592218
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-14-45"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          7,
+          23
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981502,
+            14.592333
+          ],
+          [
+            120.981515,
+            14.592292
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-15-46"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          7,
+          42
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981502,
+            14.592333
+          ],
+          [
+            120.981471,
+            14.592323
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-15-83"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          8,
+          13
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981458,
+            14.592141
+          ],
+          [
+            120.981479,
+            14.592148
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-16-26"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          8,
+          28
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981458,
+            14.592141
+          ],
+          [
+            120.981454,
+            14.592149
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-16-55"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          8,
+          23
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981525,
+            14.592244
+          ],
+          [
+            120.981515,
+            14.592292
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-17-46"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          9,
+          15
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981456,
+            14.592372
+          ],
+          [
+            120.981446,
+            14.592403
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-18-29"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          9,
+          27
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981456,
+            14.592372
+          ],
+          [
+            120.981442,
+            14.592409
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-18-53"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          9,
+          42
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981456,
+            14.592372
+          ],
+          [
+            120.981445,
+            14.592368
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-18-84"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          9,
+          15
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981474,
+            14.592411
+          ],
+          [
+            120.981446,
+            14.592403
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-19-29"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          9,
+          15
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981474,
+            14.592411
+          ],
+          [
+            120.98146,
+            14.592453
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-19-30"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          9,
+          27
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981474,
+            14.592411
+          ],
+          [
+            120.981442,
+            14.592409
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-19-53"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          10,
+          14
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981334,
+            14.591781
+          ],
+          [
+            120.981321,
+            14.591821
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-20-27"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          10,
+          19
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981334,
+            14.591781
+          ],
+          [
+            120.981343,
+            14.591753
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-20-37"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          10,
+          19
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981334,
+            14.591781
+          ],
+          [
+            120.981327,
+            14.591748
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-20-38"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          10,
+          34
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981334,
+            14.591781
+          ],
+          [
+            120.981323,
+            14.591815
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-20-67"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          10,
+          34
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981334,
+            14.591781
+          ],
+          [
+            120.981306,
+            14.59181
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-20-68"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          10,
+          14
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981317,
+            14.591777
+          ],
+          [
+            120.981321,
+            14.591821
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-21-27"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          10,
+          19
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981317,
+            14.591777
+          ],
+          [
+            120.981343,
+            14.591753
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-21-37"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          10,
+          19
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981317,
+            14.591777
+          ],
+          [
+            120.981327,
+            14.591748
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-21-38"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          10,
+          34
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981317,
+            14.591777
+          ],
+          [
+            120.981323,
+            14.591815
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-21-67"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          10,
+          34
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981317,
+            14.591777
+          ],
+          [
+            120.981306,
+            14.59181
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-21-68"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          11,
+          29
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981254,
+            14.59314
+          ],
+          [
+            120.981232,
+            14.593133
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-22-57"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          11,
+          29
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981254,
+            14.59314
+          ],
+          [
+            120.981228,
+            14.593144
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-22-58"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          11,
+          45
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981254,
+            14.59314
+          ],
+          [
+            120.981238,
+            14.593107
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-22-90"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          13,
+          25
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.9815,
+            14.592003
+          ],
+          [
+            120.981521,
+            14.592009
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-25-50"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          13,
+          28
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981479,
+            14.592148
+          ],
+          [
+            120.981454,
+            14.592149
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-26-55"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          14,
+          16
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981321,
+            14.591821
+          ],
+          [
+            120.981359,
+            14.591831
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-27-31"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          14,
+          22
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981321,
+            14.591821
+          ],
+          [
+            120.981311,
+            14.591851
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-27-43"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          14,
+          34
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981321,
+            14.591821
+          ],
+          [
+            120.981323,
+            14.591815
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-27-67"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          14,
+          34
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981321,
+            14.591821
+          ],
+          [
+            120.981306,
+            14.59181
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-27-68"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          14,
+          22
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981295,
+            14.591847
+          ],
+          [
+            120.981311,
+            14.591851
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-28-43"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          14,
+          22
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981295,
+            14.591847
+          ],
+          [
+            120.981283,
+            14.591884
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-28-44"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          14,
+          31
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981295,
+            14.591847
+          ],
+          [
+            120.981299,
+            14.59189
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-28-61"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          14,
+          34
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981295,
+            14.591847
+          ],
+          [
+            120.981323,
+            14.591815
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-28-67"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          14,
+          34
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981295,
+            14.591847
+          ],
+          [
+            120.981306,
+            14.59181
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-28-68"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          15,
+          27
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981446,
+            14.592403
+          ],
+          [
+            120.981442,
+            14.592409
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-29-53"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          15,
+          32
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981446,
+            14.592403
+          ],
+          [
+            120.981433,
+            14.592444
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-29-63"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          15,
+          42
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981446,
+            14.592403
+          ],
+          [
+            120.981445,
+            14.592368
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-29-84"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          15,
+          27
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.98146,
+            14.592453
+          ],
+          [
+            120.981442,
+            14.592409
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-30-53"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          15,
+          32
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.98146,
+            14.592453
+          ],
+          [
+            120.981433,
+            14.592444
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-30-63"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          15,
+          32
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.98146,
+            14.592453
+          ],
+          [
+            120.981449,
+            14.592484
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-30-64"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          16,
+          34
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981359,
+            14.591831
+          ],
+          [
+            120.981323,
+            14.591815
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-31-67"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          16,
+          35
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981359,
+            14.591831
+          ],
+          [
+            120.981347,
+            14.59187
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-31-70"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          16,
+          30
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981283,
+            14.592019
+          ],
+          [
+            120.981301,
+            14.592024
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-32-59"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          19,
+          33
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981343,
+            14.591753
+          ],
+          [
+            120.981353,
+            14.591721
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-37-65"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          19,
+          33
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981343,
+            14.591753
+          ],
+          [
+            120.981338,
+            14.591716
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-37-66"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          19,
+          33
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981327,
+            14.591748
+          ],
+          [
+            120.981353,
+            14.591721
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-38-65"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          19,
+          33
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981327,
+            14.591748
+          ],
+          [
+            120.981338,
+            14.591716
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-38-66"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          21,
+          26
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981291,
+            14.592352
+          ],
+          [
+            120.981321,
+            14.592364
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-41-51"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          21,
+          26
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981291,
+            14.592352
+          ],
+          [
+            120.981301,
+            14.592319
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-41-52"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          21,
+          27
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981291,
+            14.592352
+          ],
+          [
+            120.981299,
+            14.592394
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-41-54"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          22,
+          31
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981311,
+            14.591851
+          ],
+          [
+            120.981299,
+            14.59189
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-43-61"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          22,
+          34
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981311,
+            14.591851
+          ],
+          [
+            120.981323,
+            14.591815
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-43-67"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          22,
+          34
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981311,
+            14.591851
+          ],
+          [
+            120.981306,
+            14.59181
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-43-68"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          22,
+          35
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981311,
+            14.591851
+          ],
+          [
+            120.981347,
+            14.59187
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-43-70"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          22,
+          31
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981283,
+            14.591884
+          ],
+          [
+            120.981299,
+            14.59189
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-44-61"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          22,
+          31
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981283,
+            14.591884
+          ],
+          [
+            120.981272,
+            14.59192
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-44-62"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          24,
+          45
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981244,
+            14.592843
+          ],
+          [
+            120.981237,
+            14.592878
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-47-89"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          26,
+          27
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981321,
+            14.592364
+          ],
+          [
+            120.981299,
+            14.592394
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-51-54"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          27,
+          32
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981442,
+            14.592409
+          ],
+          [
+            120.981433,
+            14.592444
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-53-63"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          27,
+          42
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981442,
+            14.592409
+          ],
+          [
+            120.981445,
+            14.592368
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-53-84"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          29,
+          43
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981232,
+            14.593133
+          ],
+          [
+            120.981194,
+            14.593121
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-57-85"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          29,
+          45
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981232,
+            14.593133
+          ],
+          [
+            120.981238,
+            14.593107
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-57-90"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          29,
+          43
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981228,
+            14.593144
+          ],
+          [
+            120.981194,
+            14.593121
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-58-85"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          29,
+          45
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981228,
+            14.593144
+          ],
+          [
+            120.981238,
+            14.593107
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-58-90"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          33,
+          40
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981353,
+            14.591721
+          ],
+          [
+            120.98139,
+            14.591728
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-65-79"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          37,
+          39
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981054,
+            14.593075
+          ],
+          [
+            120.981051,
+            14.593086
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-73-78"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          38,
+          43
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981173,
+            14.593114
+          ],
+          [
+            120.981194,
+            14.593121
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-75-85"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          38,
+          43
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981173,
+            14.593114
+          ],
+          [
+            120.98117,
+            14.593125
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-75-86"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          38,
+          39
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981112,
+            14.593106
+          ],
+          [
+            120.981116,
+            14.593095
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-76-77"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated",
+        "connects": [
+          43,
+          45
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981194,
+            14.593121
+          ],
+          [
+            120.981238,
+            14.593107
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-85-90"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated-v2"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981366,
+            14.592682
+          ],
+          [
+            120.981275,
+            14.592675
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-v2-1-6"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated-v2"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981194,
+            14.59214
+          ],
+          [
+            120.981256,
+            14.592156
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-v2-2-9"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "auto-generated-v2"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981347,
+            14.59248
+          ],
+          [
+            120.981327,
+            14.592542
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "connection-v2-8-19"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "component-connector",
+        "connects_components": [
+          0,
+          5
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981256,
+            14.592156
+          ],
+          [
+            120.981226,
+            14.592207
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "component-connector-0-5"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "component-connector",
+        "connects_components": [
+          0,
+          2
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981545,
+            14.591858
+          ],
+          [
+            120.981524,
+            14.591923
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "component-connector-0-2"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "component-connector",
+        "connects_components": [
+          0,
+          1
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981307,
+            14.592879
+          ],
+          [
+            120.981237,
+            14.592878
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "component-connector-0-1"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "component-connector",
+        "connects_components": [
+          0,
+          1
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981545,
+            14.591858
+          ],
+          [
+            120.981569,
+            14.591779
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "component-connector-0-1"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "connection": "component-connector",
+        "connects_components": [
+          0,
+          1
+        ]
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981237,
+            14.592878
+          ],
+          [
+            120.98122,
+            14.592965
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "component-connector-0-1"
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            120.981167,
+            14.592877
+          ],
+          [
+            120.981167,
+            14.5928
+          ],
+          [
+            120.981167,
+            14.5927
+          ]
+        ]
+      },
+      "properties": {
+        "Name": "Library Exit Stairs Corridor",
+        "Type": "Corridor",
+        "floor": "Ground Floor",
+        "isStairAccess": true
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            120.9813,
+            14.592528
+          ],
+          [
+            120.9813,
+            14.59245
+          ],
+          [
+            120.9813,
+            14.592375
+          ]
+        ]
+      },
+      "properties": {
+        "Name": "Library Entrance Stairs Corridor",
+        "Type": "Corridor",
+        "floor": "Ground Floor",
+        "isStairAccess": true
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            120.981537,
+            14.59177
+          ],
+          [
+            120.981537,
+            14.5917
+          ],
+          [
+            120.981537,
+            14.591638
+          ]
+        ]
+      },
+      "properties": {
+        "Name": "Main Entrance Stairs Corridor",
+        "Type": "Corridor",
+        "floor": "Ground Floor",
+        "isStairAccess": true
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            120.980833,
+            14.592971
+          ],
+          [
+            120.9809,
+            14.592971
+          ],
+          [
+            120.981,
+            14.592971
+          ]
+        ]
+      },
+      "properties": {
+        "Name": "Northwest Stairs Corridor",
+        "Type": "Corridor",
+        "floor": "Ground Floor",
+        "isStairAccess": true
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            120.981532,
+            14.592298
+          ],
+          [
+            120.98155,
+            14.592298
+          ],
+          [
+            120.98155,
+            14.592375
+          ]
+        ]
+      },
+      "properties": {
+        "Name": "Central Stairs Corridor 1",
+        "Type": "Corridor",
+        "floor": "Ground Floor",
+        "isStairAccess": true
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            120.981425,
+            14.592361
+          ],
+          [
+            120.98145,
+            14.592361
+          ],
+          [
+            120.98145,
+            14.592375
+          ]
+        ]
+      },
+      "properties": {
+        "Name": "Central Stairs Corridor 2",
+        "Type": "Corridor",
+        "floor": "Ground Floor",
+        "isStairAccess": true
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            120.981431,
+            14.591738
+          ],
+          [
+            120.981431,
+            14.5918
+          ],
+          [
+            120.981431,
+            14.5919
+          ]
+        ]
+      },
+      "properties": {
+        "Name": "South Stairs Corridor",
+        "Type": "Corridor",
+        "floor": "Ground Floor",
+        "isStairAccess": true
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            120.981165,
+            14.59213
+          ],
+          [
+            120.981165,
+            14.5922
+          ],
+          [
+            120.981165,
+            14.5923
+          ]
+        ]
+      },
+      "properties": {
+        "Name": "West Stairs Corridor",
+        "Type": "Corridor",
+        "floor": "Ground Floor",
+        "isStairAccess": true
+      }
     }
   ],
   "type": "FeatureCollection"
