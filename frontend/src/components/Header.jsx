@@ -51,7 +51,7 @@ function Header() {
         {/* Logo & Title */}
         <div className="flex items-center gap-2">
           <img
-            src="/public/images/UDM_LOGO.png"
+            src="/images/UDM_LOGO.png"
             alt="UDM Logo"
             className="w-8 h-8 md:w-10 md:h-10 object-contain"
           />
