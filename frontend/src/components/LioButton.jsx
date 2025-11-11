@@ -199,44 +199,44 @@ function LioButton() {
             transition={{ type: "spring", stiffness: 80, damping: 15 }}
             className="fixed flex flex-col overflow-hidden border border-gray-200 shadow-lg"
               style={{
-                width: isMobile ? 300 : 370,
-                maxWidth: "95vw",
-                height: keyboardOpen ? "min(18rem,40vh)" : isMobile ? "min(28rem,70vh)" : "min(32rem,80vh)",
-                maxHeight: keyboardOpen ? "40vh" : isMobile ? "70vh" : "80vh",
-                bottom: isMobile ? "5rem" : "9rem",
+                width: isMobile ? "calc(100vw - 1.5rem)" : 370,
+                maxWidth: isMobile ? "calc(100vw - 1.5rem)" : "95vw",
+                height: isMobile ? "calc(100vh - 12rem)" : "min(32rem,80vh)",
+                maxHeight: isMobile ? "calc(100vh - 12rem)" : "80vh",
+                bottom: isMobile ? "6rem" : "9rem",
                 right: isMobile ? "0.75rem" : "1.5rem",
-                borderRadius: "1.25rem",
+                left: isMobile ? "0.75rem" : "auto",
+                borderRadius: isMobile ? "1rem" : "1.25rem",
                 background: "#fff",
                 boxShadow: "0 4px 24px 0 rgba(31, 38, 135, 0.08)",
                 border: "1px solid #f3f3f3",
                 display: "flex",
                 flexDirection: "column",
                 zIndex: 99999,
-                transition: "height 0.3s ease, max-height 0.3s ease"
               }}
           >
             {/* Header */}
             <div
-              className="px-4 py-2 flex justify-between items-center shadow"
+              className="px-3 py-2 flex justify-between items-center shadow"
               style={{
                 background: "#00594A",
                 color: "white",
                 borderBottom: "1px solid rgba(0,0,0,0.05)",
                 boxShadow: "0 2px 8px 0 rgba(0,0,0,0.04)",
-                minHeight: 48,
+                minHeight: isMobile ? 44 : 48,
               }}
             >
-              <span className="font-semibold text-[15px] tracking-wide flex items-center gap-2">
+              <span className={`font-semibold ${isMobile ? 'text-sm' : 'text-[15px]'} tracking-wide flex items-center gap-2`}>
                 <img
                   src="/images/Chathead.png"
                   alt="Lio"
-                  className="w-7 h-7 rounded-full border border-white shadow"
+                  className={`${isMobile ? 'w-6 h-6' : 'w-7 h-7'} rounded-full border border-white shadow`}
                 />
                 Lio – Campus Assistant
               </span>
               <button
                 onClick={handleCloseClick}
-                className="text-white hover:bg-white/20 rounded-full w-8 h-8 flex items-center justify-center transition"
+                className={`text-white hover:bg-white/20 rounded-full ${isMobile ? 'w-7 h-7' : 'w-8 h-8'} flex items-center justify-center transition`}
                 aria-label="Close chat"
               >
                 ✕
@@ -245,7 +245,7 @@ function LioButton() {
 
             {/* Messages */}
             <div
-              className="flex-1 px-4 py-3 text-[15px] space-y-2 overflow-y-auto"
+              className={`flex-1 ${isMobile ? 'px-3 py-2' : 'px-4 py-3'} text-[15px] space-y-2 overflow-y-auto`}
               style={{
                 minHeight: 0,
                 background: "rgba(245, 245, 250, 0.7)",
@@ -255,7 +255,7 @@ function LioButton() {
               {chatMessages.map((m, i) => (
                 <div
                   key={i}
-                  className={`p-2 rounded-2xl max-w-[80%] shadow-md border transition-all ${
+                  className={`${isMobile ? 'p-2' : 'p-2'} rounded-2xl max-w-[85%] shadow-md border transition-all ${
                     m.from === "lio"
                       ? "bg-white/80 text-gray-800 border-gray-100"
                       : "ml-auto text-white"
@@ -266,11 +266,11 @@ function LioButton() {
                           background: "#00594A",
                           border: "none",
                           boxShadow: "0 2px 8px 0 rgba(0,185,148,0.10)",
-                          fontSize: 14,
+                          fontSize: isMobile ? 13 : 14,
                         }
                       : {
                           boxShadow: "0 2px 8px 0 rgba(0,0,0,0.06)",
-                          fontSize: 14,
+                          fontSize: isMobile ? 13 : 14,
                         }
                   }
                 >
@@ -286,13 +286,13 @@ function LioButton() {
             </div>
 
             {/* Suggested Questions only */}
-            <div className="bg-white/60 border-t border-gray-100 px-3 py-2">
-              <div className="mb-2 flex flex-wrap gap-1">
+            <div className={`bg-white/60 border-t border-gray-100 ${isMobile ? 'px-2 py-1.5' : 'px-3 py-2'}`}>
+              <div className={`${isMobile ? 'mb-1' : 'mb-2'} flex flex-wrap gap-1`}>
                 {suggestedQuestions.map((q, idx) => (
                   <button
                     key={idx}
                     className="bg-[#E0F2EF] text-[#00695C] rounded-full px-2 py-1 text-xs font-medium hover:bg-[#C8E6E0] transition focus:outline-none focus:ring-2 focus:ring-[#00695C]"
-                    style={{ fontSize: 12, lineHeight: "1.1" }}
+                    style={{ fontSize: isMobile ? 11 : 12, lineHeight: "1.1" }}
                     onClick={() => {
                       setChatMessages((prev) => [
                         ...prev,
@@ -309,7 +309,7 @@ function LioButton() {
             </div>
 
             {/* Input */}
-            <div className="border-t px-3 py-2 flex bg-white/80" style={{ minHeight: 48 }}>
+            <div className={`border-t ${isMobile ? 'px-2 py-1.5' : 'px-3 py-2'} flex bg-white/80`} style={{ minHeight: isMobile ? 44 : 48 }}>
               <input
                 type="text"
                 placeholder="Type a message..."
@@ -318,22 +318,22 @@ function LioButton() {
                 onFocus={() => !isMobile && setKeyboardOpen(true)}
                 onKeyDown={(e) => e.key === "Enter" && handleSend()}
                 readOnly={!isMobile}
-                className="flex-1 text-[15px] border-none rounded-full px-3 py-2 focus:outline-none bg-white/80 shadow-inner transition-all cursor-pointer"
+                className={`flex-1 text-[15px] border-none rounded-full ${isMobile ? 'px-2 py-1.5' : 'px-3 py-2'} focus:outline-none bg-white/80 shadow-inner transition-all cursor-pointer`}
                 style={{
                   boxShadow: "0 1px 4px 0 rgba(0,185,148,0.06)",
-                  fontSize: 14,
-                  minHeight: 32,
+                  fontSize: isMobile ? 13 : 14,
+                  minHeight: isMobile ? 30 : 32,
                 }}
                 aria-label="Type your message"
               />
               <button
-                className="ml-2 px-4 py-2 rounded-full text-white font-medium transition shadow-lg"
+                className={`${isMobile ? 'ml-1 px-3 py-1.5' : 'ml-2 px-4 py-2'} rounded-full text-white font-medium transition shadow-lg`}
                 style={{
                   background: "#00594A",
                   boxShadow: "0 2px 8px 0 rgba(0,185,148,0.12)",
-                  minHeight: 32,
-                  minWidth: 38,
-                  fontSize: 16,
+                  minHeight: isMobile ? 30 : 32,
+                  minWidth: isMobile ? 34 : 38,
+                  fontSize: isMobile ? 14 : 16,
                 }}
                 aria-label="Send message"
                 onMouseOver={(e) =>
@@ -367,7 +367,9 @@ function LioButton() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.3 }}
-              className="absolute right-24 bottom-20 text-xs px-4 py-2 rounded-full shadow-md border border-gray-200 text-gray-800 font-bold whitespace-nowrap max-w-[70vw] sm:max-w-xs overflow-hidden text-ellipsis"
+              className={`absolute text-xs px-3 py-2 rounded-full shadow-md border border-gray-200 text-gray-800 font-bold whitespace-nowrap max-w-[70vw] sm:max-w-xs overflow-hidden text-ellipsis ${
+                isMobile ? 'right-16 bottom-16' : 'right-24 bottom-20'
+              }`}
               style={{ background: "white" }}
             >
               {tips[index][language]}

@@ -303,7 +303,7 @@ function Directory() {
       }
     };
 
-    const debounceTimer = setTimeout(fetchSuggestions, 300);
+    const debounceTimer = setTimeout(fetchSuggestions, 50);
     return () => clearTimeout(debounceTimer);
   }, [search, departments, getDirectorySuggestions]);
 

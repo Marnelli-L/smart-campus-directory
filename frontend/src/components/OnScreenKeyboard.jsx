@@ -115,7 +115,7 @@ export default function OnScreenKeyboard({
 
   const handleSuggestionClick = (suggestion) => {
     // Handle both string suggestions and object suggestions
-    const suggestionText = typeof suggestion === 'string' ? suggestion : suggestion.label || suggestion;
+    const suggestionText = typeof suggestion === 'string' ? suggestion : (suggestion.label || suggestion.name || suggestion);
     onChange(suggestionText);
     if (onEnter) {
       setTimeout(() => onEnter(), 100);
@@ -155,6 +155,25 @@ export default function OnScreenKeyboard({
         ...style
       }}
     >
+      {/* Add blinking cursor animation */}
+      <style>
+        {`
+          @keyframes blink-cursor {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+          }
+          .keyboard-cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1.2em;
+            background-color: ${theme.primary};
+            margin-left: 2px;
+            animation: blink-cursor 1s step-end infinite;
+            vertical-align: text-bottom;
+          }
+        `}
+      </style>
+
       {/* Display Area */}
       <div style={{
         display: 'flex',
@@ -178,7 +197,14 @@ export default function OnScreenKeyboard({
           whiteSpace: 'nowrap',
           letterSpacing: '0.01em'
         }}>
-          {displayValue || <span style={{ color: theme.textSecondary, fontWeight: '400' }}>{placeholder}</span>}
+          {displayValue ? (
+            <>
+              {displayValue}
+              <span className="keyboard-cursor"></span>
+            </>
+          ) : (
+            <span style={{ color: theme.textSecondary, fontWeight: '400' }}>{placeholder}</span>
+          )}
         </div>
         
         <button
@@ -239,7 +265,7 @@ export default function OnScreenKeyboard({
           overflowY: 'auto'
         }}>
           {suggestions.slice(0, 8).map((suggestion, index) => {
-            const displayText = typeof suggestion === 'string' ? suggestion : suggestion.label;
+            const displayText = typeof suggestion === 'string' ? suggestion : (suggestion.label || suggestion.name);
             
             return (
               <button

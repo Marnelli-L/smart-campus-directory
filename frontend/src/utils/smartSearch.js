@@ -2,13 +2,14 @@
  * Smart Multi-Floor Search Algorithm (Google Maps Style)
  * Searches across all GeoJSON files and intelligently matches locations
  */
+import * as turf from '@turf/turf';
 
-// Floor configuration
+// Floor configuration - keys must match MapView floor state
 const FLOOR_CONFIGS = [
-  { key: 'ground', name: 'Ground Floor', file: '/images/smart-campus-map.geojson' },
-  { key: '2nd', name: '2nd Floor', file: '/images/2nd-floor-map.geojson' },
-  { key: '3rd', name: '3rd Floor', file: '/images/3rd-floor-map.geojson' },
-  { key: '4th', name: '4th Floor', file: '/images/4th-floor-map.geojson' }
+  { key: 'ground', name: 'Ground Floor', file: '/images/1st-floor-map.geojson' },
+  { key: '2', name: '2nd Floor', file: '/images/2nd-floor-map.geojson' },
+  { key: '3', name: '3rd Floor', file: '/images/3rd-floor-map.geojson' },
+  { key: '4', name: '4th Floor', file: '/images/4th-floor-map.geojson' }
 ];
 
 // Cache for loaded GeoJSON data
@@ -265,20 +266,31 @@ export async function smartSearch(searchTerm) {
   for (const [floorKey, floorData] of Object.entries(geojsonCache)) {
     if (!floorData || !floorData.data) continue;
 
-    const pointFeatures = floorData.data.features.filter(f => 
-      f.geometry.type === 'Point' && 
+    // Include both Points and Polygons (use centroid for polygons)
+    const searchableFeatures = floorData.data.features.filter(f => 
+      (f.geometry.type === 'Point' || f.geometry.type === 'Polygon') && 
       (f.properties.Name || f.properties.name)
     );
 
-    for (const feature of pointFeatures) {
+    for (const feature of searchableFeatures) {
       const score = scoreMatch(feature, searchTerm);
       
       if (score > 0) {
+        // Get coordinates (centroid for polygons, direct for points)
+        let coordinates;
+        if (feature.geometry.type === 'Point') {
+          coordinates = feature.geometry.coordinates;
+        } else if (feature.geometry.type === 'Polygon') {
+          // Calculate centroid for polygon
+          const centroid = turf.centroid(feature);
+          coordinates = centroid.geometry.coordinates;
+        }
+
         allMatches.push({
           feature,
           floor: floorData.name,
           floorKey,
-          coordinates: feature.geometry.coordinates,
+          coordinates: coordinates,
           score,
           name: feature.properties.Name || feature.properties.name,
           building: feature.properties.Building || feature.properties.building || 'Main Building',
@@ -325,12 +337,26 @@ export async function getSearchSuggestions(searchTerm) {
   }
 
   const { results } = await smartSearch(searchTerm);
-  return results.slice(0, 5).map(r => ({
-    label: r.name,
-    sublabel: `${r.floor} • ${r.building}`,
-    floor: r.floorKey,
-    coordinates: r.coordinates
-  }));
+  
+  // Remove duplicates based on name (case-insensitive)
+  const uniqueResults = [];
+  const seenNames = new Set();
+  
+  for (const r of results) {
+    const nameLower = r.name.toLowerCase();
+    if (!seenNames.has(nameLower)) {
+      seenNames.add(nameLower);
+      uniqueResults.push({
+        name: r.name,          // Changed from 'label' to match Map.jsx
+        building: r.building,  // Use actual building name
+        floor: r.floor,        // Use full floor name (e.g., "Ground Floor")
+        floorKey: r.floorKey,  // Keep floor key too
+        coordinates: r.coordinates
+      });
+    }
+  }
+  
+  return uniqueResults.slice(0, 5);
 }
 
 /**

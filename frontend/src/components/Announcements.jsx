@@ -39,6 +39,9 @@ function Announcements() {
   const [index, setIndex] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // Detect if device is mobile
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
   // Fetch announcements from API - now with periodic refresh to stay in sync with Admin panel
   useEffect(() => {
     const fetchAnnouncements = async () => {
@@ -215,8 +218,9 @@ function Announcements() {
           display: "flex",
           justifyContent: "center",
           background: "rgba(255,255,255,0.98)",
-          padding: "0.5rem 1rem",
+          padding: isMobile ? "0.3rem 0.5rem" : "0.5rem 1rem",
           boxShadow: "0 2px 8px 0 rgba(0,0,0,0.08)",
+          fontSize: isMobile ? "11px" : "14px",
         }}
       >
         Loading announcements...
@@ -235,7 +239,7 @@ function Announcements() {
         display: "flex",
         justifyContent: "center",
         background: "rgba(255,255,255,0.98)",
-        padding: "0.5rem 1rem",
+        padding: isMobile ? "0.3rem 0.5rem" : "0.5rem 1rem",
         boxShadow: "0 2px 8px 0 rgba(0,0,0,0.08)",
         minWidth: 200,
         maxWidth: "100vw",
@@ -244,12 +248,22 @@ function Announcements() {
         borderRadius: 0,
         zIndex: 10,
         position: "relative",
+        fontSize: isMobile ? "11px" : "14px",
+        lineHeight: isMobile ? "1.3" : "1.5",
       }}
     >
-      <span style={{ fontWeight: "bold", marginRight: 8 }}>
+      <span style={{ 
+        fontWeight: "bold", 
+        marginRight: isMobile ? 4 : 8,
+        fontSize: isMobile ? "10px" : "14px",
+      }}>
         {announcements[index].type[language].toUpperCase()}:
       </span>
-      <span>{announcements[index].text[language]}</span>
+      <span style={{ 
+        fontSize: isMobile ? "11px" : "14px",
+      }}>
+        {announcements[index].text[language]}
+      </span>
     </div>
   );
 }

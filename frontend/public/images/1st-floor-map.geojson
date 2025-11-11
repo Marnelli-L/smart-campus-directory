@@ -2,36 +2,10 @@
   "features": [
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981614,
-            14.59163
-          ],
-          [
-            120.981441,
-            14.591573
-          ],
-          [
-            120.981375,
-            14.591551
-          ],
-          [
-            120.98135,
-            14.591637
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "00e534600b439c5a2db9e7a2a770aa2c"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Office of the President",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -47,8 +21,8 @@
       "type": "Feature",
       "properties": {
         "Name": "VPAA Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office of the Dean "
       },
       "geometry": {
@@ -64,35 +38,31 @@
       "type": "Feature",
       "properties": {
         "Name": "Parking",
-        "Floor": "Ground Floor",
+        "Floor": "Ground ",
         "Type": "Parking"
       },
       "geometry": {
         "coordinates": [
           [
             [
-              120.98101,
-              14.591501
+              120.981,
+              14.591547
             ],
             [
-              120.981075,
-              14.591501
+              120.981036,
+              14.591552
             ],
             [
-              120.981065,
-              14.591554
+              120.981063,
+              14.591556
             ],
             [
               120.981161,
-              14.591564
+              14.591569
             ],
             [
-              120.981173,
-              14.591502
-            ],
-            [
-              120.981303,
-              14.591504
+              120.981274,
+              14.591584
             ],
             [
               120.981196,
@@ -103,8 +73,8 @@
               14.591817
             ],
             [
-              120.98101,
-              14.591501
+              120.981,
+              14.591547
             ]
           ]
         ],
@@ -116,8 +86,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Office of the President for Student Success and Support Services",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -151,28 +121,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.980888,
-            14.59302
-          ],
-          [
-            120.980861,
-            14.593011
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "043c98d4e5fcafbd291c75487ed1392d"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Quality Assurance and Accreditation",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -207,8 +159,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Security Office",
-        "Building": "New Building",
+        "Name": "New Security Office",
+        "Building": "New ",
         "Floor": "Ground Floor",
         "Type": "Office"
       },
@@ -220,16 +172,16 @@
               14.592995
             ],
             [
-              120.980824,
-              14.593012
+              120.980823,
+              14.593013
             ],
             [
               120.980857,
               14.593024
             ],
             [
-              120.980862,
-              14.593006
+              120.980863,
+              14.593005
             ],
             [
               120.98083,
@@ -245,15 +197,15 @@
       "type": "Feature",
       "properties": {
         "Name": "Staff Room",
-        "Building": "New Building",
-        "Floor": "Ground Floor",
+        "Building": "New ",
+        "Floor": "Ground ",
         "Type": "Room"
       },
       "geometry": {
         "coordinates": [
           [
             [
-              120.981178,
+              120.981179,
               14.593197
             ],
             [
@@ -269,7 +221,7 @@
               14.593213
             ],
             [
-              120.981178,
+              120.981179,
               14.593197
             ]
           ]
@@ -282,8 +234,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Vacant",
-        "Building": "New Building",
-        "Floor": "Ground Floor",
+        "Building": "New ",
+        "Floor": "Ground ",
         "Type": "Room"
       },
       "geometry": {
@@ -317,79 +269,837 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981422,
-            14.592476
-          ],
-          [
-            120.981336,
-            14.592578
-          ],
-          [
-            120.981305,
-            14.592631
-          ],
-          [
-            120.981275,
-            14.592675
-          ],
-          [
-            120.981359,
-            14.592704
-          ],
-          [
-            120.981366,
-            14.592682
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "0cb858e7adfc40615f2fff4aa1adf485"
-    },
-    {
-      "type": "Feature",
       "properties": {
-        "Name": "You are here"
+        "Corridor": "Ground Floor"
       },
       "geometry": {
         "coordinates": [
-          120.981616,
-          14.591631
-        ],
-        "type": "Point"
-      },
-      "id": "0d9d46dce1f3e81c38e84f267e5a8990"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
+          [
+            120.981584,
+            14.591664
+          ],
+          [
+            120.981523,
+            14.591643
+          ],
+          [
+            120.981519,
+            14.59166
+          ],
+          [
+            120.981523,
+            14.591642
+          ],
+          [
+            120.981513,
+            14.591639
+          ],
+          [
+            120.981542,
+            14.591561
+          ],
+          [
+            120.981513,
+            14.591639
+          ],
+          [
+            120.981493,
+            14.591723
+          ],
+          [
+            120.981513,
+            14.591639
+          ],
+          [
+            120.98148,
+            14.591627
+          ],
+          [
+            120.981448,
+            14.591617
+          ],
+          [
+            120.981416,
+            14.591606
+          ],
+          [
+            120.981407,
+            14.591637
+          ],
+          [
+            120.98139,
+            14.591683
+          ],
+          [
+            120.981334,
+            14.591662
+          ],
+          [
+            120.98139,
+            14.591683
+          ],
+          [
+            120.981384,
+            14.591706
+          ],
+          [
+            120.981372,
+            14.591744
+          ],
+          [
+            120.981346,
+            14.591826
+          ],
           [
             120.981277,
-            14.592096
+            14.591805
           ],
           [
-            120.981257,
-            14.592157
+            120.981328,
+            14.591821
           ],
           [
-            120.981194,
-            14.59214
+            120.98134,
+            14.591785
+          ],
+          [
+            120.981287,
+            14.591768
+          ],
+          [
+            120.98134,
+            14.591785
+          ],
+          [
+            120.98135,
+            14.591752
+          ],
+          [
+            120.981297,
+            14.591735
+          ],
+          [
+            120.98135,
+            14.591752
+          ],
+          [
+            120.981354,
+            14.591738
+          ],
+          [
+            120.98136,
+            14.591716
+          ],
+          [
+            120.981358,
+            14.591721
+          ],
+          [
+            120.981309,
+            14.591702
+          ],
+          [
+            120.981358,
+            14.591721
+          ],
+          [
+            120.981344,
+            14.591771
+          ],
+          [
+            120.981328,
+            14.591821
+          ],
+          [
+            120.981296,
+            14.591927
+          ],
+          [
+            120.981244,
+            14.59191
+          ],
+          [
+            120.981296,
+            14.591927
+          ],
+          [
+            120.981308,
+            14.591888
+          ],
+          [
+            120.981256,
+            14.591872
+          ],
+          [
+            120.981308,
+            14.591888
+          ],
+          [
+            120.981318,
+            14.591855
+          ],
+          [
+            120.981267,
+            14.591841
+          ],
+          [
+            120.981318,
+            14.591855
+          ],
+          [
+            120.981328,
+            14.59182
+          ],
+          [
+            120.981346,
+            14.591826
+          ],
+          [
+            120.981337,
+            14.591857
+          ],
+          [
+            120.981323,
+            14.591905
+          ],
+          [
+            120.981295,
+            14.592002
+          ],
+          [
+            120.981244,
+            14.591988
+          ],
+          [
+            120.981294,
+            14.592001
+          ],
+          [
+            120.981249,
+            14.592151
+          ],
+          [
+            120.981165,
+            14.592128
+          ],
+          [
+            120.981249,
+            14.592151
+          ],
+          [
+            120.981227,
+            14.592205
+          ],
+          [
+            120.98115,
+            14.592186
+          ],
+          [
+            120.981134,
+            14.592226
+          ],
+          [
+            120.98115,
+            14.592185
+          ],
+          [
+            120.981227,
+            14.592205
+          ],
+          [
+            120.981204,
+            14.592259
+          ],
+          [
+            120.981188,
+            14.592302
+          ],
+          [
+            120.981236,
+            14.592321
+          ],
+          [
+            120.981337,
+            14.59236
+          ],
+          [
+            120.981241,
+            14.592414
+          ],
+          [
+            120.981337,
+            14.59236
+          ],
+          [
+            120.981373,
+            14.592401
+          ],
+          [
+            120.981403,
+            14.592441
+          ],
+          [
+            120.981429,
+            14.592469
+          ],
+          [
+            120.981469,
+            14.592494
+          ],
+          [
+            120.981429,
+            14.59247
+          ],
+          [
+            120.981414,
+            14.592489
+          ],
+          [
+            120.9814,
+            14.592509
+          ],
+          [
+            120.981338,
+            14.592478
+          ],
+          [
+            120.981399,
+            14.592509
+          ],
+          [
+            120.981376,
+            14.592542
+          ],
+          [
+            120.9813,
+            14.592527
+          ],
+          [
+            120.981376,
+            14.592542
+          ],
+          [
+            120.981356,
+            14.59257
+          ],
+          [
+            120.981332,
+            14.592602
+          ],
+          [
+            120.981284,
+            14.592672
+          ],
+          [
+            120.98128,
+            14.592708
+          ],
+          [
+            120.981276,
+            14.592743
+          ],
+          [
+            120.981272,
+            14.592777
+          ],
+          [
+            120.98127,
+            14.592799
+          ],
+          [
+            120.981267,
+            14.592823
+          ],
+          [
+            120.981217,
+            14.592849
+          ],
+          [
+            120.981167,
+            14.592877
+          ],
+          [
+            120.981266,
+            14.592822
+          ],
+          [
+            120.981261,
+            14.592878
+          ],
+          [
+            120.981335,
+            14.592874
+          ],
+          [
+            120.981261,
+            14.592878
+          ],
+          [
+            120.981251,
+            14.592962
+          ],
+          [
+            120.981097,
+            14.592926
+          ],
+          [
+            120.981251,
+            14.592962
+          ],
+          [
+            120.981248,
+            14.592995
+          ],
+          [
+            120.981242,
+            14.593044
+          ],
+          [
+            120.981238,
+            14.593079
+          ],
+          [
+            120.981235,
+            14.5931
+          ],
+          [
+            120.981233,
+            14.593121
+          ],
+          [
+            120.981181,
+            14.593103
+          ],
+          [
+            120.981162,
+            14.593158
+          ],
+          [
+            120.981181,
+            14.593103
+          ],
+          [
+            120.981122,
+            14.593084
+          ],
+          [
+            120.981105,
+            14.593137
+          ],
+          [
+            120.981122,
+            14.593084
+          ],
+          [
+            120.981067,
+            14.593065
+          ],
+          [
+            120.98105,
+            14.59312
+          ],
+          [
+            120.981067,
+            14.593065
+          ],
+          [
+            120.98101,
+            14.593045
+          ],
+          [
+            120.980981,
+            14.593035
+          ],
+          [
+            120.980973,
+            14.593033
+          ],
+          [
+            120.980964,
+            14.59303
+          ],
+          [
+            120.98095,
+            14.593025
+          ],
+          [
+            120.980933,
+            14.593085
+          ],
+          [
+            120.980951,
+            14.593026
+          ],
+          [
+            120.980936,
+            14.593021
+          ],
+          [
+            120.980899,
+            14.593009
+          ],
+          [
+            120.980878,
+            14.593067
+          ],
+          [
+            120.980899,
+            14.593009
+          ],
+          [
+            120.980875,
+            14.593001
+          ],
+          [
+            120.98087,
+            14.593019
+          ],
+          [
+            120.980842,
+            14.593009
+          ],
+          [
+            120.98087,
+            14.593019
+          ],
+          [
+            120.980875,
+            14.593001
+          ],
+          [
+            120.980843,
+            14.59299
+          ],
+          [
+            120.981006,
+            14.593044
+          ],
+          [
+            120.980987,
+            14.593103
+          ],
+          [
+            120.981005,
+            14.593044
+          ],
+          [
+            120.981154,
+            14.593095
+          ],
+          [
+            120.981186,
+            14.593105
+          ],
+          [
+            120.981215,
+            14.593115
+          ],
+          [
+            120.98121,
+            14.59313
+          ],
+          [
+            120.981263,
+            14.593146
+          ],
+          [
+            120.98121,
+            14.59313
+          ],
+          [
+            120.981215,
+            14.593115
+          ],
+          [
+            120.981233,
+            14.593121
+          ],
+          [
+            120.981217,
+            14.593175
+          ],
+          [
+            120.981233,
+            14.593121
+          ],
+          [
+            120.981258,
+            14.592897
+          ],
+          [
+            120.981284,
+            14.592672
+          ],
+          [
+            120.981324,
+            14.592685
+          ],
+          [
+            120.981353,
+            14.592694
+          ],
+          [
+            120.981364,
+            14.592658
+          ],
+          [
+            120.981353,
+            14.592694
+          ],
+          [
+            120.981332,
+            14.592687
+          ],
+          [
+            120.981296,
+            14.592676
+          ],
+          [
+            120.981284,
+            14.592672
+          ],
+          [
+            120.981327,
+            14.592609
+          ],
+          [
+            120.981343,
+            14.592587
+          ],
+          [
+            120.981361,
+            14.592563
+          ],
+          [
+            120.981368,
+            14.592553
+          ],
+          [
+            120.981385,
+            14.59253
+          ],
+          [
+            120.981429,
+            14.59247
+          ],
+          [
+            120.981437,
+            14.592442
+          ],
+          [
+            120.98148,
+            14.592461
+          ],
+          [
+            120.981437,
+            14.592442
+          ],
+          [
+            120.981449,
+            14.592399
+          ],
+          [
+            120.981505,
+            14.592419
+          ],
+          [
+            120.981449,
+            14.592399
+          ],
+          [
+            120.981459,
+            14.59237
+          ],
+          [
+            120.981424,
+            14.59236
+          ],
+          [
+            120.981459,
+            14.59237
+          ],
+          [
+            120.981476,
+            14.592319
+          ],
+          [
+            120.981538,
+            14.59234
+          ],
+          [
+            120.981476,
+            14.592319
+          ],
+          [
+            120.981486,
+            14.592283
+          ],
+          [
+            120.981531,
+            14.592298
+          ],
+          [
+            120.981486,
+            14.592282
+          ],
+          [
+            120.981494,
+            14.592256
+          ],
+          [
+            120.98152,
+            14.592265
+          ],
+          [
+            120.981546,
+            14.592273
+          ],
+          [
+            120.98155,
+            14.592259
+          ],
+          [
+            120.981546,
+            14.592273
+          ],
+          [
+            120.981494,
+            14.592256
+          ],
+          [
+            120.981479,
+            14.592251
+          ],
+          [
+            120.981453,
+            14.592243
+          ],
+          [
+            120.981433,
+            14.592238
+          ],
+          [
+            120.98145,
+            14.592182
+          ],
+          [
+            120.981457,
+            14.592162
+          ],
+          [
+            120.980999,
+            14.592025
+          ],
+          [
+            120.981119,
+            14.59153
+          ],
+          [
+            120.980998,
+            14.592026
+          ],
+          [
+            120.981456,
+            14.592161
+          ],
+          [
+            120.981465,
+            14.592135
+          ],
+          [
+            120.981534,
+            14.592158
+          ],
+          [
+            120.981465,
+            14.592135
+          ],
+          [
+            120.981482,
+            14.592081
+          ],
+          [
+            120.981507,
+            14.592002
+          ],
+          [
+            120.98158,
+            14.592025
+          ],
+          [
+            120.981507,
+            14.592002
+          ],
+          [
+            120.981529,
+            14.591931
+          ],
+          [
+            120.981334,
+            14.591867
+          ],
+          [
+            120.981529,
+            14.591931
+          ],
+          [
+            120.981552,
+            14.59186
+          ],
+          [
+            120.981617,
+            14.591879
+          ],
+          [
+            120.981551,
+            14.59186
+          ],
+          [
+            120.981557,
+            14.59184
+          ],
+          [
+            120.981563,
+            14.591821
+          ],
+          [
+            120.981575,
+            14.591783
+          ],
+          [
+            120.981536,
+            14.591769
+          ],
+          [
+            120.981575,
+            14.591783
+          ],
+          [
+            120.981585,
+            14.591751
+          ],
+          [
+            120.981596,
+            14.591714
+          ],
+          [
+            120.981608,
+            14.591672
+          ],
+          [
+            120.981584,
+            14.591664
           ]
         ],
         "type": "LineString"
       },
-      "id": "11fe54abaee406c605b08de20eadfbd1"
+      "id": "0df04faad34efed77021f9d072894d53"
     },
     {
       "type": "Feature",
       "properties": {
         "Name": "Stairs",
-        "Building": "New Building",
+        "Building": "New ",
         "Floor": "Ground Floor",
         "Type": "Stairs"
       },
@@ -425,10 +1135,11 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Stairs/ Exit from Library",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
-        "Type": "Stairs"
+        "Name": "Library Exit",
+        "Building": "Main ",
+        "Floor": "Ground ",
+        "Type": "Stairs",
+        "Stairs Type": "Exit Stairs"
       },
       "geometry": {
         "coordinates": [
@@ -443,8 +1154,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Cash Management Division",
-        "Building": "Main Building ",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office "
       },
       "geometry": {
@@ -478,64 +1189,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.980998,
-            14.593056
-          ],
-          [
-            120.980945,
-            14.593039
-          ],
-          [
-            120.980941,
-            14.59305
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "131b18484775fc2605b94038cdb30528"
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "route": "to office of the president"
-      },
-      "geometry": {
-        "coordinates": [
-          [
-            120.981616,
-            14.591631
-          ],
-          [
-            120.981581,
-            14.591744
-          ],
-          [
-            120.981562,
-            14.591802
-          ],
-          [
-            120.981545,
-            14.591858
-          ],
-          [
-            120.981565,
-            14.591865
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "13ac911115b5b786120de39b58989b21"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Registrar",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -546,32 +1203,6 @@
         "type": "Point"
       },
       "id": "1656342a8f8a176ab47e9256931d2c30"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981437,
-            14.591571
-          ],
-          [
-            120.981359,
-            14.591832
-          ],
-          [
-            120.981321,
-            14.591822
-          ],
-          [
-            120.981356,
-            14.591714
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "17ce7a346ccdf153f364859e921f3be3"
     },
     {
       "type": "Feature",
@@ -592,72 +1223,32 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981423,
-            14.592261
-          ],
-          [
-            120.98141,
-            14.592305
-          ],
-          [
-            120.981502,
-            14.592333
-          ]
-        ],
-        "type": "LineString"
+      "properties": {
+        "Name": "Exit",
+        "Floor": "Ground ",
+        "Type": "Exit"
       },
-      "id": "22f8d96b1c35609e7990fc257e35fb3f"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981458,
-            14.592141
-          ],
-          [
-            120.981436,
-            14.592219
-          ],
-          [
-            120.981525,
-            14.592244
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "237a50307f97c495f591574c43fd06e5"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
       "geometry": {
         "coordinates": [
           [
             [
-              120.981075,
+              120.981014,
               14.591501
             ],
             [
-              120.981173,
-              14.591502
+              120.981298,
+              14.591503
             ],
             [
-              120.98116,
-              14.591564
+              120.981274,
+              14.591575
             ],
             [
-              120.981065,
-              14.591554
+              120.981002,
+              14.591544
             ],
             [
-              120.981075,
+              120.981014,
               14.591501
             ]
           ]
@@ -670,8 +1261,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Conference Room",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -705,32 +1296,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981456,
-            14.592372
-          ],
-          [
-            120.981446,
-            14.592403
-          ],
-          [
-            120.981474,
-            14.592411
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "2f23219b8726346105b5afb323e59a87"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Taekwando Room",
-        "Building": "New Building",
-        "Floor": "Ground Floor",
+        "Building": "New ",
+        "Floor": "Ground ",
         "Type": "Gym / Training Room"
       },
       "geometry": {
@@ -745,7 +1314,7 @@
               14.593093
             ],
             [
-              120.980894,
+              120.980893,
               14.59311
             ],
             [
@@ -764,28 +1333,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981334,
-            14.591781
-          ],
-          [
-            120.981317,
-            14.591777
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "38c7bea527b32e4c9d2db7c48762664c"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Stairs ",
-        "Building": "Main Building ",
-        "Floor": "Ground Floor ",
+        "Building": "Main  ",
+        "Floor": "Ground ",
         "Type": "Stairs "
       },
       "geometry": {
@@ -821,39 +1372,16 @@
       "type": "Feature",
       "properties": {
         "Name": "Court",
-        "Floor": "Ground Floor",
-        "Type": ""
+        "Floor": "Ground "
       },
       "geometry": {
         "coordinates": [
-          120.981009,
-          14.592026
+          120.980997,
+          14.592027
         ],
         "type": "Point"
       },
       "id": "3c5a0f29e9bacd8d1bd4b16479f94288"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981202,
-            14.593096
-          ],
-          [
-            120.981194,
-            14.593121
-          ],
-          [
-            120.981254,
-            14.59314
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "42a76105981ff5ead6498e730c08ed08"
     },
     {
       "type": "Feature",
@@ -873,28 +1401,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981569,
-            14.591779
-          ],
-          [
-            120.981554,
-            14.591774
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "438d21497eacb90338e37eab941ae707"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Staff Room",
-        "Building": "New Building",
-        "Floor": "Ground Floor",
+        "Building": "New ",
+        "Floor": "Ground ",
         "Type": "Room"
       },
       "geometry": {
@@ -910,8 +1420,8 @@
       "type": "Feature",
       "properties": {
         "Name": "CCJ Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office of the Dean"
       },
       "geometry": {
@@ -927,62 +1437,18 @@
       "type": "Feature",
       "properties": {
         "Name": "Human Resources Management and Development Division",
-        "Building": "New Building",
-        "Floor": "Ground Floor",
+        "Building": "New ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
         "coordinates": [
-          120.981106,
-          14.593138
+          120.981105,
+          14.593136
         ],
         "type": "Point"
       },
       "id": "4bfcb77b4f1dc8239462b9596dd5e2fc"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.9815,
-            14.592003
-          ],
-          [
-            120.981458,
-            14.592141
-          ],
-          [
-            120.981479,
-            14.592148
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "4d72ba873735d62fc2691be3f6c37eec"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981321,
-            14.591821
-          ],
-          [
-            120.981311,
-            14.591852
-          ],
-          [
-            120.981295,
-            14.591847
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "4f16d21c39a5e395560c38b1a3bc55a5"
     },
     {
       "type": "Feature",
@@ -1005,14 +1471,14 @@
       "type": "Feature",
       "properties": {
         "Name": "Accreditation Room",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
         "coordinates": [
-          120.981535,
-          14.592164
+          120.981536,
+          14.592158
         ],
         "type": "Point"
       },
@@ -1020,55 +1486,33 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981446,
-            14.592403
-          ],
-          [
-            120.981433,
-            14.592445
-          ],
-          [
-            120.98146,
-            14.592453
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "51c7b3d2c2f41f3bb548dead1038c006"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Garden",
         "Type": "Garden",
-        "Floor": "Ground Floor"
+        "Floor": "Ground "
       },
       "geometry": {
         "coordinates": [
           [
             [
               120.981287,
-              14.592149
+              14.592137
             ],
             [
               120.981419,
-              14.592193
+              14.592181
             ],
             [
               120.981394,
-              14.592283
+              14.592271
             ],
             [
               120.981256,
-              14.592238
+              14.592226
             ],
             [
               120.981287,
-              14.592149
+              14.592137
             ]
           ]
         ],
@@ -1080,8 +1524,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Quality Assurance and Accreditation",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -1097,8 +1541,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Admin Wing",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -1152,32 +1596,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981359,
-            14.591831
-          ],
-          [
-            120.981302,
-            14.592025
-          ],
-          [
-            120.981283,
-            14.592019
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "59004e0aea209129e83e685980326bc5"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Maintenance and Engineering",
-        "Building": "Main Building ",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -1213,8 +1635,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Guidance Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -1229,8 +1651,8 @@
               14.591672
             ],
             [
-              120.981299,
-              14.591623
+              120.981298,
+              14.591624
             ],
             [
               120.981393,
@@ -1248,32 +1670,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981275,
-            14.592675
-          ],
-          [
-            120.981238,
-            14.592878
-          ],
-          [
-            120.981307,
-            14.592879
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "61989c7848aff513a9b2a2581b5b333d"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Comfort Room ",
-        "Building": "Main Building ",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground",
         "Type": "Restroom"
       },
       "geometry": {
@@ -1289,8 +1689,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Stairs",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground Flor",
         "Type": "Stairs"
       },
       "geometry": {
@@ -1326,8 +1726,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Exit",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Exit "
       },
       "geometry": {
@@ -1346,8 +1746,8 @@
               14.592378
             ],
             [
-              120.981588,
-              14.59233
+              120.981587,
+              14.592329
             ],
             [
               120.981511,
@@ -1363,8 +1763,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Taekwando Room",
-        "Building": "New Building",
-        "Floor": "Ground Floor",
+        "Building": "New ",
+        "Floor": "Ground ",
         "Type": "Gym / Training Room"
       },
       "geometry": {
@@ -1378,7 +1778,12 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": {
+        "Name": "Storage",
+        "Building": "New",
+        "Floor": "Ground",
+        "Type": "Utility"
+      },
       "geometry": {
         "coordinates": [
           [
@@ -1411,10 +1816,11 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Stairs/ To Library",
-        "Buiding": "Main Building",
-        "Floor": "Ground Floor",
-        "Type": "Stairs "
+        "Name": "Library Entrance",
+        "Building": "Main ",
+        "Floor": "Ground ",
+        "Type": "Stairs ",
+        "Stairs Type": "Entrace Stairs"
       },
       "geometry": {
         "coordinates": [
@@ -1430,7 +1836,7 @@
       "properties": {
         "Name": "Garden",
         "Type": "Garden",
-        "Floor": "Ground Floor"
+        "Floor": "Ground "
       },
       "geometry": {
         "coordinates": [
@@ -1465,8 +1871,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Stairs",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Stairs"
       },
       "geometry": {
@@ -1480,112 +1886,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.980945,
-            14.593039
-          ],
-          [
-            120.980888,
-            14.59302
-          ],
-          [
-            120.980884,
-            14.593032
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "6a2389607725a739f94418fa2f3f1aa8"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981343,
-            14.591753
-          ],
-          [
-            120.981327,
-            14.591748
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "6aa0407193de94c3765d17bf0a7999fb"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981393,
-            14.592509
-          ],
-          [
-            120.981347,
-            14.59248
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "6b62a10c44ed2c1bc9f6c9d50da9bb69"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981291,
-            14.592352
-          ],
-          [
-            120.981177,
-            14.592296
-          ],
-          [
-            120.981256,
-            14.592156
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "6bb8404ccce749c450632e32d8685805"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981311,
-            14.591851
-          ],
-          [
-            120.981299,
-            14.591889
-          ],
-          [
-            120.981283,
-            14.591884
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "73b453db70811a52beba3837af39089c"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "CAS Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office of the Dean"
       },
       "geometry": {
@@ -1601,7 +1905,7 @@
       "type": "Feature",
       "properties": {
         "Name": "Court",
-        "Floor": "Ground Floor"
+        "Floor": "Ground "
       },
       "geometry": {
         "coordinates": [
@@ -1611,8 +1915,8 @@
               14.591826
             ],
             [
-              120.98119,
-              14.591871
+              120.981192,
+              14.591869
             ],
             [
               120.981086,
@@ -1636,8 +1940,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Supply and Equipment Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -1651,32 +1955,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981436,
-            14.592218
-          ],
-          [
-            120.981423,
-            14.592262
-          ],
-          [
-            120.981515,
-            14.592292
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "7652562d9b12ff9ee0b06fe3ac016453"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Clinic",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Medical Facility "
       },
       "geometry": {
@@ -1710,50 +1992,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981244,
-            14.592843
-          ],
-          [
-            120.981189,
-            14.592838
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "785b1837ba1946a725f829838d857db3"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981545,
-            14.591858
-          ],
-          [
-            120.9815,
-            14.592003
-          ],
-          [
-            120.981521,
-            14.592009
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "78a7b3127ffdbb2d7990626cfc5fa7e3"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Garden",
         "Type": "Garden",
-        "Floor": "Ground Floor"
+        "Floor": "Ground "
       },
       "geometry": {
         "coordinates": [
@@ -1788,13 +2030,13 @@
       "type": "Feature",
       "properties": {
         "Name": "Entrance",
-        "Floor": "Ground Floor",
+        "Floor": "Ground ",
         "Type": "Entrance"
       },
       "geometry": {
         "coordinates": [
-          120.981546,
-          14.591557
+          120.981539,
+          14.591552
         ],
         "type": "Point"
       },
@@ -1803,9 +2045,9 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Security Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Name": "Main Security Office",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -1841,8 +2083,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Comfort Room",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Restroom"
       },
       "geometry": {
@@ -1876,7 +2118,11 @@
     },
     {
       "type": "Feature",
-      "properties": {},
+      "properties": {
+        "Name": "Canteen",
+        "Floor": "Ground ",
+        "Type": "Cafeteria"
+      },
       "geometry": {
         "coordinates": [
           [
@@ -1910,14 +2156,14 @@
       "type": "Feature",
       "properties": {
         "Name": "Lobby",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Lobby"
       },
       "geometry": {
         "coordinates": [
-          120.981518,
-          14.591658
+          120.981519,
+          14.591659
         ],
         "type": "Point"
       },
@@ -1927,8 +2173,8 @@
       "type": "Feature",
       "properties": {
         "Name": "CBA-PM Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office of the Dean"
       },
       "geometry": {
@@ -1963,10 +2209,11 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Stairs ",
-        "Building": "Main Building ",
-        "Floor": "Ground Floor ",
-        "Type": "Stairs "
+        "Name": "Library Entrance",
+        "Building": "Main ",
+        "Floor": "Ground ",
+        "Type": "Stairs ",
+        "Stairs Type": "Entrace Stairs"
       },
       "geometry": {
         "coordinates": [
@@ -2000,9 +2247,9 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Security Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Name": "Main Security Office",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -2034,8 +2281,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Registrar",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -2089,32 +2336,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981321,
-            14.592364
-          ],
-          [
-            120.98129,
-            14.592352
-          ],
-          [
-            120.981301,
-            14.592319
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "89c1c6de654cff58939e25d4075b3b95"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Clinic",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Medical Facility"
       },
       "geometry": {
@@ -2130,7 +2355,7 @@
       "type": "Feature",
       "properties": {
         "Name": "Stairs",
-        "Building": "New Building",
+        "Building": "New ",
         "Floor": "Ground Floor",
         "Type": "Stairs"
       },
@@ -2145,40 +2370,18 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981442,
-            14.592409
-          ],
-          [
-            120.981321,
-            14.592364
-          ],
-          [
-            120.981299,
-            14.592394
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "902d6bb6a0761ff9a2105167c38e5ffb"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Planning and Budget and Accounting Division",
-        "Building": "New Building",
-        "Floor": "Ground Floor",
+        "Building": "New ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
         "coordinates": [
           [
             [
-              120.980949,
-              14.593127
+              120.980948,
+              14.593125
             ],
             [
               120.980972,
@@ -2193,8 +2396,8 @@
               14.593145
             ],
             [
-              120.980949,
-              14.593127
+              120.980948,
+              14.593125
             ]
           ]
         ],
@@ -2206,8 +2409,8 @@
       "type": "Feature",
       "properties": {
         "Name": "CED Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office of the Dean"
       },
       "geometry": {
@@ -2223,8 +2426,8 @@
       "type": "Feature",
       "properties": {
         "Name": "CCS Office ",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office of the Dean"
       },
       "geometry": {
@@ -2260,8 +2463,8 @@
       "type": "Feature",
       "properties": {
         "Name": "VPAA Office",
-        "Building": "Main Building ",
-        "Floor": "Ground Floor",
+        "Building": "Main  ",
+        "Floor": "Ground ",
         "Type": "Dean's Office"
       },
       "geometry": {
@@ -2295,28 +2498,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981454,
-            14.592149
-          ],
-          [
-            120.981276,
-            14.592096
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "954bd0145831c12856d2e8a6c2b6dee7"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Stairs ",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Stairs"
       },
       "geometry": {
@@ -2331,7 +2516,7 @@
               14.592307
             ],
             [
-              120.981547,
+              120.981545,
               14.592317
             ],
             [
@@ -2352,8 +2537,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Vacant",
-        "Building": "New Building",
-        "Floor": "Ground Floor",
+        "Building": "New ",
+        "Floor": "Ground ",
         "Type": "Room"
       },
       "geometry": {
@@ -2367,24 +2552,6 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981232,
-            14.593133
-          ],
-          [
-            120.981228,
-            14.593144
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "9755b5bc44bf9420a5d4743467e33e61"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Guidance Office",
         "Building": "Main Building",
@@ -2394,7 +2561,7 @@
       "geometry": {
         "coordinates": [
           120.981334,
-          14.59166
+          14.591662
         ],
         "type": "Point"
       },
@@ -2404,14 +2571,14 @@
       "type": "Feature",
       "properties": {
         "Name": "Procurement Division",
-        "Building": "New Building",
-        "Floor": "Ground Floor",
+        "Building": "New ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
         "coordinates": [
-          120.981051,
-          14.593121
+          120.98105,
+          14.59312
         ],
         "type": "Point"
       },
@@ -2419,32 +2586,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981301,
-            14.592024
-          ],
-          [
-            120.981277,
-            14.592096
-          ],
-          [
-            120.981136,
-            14.592057
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "9990d50578e15420f2217dc1b422daf1"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Human Resources Management and Development Division",
-        "Building": "New Building",
-        "Floor": "Ground Floor",
+        "Building": "New ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -2480,8 +2625,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Stairs",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Stairs"
       },
       "geometry": {
@@ -2497,8 +2642,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Stairs",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Stairs"
       },
       "geometry": {
@@ -2514,8 +2659,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Accreditation Room",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -2551,9 +2696,9 @@
       "type": "Feature",
       "properties": {
         "Name": "Stairs",
-        "Buildin": "New Building",
+        "Building": "New ",
         "Floo": "Ground Floor",
-        "Typ": "Stairs"
+        "Type": "Stairs"
       },
       "geometry": {
         "coordinates": [
@@ -2566,76 +2711,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981299,
-            14.59189
-          ],
-          [
-            120.981288,
-            14.591925
-          ],
-          [
-            120.981272,
-            14.59192
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "a352ca5105f35ee1269487d0ff94aa13"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981433,
-            14.592444
-          ],
-          [
-            120.981431,
-            14.592447
-          ],
-          [
-            120.981422,
-            14.592476
-          ],
-          [
-            120.981449,
-            14.592484
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "a7a0eef4567b59dcf4ac5877b1536ada"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981353,
-            14.591721
-          ],
-          [
-            120.981338,
-            14.591716
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "ab319b5ec2e3f2f185930d0dbcb917f1"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Stairs",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Stairs"
       },
       "geometry": {
@@ -2649,34 +2728,16 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981323,
-            14.591815
-          ],
-          [
-            120.981306,
-            14.59181
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "af6ba114e2b08dce136db654af17831e"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Vacant",
-        "Building": "New Building",
-        "Floor": "Ground Floor",
+        "Building": "New ",
+        "Floor": "Ground ",
         "Type": "Room"
       },
       "geometry": {
         "coordinates": [
-          120.981163,
-          14.593159
+          120.981161,
+          14.593157
         ],
         "type": "Point"
       },
@@ -2684,46 +2745,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981524,
-            14.591923
-          ],
-          [
-            120.981347,
-            14.59187
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "b1e1343473c1c658fd48fe52e9afb48f"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.98122,
-            14.592965
-          ],
-          [
-            120.981114,
-            14.592942
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "b24d12d4277666271e181085bb9f27fa"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "CAS Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office of the Dean"
       },
       "geometry": {
@@ -2739,7 +2764,7 @@
             ],
             [
               120.981268,
-              14.591934
+              14.591933
             ],
             [
               120.981209,
@@ -2759,8 +2784,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Office of the President",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -2796,8 +2821,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Cash Management Division",
-        "Building": "Main Building ",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -2811,32 +2836,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981054,
-            14.593075
-          ],
-          [
-            120.980999,
-            14.593057
-          ],
-          [
-            120.980996,
-            14.593067
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "b868ed7459b02a7f5d29a2180606608c"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Canteen ",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Cafeteria"
       },
       "geometry": {
@@ -2882,32 +2885,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981173,
-            14.593114
-          ],
-          [
-            120.981116,
-            14.593095
-          ],
-          [
-            120.981112,
-            14.593106
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "c3268a4f8e478d86cb0aa1d5b9703b1a"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "IGPS Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -2943,8 +2924,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Exit",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Exit "
       },
       "geometry": {
@@ -2960,8 +2941,8 @@
       "type": "Feature",
       "properties": {
         "Name": "CBA-PM Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office of the Dean"
       },
       "geometry": {
@@ -2975,39 +2956,17 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981116,
-            14.593095
-          ],
-          [
-            120.981054,
-            14.593075
-          ],
-          [
-            120.981051,
-            14.593086
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "c664929cb842e70f7ec54b30f3517e8d"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Vacant",
-        "Building": "New Building",
-        "Floor": "Ground Floor",
+        "Building": "New ",
+        "Floor": "Ground ",
         "Type": "Room"
       },
       "geometry": {
         "coordinates": [
           [
             [
-              120.980894,
+              120.980893,
               14.59311
             ],
             [
@@ -3020,10 +2979,10 @@
             ],
             [
               120.980948,
-              14.593127
+              14.593126
             ],
             [
-              120.980894,
+              120.980893,
               14.59311
             ]
           ]
@@ -3036,8 +2995,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Admin Wing",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -3053,14 +3012,14 @@
       "type": "Feature",
       "properties": {
         "Name": "Stairs",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Stairs"
       },
       "geometry": {
         "coordinates": [
-          120.981165,
-          14.59213
+          120.981166,
+          14.592128
         ],
         "type": "Point"
       },
@@ -3068,50 +3027,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.98139,
-            14.591728
-          ],
-          [
-            120.981411,
-            14.591734
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "c9d41d1959a3b2cd72f2a5392687e616"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981226,
-            14.592207
-          ],
-          [
-            120.981149,
-            14.592186
-          ],
-          [
-            120.98114,
-            14.592211
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "cc2773e98dbcaaf854f1528d5c5b61f2"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Supply and Equipment Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -3122,8 +3041,8 @@
               14.592471
             ],
             [
-              120.981494,
-              14.592482
+              120.981495,
+              14.592483
             ],
             [
               120.981484,
@@ -3147,8 +3066,8 @@
       "type": "Feature",
       "properties": {
         "Name": "CCS Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office of the Dean"
       },
       "geometry": {
@@ -3162,32 +3081,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981471,
-            14.592323
-          ],
-          [
-            120.981456,
-            14.592372
-          ],
-          [
-            120.981445,
-            14.592368
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "d2b880a37cf5328796e2b0d8b81fd371"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Stairs",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Stairs"
       },
       "geometry": {
@@ -3221,50 +3118,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981194,
-            14.593121
-          ],
-          [
-            120.981174,
-            14.593114
-          ],
-          [
-            120.98117,
-            14.593125
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "d369e43c416bc5e5e86da1af426e2107"
-    },
-    {
-      "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981356,
-            14.592555
-          ],
-          [
-            120.981327,
-            14.592542
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "d9976c2f3da9930c94e047d7b5d845d0"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "CCJ Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office of the Dean"
       },
       "geometry": {
@@ -3300,7 +3157,7 @@
       "type": "Feature",
       "properties": {
         "Name": "Storage",
-        "Building": "New Building",
+        "Building": "New ",
         "Floor": "Ground Floor",
         "Type": "Utility"
       },
@@ -3316,10 +3173,11 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Library",
-        "Building": "Main Building ",
-        "Floor": "Ground Floor",
-        "Type": "Stairs "
+        "Name": "Library Exit",
+        "Building": "Main ",
+        "Floor": "Ground ",
+        "Type": "Stairs ",
+        "Stairs Type": "Exit Stairs"
       },
       "geometry": {
         "coordinates": [
@@ -3354,7 +3212,7 @@
       "type": "Feature",
       "properties": {
         "Name": "Stairs",
-        "Building": "New Building",
+        "Building": "New ",
         "Floor": "Ground Floor",
         "Type": "Stairs"
       },
@@ -3391,8 +3249,8 @@
       "type": "Feature",
       "properties": {
         "Name": "CED Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office of the Dean"
       },
       "geometry": {
@@ -3426,32 +3284,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981237,
-            14.592878
-          ],
-          [
-            120.981202,
-            14.593096
-          ],
-          [
-            120.981238,
-            14.593107
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "e30be7a3bb206e7ab4c5c12b7bb67247"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Planning and Budget and Accounting Division",
-        "Building": "New Building",
-        "Floor": "Ground Floor",
+        "Building": "New ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -3467,14 +3303,14 @@
       "type": "Feature",
       "properties": {
         "Name": "Canteen",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Cafeteria"
       },
       "geometry": {
         "coordinates": [
           120.981241,
-          14.592413
+          14.592414
         ],
         "type": "Point"
       },
@@ -3484,8 +3320,8 @@
       "type": "Feature",
       "properties": {
         "Name": "CHS Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office of the Dean"
       },
       "geometry": {
@@ -3501,8 +3337,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Stairs",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Stairs"
       },
       "geometry": {
@@ -3538,8 +3374,8 @@
       "type": "Feature",
       "properties": {
         "Name": "Maintenance and Engineering",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -3555,8 +3391,8 @@
       "type": "Feature",
       "properties": {
         "Name": "CHS Office",
-        "Building": "Main Building",
-        "Floor": "Ground Floor",
+        "Building": "Main ",
+        "Floor": "Ground ",
         "Type": "Office of the Dean"
       },
       "geometry": {
@@ -3592,7 +3428,7 @@
       "type": "Feature",
       "properties": {
         "Name": "Entrance",
-        "Floor": "Ground Floor",
+        "Floor": "Ground ",
         "Type": "Entrance"
       },
       "geometry": {
@@ -3645,7 +3481,7 @@
       "type": "Feature",
       "properties": {
         "Name": "Mehan Garden",
-        "Floor": "Ground Floor",
+        "Floor": "Ground ",
         "Type": "Garden"
       },
       "geometry": {
@@ -3699,28 +3535,10 @@
     },
     {
       "type": "Feature",
-      "properties": {},
-      "geometry": {
-        "coordinates": [
-          [
-            120.981202,
-            14.593096
-          ],
-          [
-            120.980847,
-            14.592983
-          ]
-        ],
-        "type": "LineString"
-      },
-      "id": "fb8e34a34a33f6110af48101d310b4c5"
-    },
-    {
-      "type": "Feature",
       "properties": {
         "Name": "Procurement Division",
-        "Building": "New Building",
-        "Floor": "Ground Floor",
+        "Building": "New ",
+        "Floor": "Ground ",
         "Type": "Office"
       },
       "geometry": {
@@ -3755,8 +3573,8 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Security Office",
-        "Building": "New Building",
+        "Name": "New Security Office",
+        "Building": "New ",
         "Floor": "Ground Floor",
         "Type": "Office"
       },

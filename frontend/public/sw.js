@@ -24,7 +24,7 @@ const STATIC_FILES = [
 
 // Map files to cache for offline navigation
 const MAP_FILES = [
-  '/images/smart-campus-map.geojson',
+  '/images/1st-floor-map.geojson',
   '/images/2nd-floor-map.geojson',
   '/images/3rd-floor-map.geojson',
   '/images/4th-floor-map.geojson'

@@ -29,7 +29,6 @@ function Map() {
   const [selectedFloor, setSelectedFloor] = useState(FLOORS[0].value);
   const [searchDestination, setSearchDestination] = useState(null);
   const [keyboardOpen, setKeyboardOpen] = useState(false);
-  const [locationTracking, setLocationTracking] = useState(false);
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const searchInputRef = useRef(null);
@@ -55,7 +54,7 @@ function Map() {
       try {
         // Load all floor data for comprehensive search
         const floorFiles = [
-          { path: '/images/smart-campus-map.geojson', floor: 'ground' },
+          { path: '/images/1st-floor-map.geojson', floor: 'ground' },
           { path: '/images/2nd-floor-map.geojson', floor: '2' },
           { path: '/images/3rd-floor-map.geojson', floor: '3' },
           { path: '/images/4th-floor-map.geojson', floor: '4' }
@@ -102,7 +101,7 @@ function Map() {
             
             if (name) {
               const item = {
-                id: feature.id || `${name}-${floor}`,
+                id: `${name}-${floor}`, // Unique ID combining name and floor
                 name: name,
                 type: type,
                 building: props.Building || props.building,
@@ -122,16 +121,21 @@ function Map() {
             }
           });
         });
+        
+        // Remove duplicates from each category based on unique name-floor combination
+        const uniqueBuildings = Array.from(new Map(allBuildings.map(item => [item.id, item])).values());
+        const uniqueRooms = Array.from(new Map(allRooms.map(item => [item.id, item])).values());
+        const uniqueServices = Array.from(new Map(allServices.map(item => [item.id, item])).values());
 
-        // Initialize search engine with all floors
+        // Initialize search engine with deduplicated data
         campusSearchEngine.buildIndex({
-          buildings: allBuildings,
-          rooms: allRooms,
-          services: allServices
+          buildings: uniqueBuildings,
+          rooms: uniqueRooms,
+          services: uniqueServices
         });
         
         console.log(`✅ Search engine initialized with data from ${floorDataResults.filter(r => r).length} floors`);
-        console.log(`   Buildings: ${allBuildings.length}, Rooms: ${allRooms.length}, Services: ${allServices.length}`);
+        console.log(`   Buildings: ${uniqueBuildings.length}, Rooms: ${uniqueRooms.length}, Services: ${uniqueServices.length}`);
 
         // Update ALL_ROOMS for legacy compatibility
         const roomNames = allFeatures
@@ -159,21 +163,16 @@ function Map() {
         mapViewRef.current.resetView();
       }
     } else if (action === "locate") {
-      const newTrackingState = !locationTracking;
-      setLocationTracking(newTrackingState);
-      
-      if (mapViewRef.current) {
-        if (newTrackingState) {
-          // Start location tracking
-          if (mapViewRef.current.startLocationTracking) {
-            mapViewRef.current.startLocationTracking();
-          }
-        } else {
-          // Stop location tracking
-          if (mapViewRef.current.stopLocationTracking) {
-            mapViewRef.current.stopLocationTracking();
-          }
-        }
+      // Call the locateUser function from MapView
+      if (mapViewRef.current && mapViewRef.current.locateUser) {
+        mapViewRef.current.locateUser();
+      }
+    } else if (action === "clearRoute") {
+      // Clear route
+      setSearch("");
+      setSearchDestination(null);
+      if (mapViewRef.current && mapViewRef.current.clearRoute) {
+        mapViewRef.current.clearRoute();
       }
     }
   };
@@ -189,7 +188,7 @@ function Map() {
   // Smart search suggestions - fetch as user types
   useEffect(() => {
     const fetchSuggestions = async () => {
-      if (search.trim().length >= 2) {
+      if (search && search.trim && search.trim().length >= 2) {
         try {
           const suggestions = await getSearchSuggestions(search.trim());
           setSearchSuggestions(suggestions);
@@ -202,7 +201,7 @@ function Map() {
       }
     };
 
-    const debounceTimer = setTimeout(fetchSuggestions, 300);
+    const debounceTimer = setTimeout(fetchSuggestions, 50);
     return () => clearTimeout(debounceTimer);
   }, [search]);
 
@@ -244,8 +243,8 @@ function Map() {
         <div
           className="
             flex flex-col md:flex-row items-stretch md:items-center
-            py-2 md:py-4 px-3 md:px-6
-            rounded-2xl md:rounded-3xl
+            py-2 md:py-4 px-2 md:px-6
+            rounded-xl md:rounded-3xl
             bg-white
             shadow
             border border-[#e0e0e0]
@@ -256,7 +255,7 @@ function Map() {
           "
           style={{
             width: "100%",
-            maxWidth: "95vw",
+            maxWidth: isMobile ? "98vw" : "95vw",
             marginBottom: 14,
             boxShadow: "0 2px 10px 0 rgba(0,105,92,0.08)",
             alignItems: "stretch",
@@ -281,13 +280,13 @@ function Map() {
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                 className="flex items-center justify-center p-2 border-2 border-[#00695C] rounded-lg bg-white text-[#00695C] hover:bg-[#E0F2EF] transition-all"
                 style={{
-                  width: 44,
-                  height: 44,
+                  width: 40,
+                  height: 40,
                   flexShrink: 0,
                 }}
                 aria-label="Toggle menu"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
                 </svg>
               </button>
@@ -300,17 +299,17 @@ function Map() {
                 style={{
                   borderColor: "#00695C",
                   borderWidth: 2,
-                  height: 44,
+                  height: 40,
                   boxShadow: "none",
-                  fontSize: "clamp(14px, 3vw, 18px)",
+                  fontSize: "clamp(13px, 3vw, 18px)",
                   width: "100%",
-                  borderRadius: "clamp(12px, 2vw, 16px)",
+                  borderRadius: "clamp(10px, 2vw, 16px)",
                   fontWeight: 600,
                 }}
                 tabIndex={-1}
               >
               <svg
-                className="w-5 h-5 md:w-6 md:h-6 text-[#00695C] mr-2 md:mr-4 flex-shrink-0"
+                className="w-4 h-4 md:w-6 md:h-6 text-[#00695C] mr-2 md:mr-4 flex-shrink-0"
                 fill="none"
                 stroke="currentColor"
                 strokeWidth={2}
@@ -326,20 +325,38 @@ function Map() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 onFocus={() => !isMobile && setKeyboardOpen(true)}
+                onBlur={(e) => {
+                  // Don't close if clicking on keyboard
+                  const relatedTarget = e.relatedTarget;
+                  if (!relatedTarget || !relatedTarget.closest('[role="dialog"]')) {
+                    // Delay to allow keyboard interaction
+                    setTimeout(() => setKeyboardOpen(false), 200);
+                  }
+                }}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' && search.trim()) {
+                    setSearchDestination(search.trim());
+                    setSearchSuggestions([]);
+                    setKeyboardOpen(false);
+                    e.target.blur();
+                  }
+                }}
                 placeholder="Search rooms, buildings..."
                 className="flex-1 bg-transparent outline-none text-sm md:text-lg text-[#00695C] placeholder-[#00695C]/60 font-semibold min-w-0"
                 aria-label="Search for a room, building, or service"
                 autoComplete="off"
                 readOnly={!isMobile}
+                aria-haspopup="dialog"
+                aria-expanded={keyboardOpen}
                 style={{
-                  minHeight: 32,
-                  fontSize: "clamp(14px, 3vw, 18px)",
+                  minHeight: 28,
+                  fontSize: "clamp(13px, 3vw, 18px)",
                   border: "none",
                   boxShadow: "none",
                   background: "transparent",
                   width: "100%",
                   fontWeight: 600,
-                  cursor: "pointer"
+                  cursor: !isMobile ? 'pointer' : 'text'
                 }}
               />
               
@@ -349,15 +366,37 @@ function Map() {
                     setSearchDestination(null);
                     setSearch('');
                   }}
-                  className="ml-2 text-[#00695C] hover:text-[#004d40] transition-colors"
+                  className="ml-2 text-[#00695C] hover:text-[#004d40] transition-colors flex-shrink-0"
                   title="Clear navigation"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
               )}
             </div>
+            
+            {/* Search Suggestions Dropdown - Only show on mobile devices */}
+            {isMobile && searchSuggestions.length > 0 && !searchDestination && (
+              <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl shadow-2xl border-2 border-[#00695C] z-[100] max-h-64 overflow-y-auto">
+                {searchSuggestions.map((suggestion, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => {
+                      setSearch(suggestion.name);
+                      setSearchDestination(suggestion.name);
+                      setSearchSuggestions([]);
+                    }}
+                    className="w-full px-4 py-3 text-left hover:bg-[#E0F2EF] transition-colors border-b border-gray-100 last:border-b-0"
+                  >
+                    <div className="font-semibold text-[#00695C]">{suggestion.name}</div>
+                    {suggestion.building && (
+                      <div className="text-sm text-gray-600">{suggestion.building} • {suggestion.floor}</div>
+                    )}
+                  </button>
+                ))}
+              </div>
+            )}
             </div>
             </div>
           </div>
@@ -496,71 +535,86 @@ function Map() {
             <span>Reset View</span>
           </button>
 
-          {/* Locate Me Button - Toggle for Location Tracking */}
+          {/* Locate Me Button */}
           <button
-            className={`flex items-center gap-2 px-4 py-2 border-2 font-bold text-sm transition-all duration-200 focus:outline-none focus:ring-2 ${
-              locationTracking
-                ? 'bg-[#00695C] border-[#00695C] text-white hover:bg-[#004D40] focus:ring-[#004D40]'
-                : 'border-[#00695C] bg-white text-[#00695C] hover:bg-[#E0F2EF] focus:ring-[#00695C]'
-            }`}
+            className="flex items-center gap-2 px-4 py-2 border-2 border-[#00695C] bg-white text-[#00695C] font-bold text-sm transition-all duration-200 hover:bg-[#E0F2EF] focus:outline-none focus:ring-2 focus:ring-[#00695C]"
             style={{
               fontSize: 14,
               width: 140,
               minWidth: 110,
               borderRadius: 16,
-              boxShadow: locationTracking ? "0 4px 12px rgba(0, 105, 92, 0.3)" : "none",
               height: 48,
               flex: "0 0 auto",
               whiteSpace: "nowrap",
               fontWeight: 600,
             }}
             onClick={() => handleEssential("locate")}
-            aria-label={locationTracking ? "Stop Location Tracking" : "Start Location Tracking"}
-            title={locationTracking ? "Click to stop tracking your location" : "Track your real-time location on campus"}
+            aria-label="Locate Me"
+            title="Find your current location on campus"
           >
             <span style={{ display: "flex", alignItems: "center" }}>
-              {locationTracking ? (
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="3" />
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" opacity="0.7" />
-                </svg>
-              ) : (
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <circle cx="12" cy="12" r="10" strokeWidth="2" />
-                  <circle cx="12" cy="12" r="4" strokeWidth="2" />
-                </svg>
-              )}
-            </span>
-            <span>{locationTracking ? "Stop" : "Locate Me"}</span>
-          </button>
-          
-          {/* Emergency Exit Button */}
-          <button
-            className="flex items-center gap-2 px-4 py-2 border-2 border-[#f44336] bg-white text-[#f44336] hover:bg-[#ffebee] font-bold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#f44336]"
-            style={{
-              fontSize: 14,
-              width: 140,
-              minWidth: 110,
-              borderRadius: 16,
-              boxShadow: "none",
-              height: 48,
-              flex: "0 0 auto",
-              whiteSpace: "nowrap",
-              fontWeight: 600,
-            }}
-            onClick={() => {
-              setSearchDestination("EMERGENCY_EXIT");
-            }}
-            aria-label="Emergency Exit Route"
-            title="Find fastest route to nearest emergency exit"
-          >
-            <span style={{ display: "flex", alignItems: "center" }}>
-              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z" />
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                <circle cx="12" cy="12" r="4" strokeWidth="2" />
               </svg>
             </span>
-            <span>Emergency</span>
+            <span>Locate Me</span>
           </button>
+          
+          {/* Combined Clear Route / Emergency Button */}
+          {searchDestination ? (
+            <button
+              className="flex items-center gap-2 px-4 py-2 border-2 border-red-500 bg-white text-red-500 font-bold text-sm transition-all duration-200 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500"
+              style={{
+                fontSize: 14,
+                width: 140,
+                minWidth: 110,
+                borderRadius: 16,
+                boxShadow: "none",
+                height: 48,
+                flex: "0 0 auto",
+                whiteSpace: "nowrap",
+                fontWeight: 600,
+              }}
+              onClick={() => handleEssential("clearRoute")}
+              aria-label="Clear Route"
+              title="Clear current route"
+            >
+              <span style={{ display: "flex", alignItems: "center" }}>
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </span>
+              <span>Clear Route</span>
+            </button>
+          ) : (
+            <button
+              className="flex items-center gap-2 px-4 py-2 border-2 border-[#f44336] bg-white text-[#f44336] hover:bg-[#ffebee] font-bold text-sm transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#f44336]"
+              style={{
+                fontSize: 14,
+                width: 140,
+                minWidth: 110,
+                borderRadius: 16,
+                boxShadow: "none",
+                height: 48,
+                flex: "0 0 auto",
+                whiteSpace: "nowrap",
+                fontWeight: 600,
+              }}
+              onClick={() => {
+                setSearchDestination("EMERGENCY_EXIT");
+              }}
+              aria-label="Emergency Exit Route"
+              title="Find fastest route to nearest emergency exit"
+            >
+              <span style={{ display: "flex", alignItems: "center" }}>
+                <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.314 16.5c-.77.833.192 2.5 1.732 2.5z" />
+                </svg>
+              </span>
+              <span>Emergency</span>
+            </button>
+          )}
           </>
           )}
 
@@ -643,24 +697,13 @@ function Map() {
                     handleEssential("locate");
                     setMobileMenuOpen(false);
                   }}
-                  className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all ${
-                    locationTracking
-                      ? 'bg-[#00695C] text-white'
-                      : 'bg-gray-100 text-[#00695C] hover:bg-gray-200'
-                  }`}
+                  className="w-full flex items-center gap-3 p-3 rounded-lg bg-gray-100 text-[#00695C] hover:bg-gray-200 transition-all"
                 >
-                  {locationTracking ? (
-                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                      <circle cx="12" cy="12" r="3" />
-                      <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" opacity="0.7" />
-                    </svg>
-                  ) : (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <circle cx="12" cy="12" r="10" strokeWidth="2" />
-                      <circle cx="12" cy="12" r="4" strokeWidth="2" />
-                    </svg>
-                  )}
-                  <span className="font-semibold">{locationTracking ? "Stop Tracking" : "Locate Me"}</span>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <circle cx="12" cy="12" r="10" strokeWidth="2" />
+                    <circle cx="12" cy="12" r="4" strokeWidth="2" />
+                  </svg>
+                  <span className="font-semibold">Locate Me</span>
                 </button>
 
                 {/* Emergency Button */}
@@ -703,8 +746,8 @@ function Map() {
         />
       </div>
 
-      {/* On-Screen Keyboard - Mobile Optimized */}
-      {keyboardOpen && createPortal(
+      {/* On-Screen Keyboard - Only show on non-mobile devices (kiosk mode) */}
+      {!isMobile && keyboardOpen && createPortal(
         <div
           style={{
             position: 'fixed',
@@ -717,7 +760,10 @@ function Map() {
             animation: 'fadeIn 0.2s ease-out',
             padding: '10px'
           }}
+          role="dialog"
+          aria-label="On-screen keyboard overlay"
           onClick={(e) => {
+            // Click on dimmed background closes keyboard
             if (e.target === e.currentTarget) setKeyboardOpen(false);
           }}
         >
@@ -746,6 +792,7 @@ function Map() {
               onEnter={() => {
                 if (search.trim()) {
                   setSearchDestination(search.trim());
+                  setSearchSuggestions([]);
                 }
                 setKeyboardOpen(false);
               }}

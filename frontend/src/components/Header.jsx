@@ -73,17 +73,17 @@ function Header() {
       
       <div className="flex items-center justify-between px-2 md:px-4 py-2">
         {/* Logo & Title */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-1 md:flex-initial min-w-0 md:min-w-fit">
           <img
             src="/images/UDM_LOGO.png"
             alt="UDM Logo"
-            className="w-8 h-8 md:w-10 md:h-10 object-contain"
+            className="w-8 h-8 md:w-10 md:h-10 object-contain flex-shrink-0"
           />
-          <div className="leading-tight">
-            <h1 className="text-sm md:text-base font-bold tracking-wide whitespace-nowrap">
+          <div className="leading-tight min-w-0 md:min-w-fit">
+            <h1 className="text-[11px] sm:text-sm md:text-base font-bold tracking-wide truncate md:whitespace-nowrap">
               UDM CAMPUS NAVIGATION
             </h1>
-            <p className="text-[10px] md:text-xs text-gray-300">Smart Campus Directory</p>
+            <p className="text-[9px] sm:text-[10px] md:text-xs text-gray-300 truncate md:whitespace-normal">Smart Campus Directory</p>
           </div>
         </div>
 
@@ -107,7 +107,7 @@ function Header() {
         </nav>
 
         {/* Language Selector */}
-        <div ref={langRef} className="relative ml-2">
+        <div ref={langRef} className="relative ml-2 flex-shrink-0">
           <button
             className="flex items-center gap-1.5 text-xs md:text-sm rounded px-2 py-1 md:px-3 md:py-1.5 font-semibold bg-[#00594A] hover:bg-[#007763] transition-colors duration-200"
             style={{ minHeight: "32px" }}
@@ -160,7 +160,7 @@ function Header() {
 
         {/* Hamburger for Mobile */}
         <button
-          className="md:hidden ml-2 p-2 rounded hover:bg-[#00594A]/80 transition"
+          className="md:hidden ml-2 p-2 rounded hover:bg-[#00594A]/80 transition flex-shrink-0"
           onClick={() => setMobileNav((v) => !v)}
         >
           {mobileNav ? <MdClose size={24} /> : <MdMenu size={24} />}
