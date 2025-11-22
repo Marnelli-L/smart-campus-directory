@@ -1,11 +1,13 @@
 const express = require('express');
+const Logger = require('../utils/logger');
+const logger = new Logger('buildings');
 const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { logAudit } = require('../utils/auditLogger');
 
-console.log('🧩 buildings.js file loaded');
+logger.info('🧩 buildings.js file loaded');
 
 // Configure multer for image uploads
 const storage = multer.diskStorage({
@@ -100,7 +102,7 @@ const mockBuildings = [
 
 // GET all buildings/departments
 router.get('/', async (req, res) => {
-  console.log('📡 /api/buildings route accessed');
+  logger.info('📡 /api/buildings route accessed');
 
   try {
     // Try database first
@@ -111,20 +113,20 @@ router.get('/', async (req, res) => {
       status: fromDbStatus(r.status),
       image: r.image || null
     }));
-    console.log(`✅ ${mapped.length} directory rows fetched from database.`);
+    logger.info(`✅ ${mapped.length} directory rows fetched from database.`);
     res.status(200).json(mapped);
   } catch (err) {
-    console.error('❌ Database query failed for directories table. No fallback will be used.');
-    console.error(err);
+    logger.error('❌ Database query failed for directories table. No fallback will be used.');
+    logger.error(err);
     res.status(500).json({ error: 'Database fetch failed', details: err.message });
   }
 });
 
 // POST new building/department
 router.post('/', upload.single('image'), async (req, res) => {
-  console.log('📡 POST /api/buildings route accessed');
-  console.log('📦 req.body:', req.body);
-  console.log('📦 req.file:', req.file);
+  logger.info('📡 POST /api/buildings route accessed');
+  logger.info('📦 req.body:', req.body);
+  logger.info('📦 req.file:', req.file);
   
   try {
     // Check if req.body exists
@@ -147,7 +149,7 @@ router.post('/', upload.single('image'), async (req, res) => {
     let imagePath = null;
     if (req.file) {
       imagePath = `/uploads/directory-images/${req.file.filename}`;
-      console.log('✅ Image uploaded:', imagePath);
+      logger.info('✅ Image uploaded:', imagePath);
     }
     
     try {
@@ -158,10 +160,10 @@ router.post('/', upload.single('image'), async (req, res) => {
         [name, location, contact, email || '', staff || '', office_hours || 'Mon-Fri 8:00am-5:00pm', category || 'General', status || 'Open', announcement || '', imagePath]
       );
       const inserted = { ...result.rows[0], status: fromDbStatus(result.rows[0].status) };
-      console.log('✅ Building created in database:', inserted);
+      logger.info('✅ Building created in database:', inserted);
       
       // Log to audit log
-      console.log('🔍 About to log audit entry for building creation...');
+      logger.info('🔍 About to log audit entry for building creation...');
       try {
         const auditResult = await logAudit(
           'Created',
@@ -170,14 +172,14 @@ router.post('/', upload.single('image'), async (req, res) => {
           `Directory entry "${inserted.name}" created`,
           { name: inserted.name, category: inserted.category, status: inserted.status }
         );
-        console.log('✅ Audit log result:', auditResult);
+        logger.info('✅ Audit log result:', auditResult);
       } catch (auditError) {
-        console.error('❌ Audit log failed:', auditError);
+        logger.error('❌ Audit log failed:', auditError);
       }
       
       res.status(201).json(inserted);
     } catch (dbErr) {
-      console.error('❌ Database INSERT error:', dbErr);
+      logger.error('❌ Database INSERT error:', dbErr);
       // Delete uploaded file if database insert fails
       if (req.file) {
         fs.unlinkSync(req.file.path);
@@ -185,7 +187,7 @@ router.post('/', upload.single('image'), async (req, res) => {
       return res.status(500).json({ error: 'Database insert failed', details: dbErr.message });
     }
   } catch (err) {
-    console.error('❌ ERROR creating building:', err.stack);
+    logger.error('❌ ERROR creating building:', err.stack);
     // Delete uploaded file on error
     if (req.file) {
       fs.unlinkSync(req.file.path);
@@ -196,9 +198,9 @@ router.post('/', upload.single('image'), async (req, res) => {
 
 // PUT update building/department
 router.put('/:id', upload.single('image'), async (req, res) => {
-  console.log('📡 PUT /api/buildings/:id route accessed');
-  console.log('📦 req.body:', req.body);
-  console.log('📦 req.file:', req.file);
+  logger.info('📡 PUT /api/buildings/:id route accessed');
+  logger.info('📦 req.body:', req.body);
+  logger.info('📦 req.file:', req.file);
   
   try {
     const { id } = req.params;
@@ -222,7 +224,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
     let imagePath = req.body.image || null; // Keep existing image if no new upload
     if (req.file) {
       imagePath = `/uploads/directory-images/${req.file.filename}`;
-      console.log('✅ New image uploaded:', imagePath);
+      logger.info('✅ New image uploaded:', imagePath);
       
       // Delete old image if it exists
       try {
@@ -232,11 +234,11 @@ router.put('/:id', upload.single('image'), async (req, res) => {
           const oldImagePath = path.join(__dirname, '..', oldData.rows[0].image);
           if (fs.existsSync(oldImagePath)) {
             fs.unlinkSync(oldImagePath);
-            console.log('✅ Old image deleted:', oldData.rows[0].image);
+            logger.info('✅ Old image deleted:', oldData.rows[0].image);
           }
         }
       } catch (err) {
-        console.warn('⚠️ Could not delete old image:', err.message);
+        logger.warn('⚠️ Could not delete old image:', err.message);
       }
     }
     
@@ -257,7 +259,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
       }
       
       const updated = { ...result.rows[0], status: fromDbStatus(result.rows[0].status) };
-      console.log('✅ Building updated in database:', updated);
+      logger.info('✅ Building updated in database:', updated);
       
       // Log to audit log
       await logAudit(
@@ -270,7 +272,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
       
       res.status(200).json(updated);
     } catch (dbErr) {
-      console.error('❌ Database UPDATE error:', dbErr);
+      logger.error('❌ Database UPDATE error:', dbErr);
       // Delete uploaded file if database update fails
       if (req.file) {
         fs.unlinkSync(req.file.path);
@@ -278,7 +280,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
       return res.status(500).json({ error: 'Database update failed', details: dbErr.message });
     }
   } catch (err) {
-    console.error('❌ ERROR updating building:', err.stack);
+    logger.error('❌ ERROR updating building:', err.stack);
     // Delete uploaded file on error
     if (req.file) {
       fs.unlinkSync(req.file.path);
@@ -289,7 +291,7 @@ router.put('/:id', upload.single('image'), async (req, res) => {
 
 // DELETE building/department
 router.delete('/:id', async (req, res) => {
-  console.log('📡 DELETE /api/buildings/:id route accessed');
+  logger.info('📡 DELETE /api/buildings/:id route accessed');
   
   try {
     const { id } = req.params;
@@ -314,21 +316,21 @@ router.delete('/:id', async (req, res) => {
         { name: deleted.name, id: deleted.id }
       );
       
-      console.log('✅ Building deleted from database:', deleted);
+      logger.info('✅ Building deleted from database:', deleted);
       res.status(200).json({ message: 'Building deleted successfully', building: deleted });
     } catch (dbErr) {
-      console.error('❌ Database DELETE error:', dbErr);
+      logger.error('❌ Database DELETE error:', dbErr);
       return res.status(500).json({ error: 'Database delete failed', details: dbErr.message });
     }
   } catch (err) {
-    console.error('❌ ERROR deleting building:', err.stack);
+    logger.error('❌ ERROR deleting building:', err.stack);
     res.status(500).send('Server error: ' + err.message);
   }
 });
 
 // Bulk delete buildings/directories (admin only)
 router.post('/bulk-delete', async (req, res) => {
-  console.log('📡 POST /api/buildings/bulk-delete route accessed');
+  logger.info('📡 POST /api/buildings/bulk-delete route accessed');
   
   try {
     const { ids } = req.body;
@@ -361,10 +363,10 @@ router.post('/bulk-delete', async (req, res) => {
       { count: result.rowCount, ids, names: buildingDetails.rows.map(b => b.name) }
     );
 
-    console.log(`✅ Bulk deleted ${result.rowCount} buildings`);
+    logger.info(`✅ Bulk deleted ${result.rowCount} buildings`);
     res.json({ message: `Successfully deleted ${result.rowCount} directory entry/entries`, count: result.rowCount });
   } catch (error) {
-    console.error('❌ Error bulk deleting buildings:', error);
+    logger.error('❌ Error bulk deleting buildings:', error);
     res.status(500).json({ error: 'Failed to bulk delete directory entries', details: error.message });
   }
 });

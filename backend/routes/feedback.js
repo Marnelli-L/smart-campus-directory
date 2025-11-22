@@ -2,6 +2,8 @@
 // Add this to your express server (server.js or index.js)
 
 const express = require('express');
+const Logger = require('../utils/logger');
+const logger = new Logger('feedback');
 const db = require('../db/db');
 const { logAudit } = require('../utils/auditLogger');
 
@@ -55,7 +57,7 @@ router.get('/feedback', async (req, res) => {
       pages: Math.ceil(total / limit)
     });
   } catch (error) {
-    console.error('Error fetching feedback:', error);
+    logger.error('Error fetching feedback:', error);
     res.status(500).json({ error: 'Failed to fetch feedback' });
   }
 });
@@ -69,7 +71,7 @@ router.get('/feedback/:id', async (req, res) => {
     }
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Error fetching feedback:', error);
+    logger.error('Error fetching feedback:', error);
     res.status(500).json({ error: 'Failed to fetch feedback' });
   }
 });
@@ -99,7 +101,7 @@ router.post('/feedback', async (req, res) => {
     
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error('Error creating feedback:', error);
+    logger.error('Error creating feedback:', error);
     res.status(500).json({ error: 'Failed to create feedback', details: error.message });
   }
 });
@@ -133,7 +135,7 @@ router.put('/feedback/:id', async (req, res) => {
     
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Error updating feedback:', error);
+    logger.error('Error updating feedback:', error);
     res.status(500).json({ error: 'Failed to update feedback' });
   }
 });
@@ -157,7 +159,7 @@ router.delete('/feedback/:id', async (req, res) => {
     
     res.json({ message: 'Feedback deleted successfully' });
   } catch (error) {
-    console.error('Error deleting feedback:', error);
+    logger.error('Error deleting feedback:', error);
     res.status(500).json({ error: 'Failed to delete feedback' });
   }
 });
@@ -195,7 +197,7 @@ router.post('/feedback/bulk-delete', async (req, res) => {
 
     res.json({ message: `Successfully deleted ${result.rowCount} feedback item(s)`, count: result.rowCount });
   } catch (error) {
-    console.error('Error bulk deleting feedback:', error);
+    logger.error('Error bulk deleting feedback:', error);
     res.status(500).json({ error: 'Failed to bulk delete feedback' });
   }
 });
@@ -258,7 +260,7 @@ router.get('/reports', async (req, res) => {
       pages: Math.ceil(total / limit)
     });
   } catch (error) {
-    console.error('Error fetching reports:', error);
+    logger.error('Error fetching reports:', error);
     res.status(500).json({ error: 'Failed to fetch reports' });
   }
 });
@@ -272,7 +274,7 @@ router.get('/reports/:id', async (req, res) => {
     }
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Error fetching report:', error);
+    logger.error('Error fetching report:', error);
     res.status(500).json({ error: 'Failed to fetch report' });
   }
 });
@@ -302,7 +304,7 @@ router.post('/reports', async (req, res) => {
     
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error('Error creating report:', error);
+    logger.error('Error creating report:', error);
     res.status(500).json({ error: 'Failed to create report', details: error.message });
   }
 });
@@ -361,7 +363,7 @@ router.put('/reports/:id', async (req, res) => {
     
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Error updating report:', error);
+    logger.error('Error updating report:', error);
     res.status(500).json({ error: 'Failed to update report' });
   }
 });
@@ -385,7 +387,7 @@ router.delete('/reports/:id', async (req, res) => {
     
     res.json({ message: 'Report deleted successfully' });
   } catch (error) {
-    console.error('Error deleting report:', error);
+    logger.error('Error deleting report:', error);
     res.status(500).json({ error: 'Failed to delete report' });
   }
 });
@@ -423,7 +425,7 @@ router.post('/reports/bulk-delete', async (req, res) => {
 
     res.json({ message: `Successfully deleted ${result.rowCount} report(s)`, count: result.rowCount });
   } catch (error) {
-    console.error('Error bulk deleting reports:', error);
+    logger.error('Error bulk deleting reports:', error);
     res.status(500).json({ error: 'Failed to bulk delete reports' });
   }
 });
@@ -462,7 +464,7 @@ router.get('/visitor-feedback', async (req, res) => {
       pages: Math.ceil(total / limit)
     });
   } catch (error) {
-    console.error('Error fetching visitor feedback:', error);
+    logger.error('Error fetching visitor feedback:', error);
     res.status(500).json({ error: 'Failed to fetch visitor feedback' });
   }
 });
@@ -515,7 +517,7 @@ router.post('/visitor-feedback', async (req, res) => {
     
     res.status(201).json(result.rows[0]);
   } catch (error) {
-    console.error('Error creating visitor feedback:', error);
+    logger.error('Error creating visitor feedback:', error);
     res.status(500).json({ error: 'Failed to create visitor feedback' });
   }
 });
@@ -574,7 +576,7 @@ router.put('/visitor-feedback/:id', async (req, res) => {
     
     res.json(result.rows[0]);
   } catch (error) {
-    console.error('Error updating visitor feedback:', error);
+    logger.error('Error updating visitor feedback:', error);
     res.status(500).json({ error: 'Failed to update visitor feedback' });
   }
 });
@@ -598,7 +600,7 @@ router.delete('/visitor-feedback/:id', async (req, res) => {
     
     res.json({ message: 'Visitor feedback deleted successfully' });
   } catch (error) {
-    console.error('Error deleting visitor feedback:', error);
+    logger.error('Error deleting visitor feedback:', error);
     res.status(500).json({ error: 'Failed to delete visitor feedback' });
   }
 });
@@ -636,7 +638,7 @@ router.post('/visitor-feedback/bulk-delete', async (req, res) => {
 
     res.json({ message: `Successfully deleted ${result.rowCount} visitor feedback item(s)`, count: result.rowCount });
   } catch (error) {
-    console.error('Error bulk deleting visitor feedback:', error);
+    logger.error('Error bulk deleting visitor feedback:', error);
     res.status(500).json({ error: 'Failed to bulk delete visitor feedback' });
   }
 });
@@ -658,7 +660,7 @@ router.get('/dashboard/feedback-stats', async (req, res) => {
       reports: reportStats.rows
     });
   } catch (error) {
-    console.error('Error fetching stats:', error);
+    logger.error('Error fetching stats:', error);
     res.status(500).json({ error: 'Failed to fetch stats' });
   }
 });

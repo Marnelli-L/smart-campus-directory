@@ -55,7 +55,6 @@ function Announcements() {
         }
 
         const data = await response.json();
-        console.log("Announcements fetched:", data); // Debug log
 
         if (data && data.length > 0) {
           // Transform API data to match our component's format
@@ -101,8 +100,6 @@ function Announcements() {
   // Real-time announcements listener
   useEffect(() => {
     const handleRealTimeAnnouncement = (newAnnouncement) => {
-      console.log("📢 Real-time announcement received:", newAnnouncement);
-      
       // Use category from API, fallback to detection if not provided
       const type = newAnnouncement.category ? newAnnouncement.category.toLowerCase() : getAnnouncementType(newAnnouncement.title, newAnnouncement.content);
       const emoji = getEmojiForType(type);

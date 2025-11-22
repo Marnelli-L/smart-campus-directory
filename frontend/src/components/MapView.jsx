@@ -7,7 +7,8 @@ import QRCode from 'qrcode';
 const MapView = forwardRef(({ 
   selectedDestination = null,
   searchDestination = null,
-  selectedFloor = 'F1'
+  selectedFloor = 'F1',
+  onFloorChange = null
 }, ref) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
@@ -65,12 +66,31 @@ const MapView = forwardRef(({
         });
       }
       
-      // Remove all markers
+      // Remove all marker elements from DOM
       const markerIds = ['route-start-marker', 'route-end-marker', 'route-stairs-marker'];
       markerIds.forEach(id => {
         const marker = document.getElementById(id);
-        if (marker) marker.remove();
+        if (marker) {
+          // Remove the parent marker container (Mapbox wraps markers in a container)
+          const markerContainer = marker.closest('.mapboxgl-marker');
+          if (markerContainer && markerContainer.parentNode) {
+            markerContainer.parentNode.removeChild(markerContainer);
+          } else {
+            marker.remove();
+          }
+        }
       });
+      
+      // Also remove any remaining Mapbox marker elements that might not have IDs
+      if (mapRef.current) {
+        const allMapboxMarkers = document.querySelectorAll('.mapboxgl-marker');
+        allMapboxMarkers.forEach(marker => {
+          const hasRouteMarker = marker.querySelector('[id^="route-"]');
+          if (hasRouteMarker) {
+            marker.remove();
+          }
+        });
+      }
       
       // Clear route info
       setRouteInfo(null);
@@ -1166,13 +1186,7 @@ const MapView = forwardRef(({
         return;
       }
 
-      // ALWAYS use entrance as starting point for navigation searches
-      // The "Locate Me" button is separate and shows user's actual location
-      const startPoint = [120.981539, 14.591552]; // Main entrance (from GeoJSON)
-      const startMessage = 'Starting from Main Entrance';
-      console.log('📍 Using Main Entrance as starting point for navigation');
-      
-      // Find destination
+      // Find destination first to determine floors
       const foundDestination = await findDestination(destinationName);
       let destinationCoords;
       let destinationInfo = {};
@@ -1208,19 +1222,52 @@ const MapView = forwardRef(({
         };
       }
       
+      // Determine current and destination floors
+      const currentFloorKey = floor;
+      const destinationFloorKey = destinationInfo.floorKey || floor;
+      const needsFloorSwitch = currentFloorKey !== destinationFloorKey;
+      
+      // Use a starting point on the CURRENT floor, not ground floor entrance
+      // Find the center of the current floor's corridor network
+      let startPoint;
+      if (geojsonData.features && geojsonData.features.length > 0) {
+        // Find a corridor entrance or central point on current floor
+        const corridorFeature = geojsonData.features.find(f => 
+          f?.geometry?.type === 'LineString' && 
+          (f.properties?.Type === 'corridor' || f.properties?.type === 'corridor')
+        );
+        
+        if (corridorFeature && corridorFeature.geometry.coordinates.length > 0) {
+          // Use the first point of the first corridor as starting point
+          startPoint = corridorFeature.geometry.coordinates[0];
+          console.log(`📍 Using corridor start point on ${currentFloorKey} as navigation start`);
+        } else {
+          // Fallback to a default point
+          startPoint = [120.981539, 14.591552];
+          console.log('📍 Using default entrance point');
+        }
+      } else {
+        startPoint = [120.981539, 14.591552];
+      }
+      
+      const startMessage = `Starting from your location on ${currentFloorKey}`;
+      
       console.log('🧭 === A* PATHFINDING ROUTE ===');
       console.log('📍 Start:', startPoint);
       console.log('🎯 Destination:', destinationCoords);
       console.log('🏢 Target:', destinationInfo.name);
       console.log(`📝 ${startMessage}`);
-      
-      // Determine start floor (current floor or destination floor if same building)
-      const currentFloorKey = floor;
-      const destinationFloorKey = destinationInfo.floorKey || floor;
-      const needsFloorSwitch = currentFloorKey !== destinationFloorKey;
-      
       console.log(`🏢 Current Floor: ${currentFloorKey}, Destination Floor: ${destinationFloorKey}`);
       console.log(`🏢 Needs floor switch: ${needsFloorSwitch ? 'YES ✅' : 'NO'}`);
+      
+      // AUTO-SWITCH TO DESTINATION FLOOR
+      if (needsFloorSwitch && onFloorChange) {
+        console.log('🔄 Auto-switching to destination floor:', destinationFloorKey);
+        const floorMapping = { 'ground': 'F1', '2': 'F2', '3': 'F3', '4': 'F4' };
+        onFloorChange(floorMapping[destinationFloorKey] || 'F1');
+        await new Promise(resolve => setTimeout(resolve, 800));
+        console.log('✅ Floor switched to:', destinationFloorKey);
+      }
       
       let pathfindingResult;
       
@@ -1321,23 +1368,10 @@ const MapView = forwardRef(({
                     mapRef.current.moveLayer('navigation-route-line');
                   }
                   
-                  // Add markers
+                  // DON'T add start marker in Phase 1 - it will be on a different floor after transition
+                  // Only show the stairs marker
                   const existingStartMarker = document.getElementById('route-start-marker');
                   if (existingStartMarker) existingStartMarker.remove();
-                  
-                  const startEl = document.createElement('div');
-                  startEl.id = 'route-start-marker';
-                  startEl.style.cssText = `
-                    width: 30px; height: 30px; background: #4CAF50; border: 3px solid white;
-                    border-radius: 50%; box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                    display: flex; align-items: center; justify-content: center;
-                    color: white; font-weight: bold; font-size: 18px; cursor: pointer;
-                  `;
-                  startEl.innerHTML = 'S';
-                  startEl.title = 'Start Point (Entrance)';
-                  new window.mapboxgl.Marker({ element: startEl })
-                    .setLngLat(startPoint)
-                    .addTo(mapRef.current);
                   
                   const existingStairsMarker = document.getElementById('route-stairs-marker');
                   if (existingStairsMarker) existingStairsMarker.remove();
@@ -1354,10 +1388,10 @@ const MapView = forwardRef(({
                   stairsEl.title = 'Take Stairs';
                   new window.mapboxgl.Marker({ 
                     element: stairsEl,
-                    anchor: 'center', // Center the marker on the coordinates
-                    offset: [0, 0] // No offset
+                    anchor: 'center',
+                    offset: [0, 0]
                   })
-                    .setLngLat(routeToStairs.path[routeToStairs.path.length - 1]) // Use last point of route line
+                    .setLngLat(routeToStairs.path[routeToStairs.path.length - 1])
                     .addTo(mapRef.current);
                   
                   // Zoom to route
@@ -1373,7 +1407,17 @@ const MapView = forwardRef(({
                   });
                 }
                 
-                // Set route info for phase 1
+                // Set route info for phase 1 with stair instruction
+                const phase1Directions = [
+                  ...(routeToStairs.directions || []).filter(d => d.type !== 'arrive'),
+                  {
+                    type: 'stairs',
+                    instruction: `Take stairs to ${destinationInfo.floor}`,
+                    coords: nearestStair,
+                    isFloorChange: true
+                  }
+                ];
+                
                 setRouteInfo({
                   distance: routeToStairs.distance,
                   waypoints: routeToStairs.path.length,
@@ -1384,8 +1428,8 @@ const MapView = forwardRef(({
                   floor: currentFloorKey,
                   floors: [currentFloorKey, destinationFloorKey],
                   isMultiFloor: true,
-                  floorTransitions: [{ from: currentFloorKey, to: destinationFloorKey, stairName: 'Stairs' }],
-                  directions: routeToStairs.directions || []
+                  floorTransitions: [{ from: currentFloorKey, to: destinationFloorKey, stairName: stairName }],
+                  directions: phase1Directions
                 });
                 
                 // Phase 2: Floor transition
@@ -1430,6 +1474,13 @@ const MapView = forwardRef(({
                     }
                   }
                   
+                  // Remove old stairs marker from Phase 1 before adding new one
+                  const oldStairsMarker = document.getElementById('route-stairs-marker');
+                  if (oldStairsMarker) {
+                    const oldMarkerContainer = oldStairsMarker.closest('.mapboxgl-marker');
+                    if (oldMarkerContainer) oldMarkerContainer.remove();
+                  }
+                  
                   // Add stairs marker on new floor (start of Phase 3)
                   const newStairsEl = document.createElement('div');
                   newStairsEl.id = 'route-stairs-marker';
@@ -1461,7 +1512,7 @@ const MapView = forwardRef(({
                     display: flex; align-items: center; justify-content: center;
                     color: white; font-weight: bold; font-size: 18px; cursor: pointer;
                   `;
-                  endEl.innerHTML = 'E';
+                  endEl.innerHTML = destinationInfo.name ? destinationInfo.name.charAt(0).toUpperCase() : 'E';
                   endEl.title = destinationInfo.name;
                   new window.mapboxgl.Marker({ element: endEl })
                     .setLngLat(pathfindingResult.path[pathfindingResult.path.length - 1]) // Use last point of Phase 3 route
@@ -1479,6 +1530,39 @@ const MapView = forwardRef(({
                     bearing: 253
                   });
                   
+                  // Combine directions from both phases with stair transition
+                  const rawDirections = [
+                    ...(routeToStairs.directions || []).filter(d => d.type !== 'arrive'),
+                    {
+                      type: 'stairs',
+                      instruction: `Take stairs to ${destinationInfo.floor}`,
+                      coords: nearestStair,
+                      isFloorChange: true
+                    },
+                    ...(pathfindingResult.directions || []).filter(d => d.type !== 'start')
+                  ];
+                  
+                  // Consolidate consecutive "Continue straight" instructions
+                  const combinedDirections = [];
+                  for (let i = 0; i < rawDirections.length; i++) {
+                    const current = rawDirections[i];
+                    const instruction = typeof current === 'string' ? current : current.instruction || '';
+                    
+                    // Check if this is a "continue straight" instruction
+                    if (instruction.toLowerCase().includes('continue straight') || 
+                        (current.type === 'straight' && i > 0)) {
+                      // Skip if the previous instruction was also "continue straight"
+                      const prev = combinedDirections[combinedDirections.length - 1];
+                      const prevInstruction = typeof prev === 'string' ? prev : (prev?.instruction || '');
+                      
+                      if (prevInstruction.toLowerCase().includes('continue straight') || prev?.type === 'straight') {
+                        continue; // Skip this duplicate
+                      }
+                    }
+                    
+                    combinedDirections.push(current);
+                  }
+                  
                   // Update route info for Phase 3
                   setRouteInfo({
                     distance: routeToStairs.distance + pathfindingResult.distance,
@@ -1490,8 +1574,8 @@ const MapView = forwardRef(({
                     floor: destinationFloorKey,
                     floors: [currentFloorKey, destinationFloorKey],
                     isMultiFloor: true,
-                    floorTransitions: [{ from: currentFloorKey, to: destinationFloorKey, stairName: 'Stairs' }],
-                    directions: pathfindingResult.directions || []
+                    floorTransitions: [{ from: currentFloorKey, to: destinationFloorKey, stairName: stairName }],
+                    directions: combinedDirections
                   });
                   
                   console.log('✅ Multi-floor navigation complete!');
@@ -1566,6 +1650,29 @@ const MapView = forwardRef(({
       const estimatedTimeSeconds = pathfindingResult.distance / 1.4;
       const estimatedMinutes = Math.ceil(estimatedTimeSeconds / 60);
       
+      // Consolidate consecutive "Continue straight" directions
+      const consolidatedDirections = [];
+      const rawDirections = pathfindingResult.directions || [];
+      
+      for (let i = 0; i < rawDirections.length; i++) {
+        const current = rawDirections[i];
+        const instruction = typeof current === 'string' ? current : current.instruction || '';
+        
+        // Check if this is a "continue straight" instruction
+        if (instruction.toLowerCase().includes('continue straight') || 
+            (current.type === 'straight' && i > 0)) {
+          // Skip if the previous instruction was also "continue straight"
+          const prev = consolidatedDirections[consolidatedDirections.length - 1];
+          const prevInstruction = typeof prev === 'string' ? prev : (prev?.instruction || '');
+          
+          if (prevInstruction.toLowerCase().includes('continue straight') || prev?.type === 'straight') {
+            continue; // Skip this duplicate
+          }
+        }
+        
+        consolidatedDirections.push(current);
+      }
+      
       setRouteInfo({
         distance: pathfindingResult.distance,
         waypoints: pathfindingResult.waypoints,
@@ -1577,7 +1684,7 @@ const MapView = forwardRef(({
         floors: pathfindingResult.floors || [destinationInfo.floor],
         isMultiFloor: pathfindingResult.isMultiFloor || false,
         floorTransitions: pathfindingResult.floorTransitions || [],
-        directions: pathfindingResult.directions || []
+        directions: consolidatedDirections
       });
       
       // Show QR prompt after route is displayed (only on non-mobile devices/kiosks)
@@ -1647,7 +1754,7 @@ const MapView = forwardRef(({
             cursor: pointer;
           `;
           startEl.innerHTML = 'S';
-          startEl.title = 'Start Point (Entrance)';
+          startEl.title = `Start (${floor.toUpperCase()})`;
           
           new window.mapboxgl.Marker({ element: startEl })
             .setLngLat(startPoint)
@@ -1772,7 +1879,7 @@ const MapView = forwardRef(({
       
       setRouteInfo(null);
     }
-  }, [destination, mapLoaded, floor, geojsonData, allFloorsData, isMobile]);
+  }, [destination, mapLoaded, floor, geojsonData, allFloorsData, isMobile, onFloorChange]);
 
   return (
     <div style={{ 
@@ -1850,6 +1957,172 @@ const MapView = forwardRef(({
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <span style={{ color: '#666', fontSize: isMobile ? '9px' : '11px' }}>Floor:</span>
             <span style={{ fontWeight: '600', color: '#00695C', fontSize: isMobile ? '9px' : '11px' }}>{routeInfo.floor}</span>
+          </div>
+        </div>
+      )}
+
+      {/* Step-by-Step Directions Panel */}
+      {destination && routeInfo && routeInfo.isValid && routeInfo.directions && routeInfo.directions.length > 0 && (
+        <div 
+          style={{
+            position: 'fixed',
+            bottom: isMobile ? '10px' : '30px',
+            left: isMobile ? '120px' : '200px',
+            background: 'white',
+            padding: isMobile ? '10px 12px' : '14px 16px',
+            borderRadius: '10px',
+            fontSize: isMobile ? '9px' : '11px',
+            zIndex: 9999,
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            width: isMobile ? '200px' : '280px',
+            maxHeight: isMobile ? '300px' : '400px',
+            overflowY: 'auto',
+            fontFamily: 'Segoe UI, Arial, sans-serif',
+            border: '1px solid #e0e0e0'
+          }}>
+          <div style={{ 
+            fontWeight: '700', 
+            marginBottom: '12px', 
+            color: '#333', 
+            fontSize: isMobile ? '11px' : '14px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            paddingBottom: '10px',
+            borderBottom: '1px solid #e0e0e0'
+          }}>
+            <span style={{ fontSize: isMobile ? '14px' : '16px' }}>🧭</span>
+            <span>Directions</span>
+          </div>
+          
+          {/* Smart direction filtering: Show up to 5 steps, but ALWAYS include stairs if present */}
+          {(() => {
+            // Find stair instruction index
+            const stairIndex = routeInfo.directions.findIndex(d => 
+              (typeof d === 'object' && d !== null && (d.type === 'stairs' || d.isFloorChange === true)) ||
+              (typeof d === 'string' && d.toLowerCase().includes('take stairs'))
+            );
+            
+            let directionsToShow;
+            if (stairIndex >= 0 && stairIndex < routeInfo.directions.length) {
+              // Stair instruction exists
+              if (stairIndex < 5) {
+                // Stair is in first 5, just show first 5
+                directionsToShow = routeInfo.directions.slice(0, 5);
+              } else {
+                // Stair is beyond position 5, prioritize it
+                // Show first 3 steps + stair step + 1 step after stair = 5 total
+                directionsToShow = [
+                  ...routeInfo.directions.slice(0, 3),
+                  routeInfo.directions[stairIndex],
+                  ...(stairIndex + 1 < routeInfo.directions.length ? [routeInfo.directions[stairIndex + 1]] : [])
+                ];
+              }
+            } else {
+              // No stairs, show first 5
+              directionsToShow = routeInfo.directions.slice(0, 5);
+            }
+            
+            return directionsToShow;
+          })().map((direction, index) => {
+            // Simplify direction text - remove distance details
+            let directionText = typeof direction === 'string' ? direction : 
+                                typeof direction === 'object' && direction !== null ? 
+                                (direction.instruction || direction.text || direction.description || JSON.stringify(direction)) : 
+                                String(direction);
+            
+            // Remove distance numbers (e.g., "for 15m") to minimize info
+            directionText = directionText.replace(/\s+for \d+m$/i, '').replace(/\s+and continue for \d+m$/i, '');
+            
+            // Check if this is a stair step (by type or text content)
+            const isStairs = (typeof direction === 'object' && direction !== null && 
+                            (direction.type === 'stairs' || direction.isFloorChange === true)) ||
+                           directionText.toLowerCase().includes('stair') || 
+                           directionText.toLowerCase().includes('floor') ||
+                           directionText.toLowerCase().includes('level');
+            
+            return (
+              <div 
+                key={index}
+                style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: '10px',
+                  marginBottom: '10px',
+                  padding: '8px 6px',
+                  background: index === 0 ? 'rgba(76, 175, 80, 0.08)' : isStairs ? 'rgba(255, 152, 0, 0.08)' : 'white',
+                  borderRadius: '6px',
+                  borderLeft: index === 0 ? '3px solid #4CAF50' : isStairs ? '3px solid #FF9800' : '3px solid transparent',
+                  transition: 'background 0.2s ease'
+                }}>
+                <div style={{
+                  minWidth: isMobile ? '20px' : '24px',
+                  height: isMobile ? '20px' : '24px',
+                  borderRadius: '50%',
+                  background: index === 0 ? '#4CAF50' : isStairs ? '#FF9800' : '#00695C',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: isMobile ? '9px' : '11px',
+                  fontWeight: '700',
+                  flexShrink: 0,
+                  boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+                }}>
+                  {isStairs ? '🚶' : index + 1}
+                </div>
+                <div style={{ 
+                  flex: 1, 
+                  color: '#333', 
+                  lineHeight: '1.4', 
+                  fontSize: isMobile ? '9px' : '11px',
+                  paddingTop: '2px'
+                }}>
+                  {directionText}
+                </div>
+              </div>
+            );
+          })}
+          
+          {/* Final destination step - always shown */}
+          <div 
+            style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '10px',
+              marginBottom: routeInfo.directions.length > 5 ? '10px' : '0',
+              padding: '8px 6px',
+              background: 'rgba(244, 67, 54, 0.08)',
+              borderRadius: '6px',
+              borderLeft: '3px solid #F44336',
+              transition: 'background 0.2s ease'
+            }}>
+            <div style={{
+              minWidth: isMobile ? '20px' : '24px',
+              height: isMobile ? '20px' : '24px',
+              borderRadius: '50%',
+              background: '#F44336',
+              color: 'white',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: isMobile ? '11px' : '13px',
+              fontWeight: '700',
+              flexShrink: 0,
+              boxShadow: '0 1px 3px rgba(0,0,0,0.2)'
+            }}>
+              🎯
+            </div>
+            <div style={{ 
+              flex: 1, 
+              color: '#333', 
+              lineHeight: '1.4', 
+              fontSize: isMobile ? '9px' : '11px',
+              paddingTop: '2px',
+              fontWeight: '600'
+            }}>
+              Arrived at {routeInfo.destination || destination}
+            </div>
           </div>
         </div>
       )}

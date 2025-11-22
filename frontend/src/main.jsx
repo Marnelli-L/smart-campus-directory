@@ -1,11 +1,15 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import App from "./App";
-import Admin from "./pages/Admin";
 import Login from "./pages/Login";
-import ProtectedRoute from "./components/ProtectedRoute"; // Import ProtectedRoute
+import ProtectedRoute from "./components/ProtectedRoute";
+import ErrorBoundary from "./components/ErrorBoundary";
+import { PageLoader } from "./components/LoadingSkeleton";
 import "./index.css";
+
+// Lazy load Admin page (heavy component)
+const Admin = lazy(() => import("./pages/Admin"));
 
 // Register Service Worker for offline functionality
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
@@ -95,20 +99,24 @@ const Main = () => {
 
     return (
         <React.StrictMode>
-            <Router>
-                <Routes>
-                    <Route path="/*" element={<App />} /> {/* Main Interface */}
-                    <Route
-                        path="/admin"
-                        element={
-                            <ProtectedRoute isAuthenticated={isAuthenticated}>
-                                <Admin setIsAuthenticated={setIsAuthenticated} />
-                            </ProtectedRoute>
-                        }
-                    /> {/* Admin Dashboard */}
-                    <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} /> {/* Admin Login */}
-                </Routes>
-            </Router>
+            <ErrorBoundary>
+                <Router>
+                    <Suspense fallback={<PageLoader message="Loading..." />}>
+                        <Routes>
+                            <Route path="/*" element={<App />} /> {/* Main Interface */}
+                            <Route
+                                path="/admin"
+                                element={
+                                    <ProtectedRoute isAuthenticated={isAuthenticated}>
+                                        <Admin setIsAuthenticated={setIsAuthenticated} />
+                                    </ProtectedRoute>
+                                }
+                            /> {/* Admin Dashboard */}
+                            <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} /> {/* Admin Login */}
+                        </Routes>
+                    </Suspense>
+                </Router>
+            </ErrorBoundary>
         </React.StrictMode>
     );
 };

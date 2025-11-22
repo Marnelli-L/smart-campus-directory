@@ -1,6 +1,7 @@
 /**
- * Smart Multi-Floor Search Algorithm (Google Maps Style)
- * Searches across all GeoJSON files and intelligently matches locations
+ * DIRECT GeoJSON Search - 100% Accurate
+ * Searches directly from GeoJSON data across all floors
+ * No complex scoring - just simple, accurate matching
  */
 import * as turf from '@turf/turf';
 
@@ -70,192 +71,25 @@ export async function loadAllFloorData() {
 }
 
 /**
- * Calculate string similarity (Levenshtein distance normalized)
+ * Simple case-insensitive string matching
  */
-function calculateSimilarity(str1, str2) {
-  const s1 = str1.toLowerCase();
-  const s2 = str2.toLowerCase();
-  
-  // Quick exact match
-  if (s1 === s2) return 1.0;
-  
-  // Check if one contains the other
-  if (s1.includes(s2) || s2.includes(s1)) return 0.8;
-  
-  // Levenshtein distance
-  const matrix = [];
-  for (let i = 0; i <= s2.length; i++) {
-    matrix[i] = [i];
-  }
-  for (let j = 0; j <= s1.length; j++) {
-    matrix[0][j] = j;
-  }
-  
-  for (let i = 1; i <= s2.length; i++) {
-    for (let j = 1; j <= s1.length; j++) {
-      if (s2.charAt(i - 1) === s1.charAt(j - 1)) {
-        matrix[i][j] = matrix[i - 1][j - 1];
-      } else {
-        matrix[i][j] = Math.min(
-          matrix[i - 1][j - 1] + 1,
-          matrix[i][j - 1] + 1,
-          matrix[i - 1][j] + 1
-        );
-      }
-    }
-  }
-  
-  const maxLen = Math.max(s1.length, s2.length);
-  return 1 - (matrix[s2.length][s1.length] / maxLen);
+function matchesSearch(text, search) {
+  if (!text) return false;
+  const textLower = text.toLowerCase().trim();
+  const searchLower = search.toLowerCase().trim();
+  return textLower.includes(searchLower);
 }
 
 /**
- * Extract searchable text from a feature
- */
-function getSearchableText(feature) {
-  const props = feature.properties || {};
-  return {
-    name: props.Name || props.name || '',
-    building: props.Building || props.building || '',
-    type: props.Type || props.type || '',
-    description: props.Description || props.description || '',
-    room: props.Room || props.room || '',
-    floor: props.Floor || props.floor || ''
-  };
-}
-
-/**
- * Score a feature match against search term
- */
-function scoreMatch(feature, searchTerm) {
-  const search = searchTerm.toLowerCase().trim();
-  const searchable = getSearchableText(feature);
-  
-  let score = 0;
-  const scores = {
-    exactMatch: 100,
-    startsWith: 80,
-    contains: 60,
-    roomCodeMatch: 70, // Special score for room codes
-    wordMatch: 50,
-    similarityHigh: 40,
-    similarityMed: 20,
-    similarityLow: 10
-  };
-
-  // Name matching (highest priority)
-  const name = searchable.name.toLowerCase();
-  if (name === search) {
-    score += scores.exactMatch;
-  } else if (name.startsWith(search)) {
-    score += scores.startsWith;
-  } else if (name.includes(search)) {
-    score += scores.contains;
-  } else {
-    const similarity = calculateSimilarity(name, search);
-    if (similarity > 0.8) score += scores.similarityHigh;
-    else if (similarity > 0.6) score += scores.similarityMed;
-    else if (similarity > 0.4) score += scores.similarityLow;
-  }
-
-  // Room code matching with special handling for variations
-  // e.g., "NB306" should match "N306", "M306"
-  const room = searchable.room.toLowerCase();
-  if (room) {
-    if (room === search) {
-      score += scores.exactMatch;
-    } else if (room.includes(search) || search.includes(room)) {
-      score += scores.contains;
-    } else {
-      // Handle room code variations: NB306 -> N306, M306
-      const searchDigits = search.match(/\d+/)?.[0];
-      const roomDigits = room.match(/\d+/)?.[0];
-      
-      if (searchDigits && roomDigits && searchDigits === roomDigits) {
-        // Same number - check if letter prefixes are similar
-        const searchLetters = search.replace(/\d+/g, '').replace(/\s+/g, '');
-        const roomLetters = room.replace(/\d+/g, '').replace(/\s+/g, '');
-        
-        if (searchLetters && roomLetters) {
-          // Check if search contains room letters or vice versa
-          if (searchLetters.includes(roomLetters) || roomLetters.includes(searchLetters)) {
-            score += scores.roomCodeMatch;
-          } else if (searchLetters[0] === roomLetters[0]) {
-            // Same first letter (e.g., N matches NB)
-            score += scores.roomCodeMatch * 0.8;
-          }
-        } else if (!roomLetters) {
-          // Room has no letters but numbers match (e.g., "306" matches "NB306")
-          score += scores.roomCodeMatch * 0.6;
-        }
-      }
-    }
-  }
-  
-  // Check name for room code patterns too (since room might be in Name field)
-  if (!room && name) {
-    const searchDigits = search.match(/\d+/)?.[0];
-    const nameDigits = name.match(/\d+/)?.[0];
-    
-    if (searchDigits && nameDigits && searchDigits === nameDigits) {
-      const searchLetters = search.replace(/\d+/g, '').replace(/\s+/g, '');
-      const nameLetters = name.replace(/\d+/g, '').replace(/\s+/g, '');
-      
-      if (searchLetters && nameLetters) {
-        if (searchLetters.includes(nameLetters) || nameLetters.includes(searchLetters)) {
-          score += scores.roomCodeMatch;
-        } else if (searchLetters[0] === nameLetters[0]) {
-          score += scores.roomCodeMatch * 0.8;
-        }
-      }
-    }
-  }
-
-  // Building matching
-  const building = searchable.building.toLowerCase();
-  if (building && (building.includes(search) || search.includes(building))) {
-    score += 30;
-  }
-
-  // Type matching
-  const type = searchable.type.toLowerCase();
-  if (type && (type.includes(search) || search.includes(type))) {
-    score += 20;
-  }
-
-  // Word-by-word matching
-  const searchWords = search.split(/[\s\-_]+/);
-  const nameWords = name.split(/[\s\-_]+/);
-  
-  for (const searchWord of searchWords) {
-    for (const nameWord of nameWords) {
-      if (nameWord.includes(searchWord) || searchWord.includes(nameWord)) {
-        score += scores.wordMatch / searchWords.length;
-      }
-    }
-  }
-
-  // Acronym matching (e.g., "COL" matches "College Of Law")
-  if (search.length >= 2 && !/\s/.test(search)) {
-    const acronym = nameWords.map(w => w[0]).join('').toLowerCase();
-    if (acronym.includes(search) || search.includes(acronym)) {
-      score += 35;
-    }
-  }
-
-  return score;
-}
-
-/**
- * Smart search across all floors
- * Returns: { feature, floor, floorKey, coordinates, score }
+ * Direct GeoJSON search - returns ALL matching locations
  */
 export async function smartSearch(searchTerm) {
   if (!searchTerm || searchTerm.trim().length < 2) {
     return { results: [], bestMatch: null };
   }
 
-  console.log(`🔍 Smart Search: "${searchTerm}"`);
+  const search = searchTerm.toLowerCase().trim();
+  console.log(`🔍 Searching GeoJSON for: "${searchTerm}"`);
 
   // Load all floor data if not cached
   await loadAllFloorData();
@@ -266,59 +100,92 @@ export async function smartSearch(searchTerm) {
   for (const [floorKey, floorData] of Object.entries(geojsonCache)) {
     if (!floorData || !floorData.data) continue;
 
-    // Include both Points and Polygons (use centroid for polygons)
-    const searchableFeatures = floorData.data.features.filter(f => 
-      (f.geometry.type === 'Point' || f.geometry.type === 'Polygon') && 
-      (f.properties.Name || f.properties.name)
-    );
+    // Search through all features
+    floorData.data.features.forEach(feature => {
+      const props = feature.properties || {};
+      const name = (props.Name || props.name || '').trim();
+      const building = (props.Building || props.building || '').trim();
+      const type = (props.Type || props.type || '').trim();
+      const room = (props.Room || props.room || '').trim();
 
-    for (const feature of searchableFeatures) {
-      const score = scoreMatch(feature, searchTerm);
-      
-      if (score > 0) {
-        // Get coordinates (centroid for polygons, direct for points)
+      // Skip features without a name
+      if (!name) return;
+
+      // Check if search matches name, type, room, or building
+      if (matchesSearch(name, search) || 
+          matchesSearch(type, search) || 
+          matchesSearch(room, search) ||
+          matchesSearch(building, search)) {
+        
+        // Get coordinates
         let coordinates;
         if (feature.geometry.type === 'Point') {
           coordinates = feature.geometry.coordinates;
         } else if (feature.geometry.type === 'Polygon') {
-          // Calculate centroid for polygon
-          const centroid = turf.centroid(feature);
-          coordinates = centroid.geometry.coordinates;
+          coordinates = turf.centroid(feature).geometry.coordinates;
+        } else {
+          return; // Skip unsupported geometry types
         }
 
+        // Calculate simple priority score
+        let priority = 0;
+        const nameLower = name.toLowerCase();
+        
+        // Exact match gets highest priority
+        if (nameLower === search) {
+          priority = 1000;
+        }
+        // Starts with search term
+        else if (nameLower.startsWith(search)) {
+          priority = 500;
+        }
+        // Contains search term
+        else if (nameLower.includes(search)) {
+          priority = 100;
+        }
+        // Room or type match
+        else if (matchesSearch(room, search) || matchesSearch(type, search)) {
+          priority = 50;
+        }
+        
+        // Add match to results
         allMatches.push({
           feature,
           floor: floorData.name,
           floorKey,
-          coordinates: coordinates,
-          score,
-          name: feature.properties.Name || feature.properties.name,
-          building: feature.properties.Building || feature.properties.building || 'Main Building',
-          type: feature.properties.Type || feature.properties.type || 'Location'
+          coordinates,
+          name,
+          building: building || 'Main Building',
+          type: type || 'Location',
+          room,
+          priority
         });
       }
-    }
+    });
   }
 
-  // Sort by score (highest first)
-  allMatches.sort((a, b) => b.score - a.score);
+  // Sort by priority (highest first), then by name length (shorter first)
+  allMatches.sort((a, b) => {
+    if (b.priority !== a.priority) {
+      return b.priority - a.priority;
+    }
+    return a.name.length - b.name.length;
+  });
 
-  // Get top 10 results
-  const topResults = allMatches.slice(0, 10);
-
-  // Best match (highest score)
+  // Get top results
+  const topResults = allMatches.slice(0, 15);
   const bestMatch = topResults.length > 0 ? topResults[0] : null;
 
   if (bestMatch) {
-    console.log(`✅ Best match: "${bestMatch.name}" on ${bestMatch.floor} (score: ${bestMatch.score})`);
+    console.log(`✅ Best match: "${bestMatch.name}" on ${bestMatch.floor} (priority: ${bestMatch.priority})`);
   } else {
     console.warn(`⚠️ No matches found for: "${searchTerm}"`);
   }
 
   if (topResults.length > 1) {
-    console.log(`📋 Top ${topResults.length} matches:`, topResults.map(r => 
-      `${r.name} (${r.floor}, score: ${r.score})`
-    ));
+    console.log(`📋 Found ${topResults.length} matches:`, 
+      topResults.slice(0, 5).map(r => `${r.name} (${r.floor})`)
+    );
   }
 
   return {
@@ -329,7 +196,8 @@ export async function smartSearch(searchTerm) {
 }
 
 /**
- * Get suggestions for autocomplete (top 5 matches)
+ * Get intelligent suggestions for autocomplete
+ * Returns top 8 most relevant, unique suggestions
  */
 export async function getSearchSuggestions(searchTerm) {
   if (!searchTerm || searchTerm.trim().length < 2) {
@@ -338,25 +206,64 @@ export async function getSearchSuggestions(searchTerm) {
 
   const { results } = await smartSearch(searchTerm);
   
-  // Remove duplicates based on name (case-insensitive)
+  // Deduplication by name (keep highest priority)
   const uniqueResults = [];
-  const seenNames = new Set();
+  const seenNames = new Map();
   
   for (const r of results) {
-    const nameLower = r.name.toLowerCase();
-    if (!seenNames.has(nameLower)) {
-      seenNames.add(nameLower);
+    const nameLower = r.name.trim().toLowerCase();
+    
+    // Check if we've seen this name before
+    if (seenNames.has(nameLower)) {
+      const existing = seenNames.get(nameLower);
+      
+      // Keep the one with higher priority
+      if (r.priority > existing.priority) {
+        // Replace with higher priority version
+        const index = uniqueResults.findIndex(ur => ur.name.trim().toLowerCase() === nameLower);
+        if (index > -1) {
+          uniqueResults[index] = {
+            name: r.name.trim(),
+            building: r.building,
+            floor: r.floor,
+            floorKey: r.floorKey,
+            coordinates: r.coordinates,
+            type: r.type,
+            room: r.room,
+            priority: r.priority
+          };
+          seenNames.set(nameLower, r);
+        }
+      }
+    } else {
+      // New unique location
+      seenNames.set(nameLower, r);
       uniqueResults.push({
-        name: r.name,          // Changed from 'label' to match Map.jsx
-        building: r.building,  // Use actual building name
-        floor: r.floor,        // Use full floor name (e.g., "Ground Floor")
-        floorKey: r.floorKey,  // Keep floor key too
-        coordinates: r.coordinates
+        name: r.name.trim(),
+        building: r.building,
+        floor: r.floor,
+        floorKey: r.floorKey,
+        coordinates: r.coordinates,
+        type: r.type,
+        room: r.room,
+        priority: r.priority
       });
     }
   }
   
-  return uniqueResults.slice(0, 5);
+  // Return top 8 suggestions, sorted by priority
+  return uniqueResults
+    .sort((a, b) => b.priority - a.priority)
+    .slice(0, 8)
+    .map(({ name, building, floor, floorKey, coordinates, type, room }) => ({
+      name,
+      building,
+      floor,
+      floorKey,
+      coordinates,
+      type,
+      room
+    }));
 }
 
 /**

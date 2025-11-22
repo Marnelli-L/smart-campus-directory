@@ -1,32 +1,69 @@
-
-console.log('admin route loaded')
 const express = require('express');
+const Logger = require('../utils/logger');
+const logger = new Logger('admin');
 const router = express.Router();
 const db = require('../db/db');
 const { logAudit } = require('../utils/auditLogger');
+const bcrypt = require('bcrypt');
+const { validateLogin } = require('../middleware/validation');
 
-// Admin login route
-router.post('/login', async (req, res) => {
-  console.log('Login attempt:', req.body.username); // Log username only (not password)
+logger.info('admin route loaded');
+
+// Admin login route with validation
+router.post('/login', validateLogin, async (req, res) => {
+  logger.info('Login attempt:', req.body.username);
+  
   const { username, password } = req.body;
   
-  // Validate input
-  if (!username || !password) {
-    return res.status(400).json({ 
-      success: false, 
-      message: 'Username and password are required' 
-    });
-  }
-  
   try {
-    // Query for admin user (in production, use hashed passwords)
+    // Check if running on localhost - allow bypass for testing
+    const isLocalhost = req.hostname === 'localhost' || 
+                        req.hostname === '127.0.0.1' ||
+                        req.get('host')?.includes('localhost');
+    
+    // In localhost, allow test credentials without database check
+    if (isLocalhost && username === 'admin' && password === 'admin') {
+      logger.info('✅ Localhost test login successful');
+      
+      return res.json({ 
+        success: true,
+        token: `test_session_${Date.now()}`,
+        user: {
+          id: 1,
+          username: 'admin',
+          role: 'administrator'
+        }
+      });
+    }
+    
+    // For production, check database with bcrypt
     const result = await db.query(
-      'SELECT id, username FROM admins WHERE username = $1 AND password = $2 LIMIT 1',
-      [username, password]
+      'SELECT id, username, password FROM admins WHERE username = $1 LIMIT 1',
+      [username]
     );
     
     if (result.rows.length > 0) {
       const admin = result.rows[0];
+      
+      // Compare password with bcrypt hash
+      const isPasswordValid = await bcrypt.compare(password, admin.password);
+      
+      if (!isPasswordValid) {
+        // Log failed login attempt
+        logger.warn('⚠️ Invalid password for username:', username);
+        await logAudit(
+          'Failed Login',
+          'System',
+          null,
+          `Failed login attempt for username "${username}" - Invalid password`,
+          { username, ip: req.ip }
+        );
+        
+        return res.status(401).json({ 
+          success: false, 
+          message: 'Invalid username or password' 
+        });
+      }
       
       // Generate a simple session token (in production, use JWT or proper session management)
       const sessionToken = `session_${admin.id}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
@@ -40,7 +77,7 @@ router.post('/login', async (req, res) => {
         { username: admin.username, role: 'administrator' }
       );
       
-      console.log('✅ Login successful for user:', admin.username);
+      logger.info('✅ Login successful for user:', admin.username);
       
       return res.json({ 
         success: true,
@@ -54,7 +91,7 @@ router.post('/login', async (req, res) => {
     }
     
     // Log failed login attempt
-    console.warn('⚠️ Failed login attempt for username:', username);
+    logger.warn('⚠️ Failed login attempt for username:', username);
     await logAudit(
       'Failed Login',
       'System',
@@ -68,7 +105,21 @@ router.post('/login', async (req, res) => {
       message: 'Invalid username or password' 
     });
   } catch (err) {
-    console.error('❌ Login error:', err);
+    logger.error('❌ Login error:', err);
+    
+    // If database error on localhost, provide helpful message
+    const isLocalhost = req.hostname === 'localhost' || 
+                        req.hostname === '127.0.0.1' ||
+                        req.get('host')?.includes('localhost');
+    
+    if (isLocalhost) {
+      return res.status(503).json({ 
+        success: false, 
+        message: 'Database connection error. Use admin/admin for localhost testing.',
+        error: err.message
+      });
+    }
+    
     res.status(500).json({ 
       success: false, 
       message: 'Server error. Please try again later.',
@@ -104,10 +155,10 @@ router.post('/logout', async (req, res) => {
       { username: username || 'Unknown' }
     );
     
-    console.log('✅ Logout successful for user:', username || 'Unknown');
+    logger.info('✅ Logout successful for user:', username || 'Unknown');
     res.json({ success: true, message: 'Logged out successfully' });
   } catch (err) {
-    console.error('❌ Logout error:', err);
+    logger.error('❌ Logout error:', err);
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });

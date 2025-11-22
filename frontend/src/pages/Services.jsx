@@ -7,7 +7,6 @@ function Services() {
       description: "Access books, journals, and digital resources at the campus library.",
       icon: "📚",
       openingHours: "8:00 AM - 6:00 PM",
-      contact: "library@udm.edu.ph | (02) 123-4567",
       location: "3rd Floor, Main Building",
     },
     {
@@ -15,7 +14,6 @@ function Services() {
       description: "Visit the campus clinic for medical consultations and assistance.",
       icon: "🏥",
       openingHours: "8:00 AM - 5:00 PM",
-      contact: "clinic@udm.edu.ph | (02) 765-4321",
       location: "Ground Floor, Wellness Center",
     },
     {
@@ -23,7 +21,6 @@ function Services() {
       description: "Get help with campus Wi-Fi, software, and technical issues.",
       icon: "💻",
       openingHours: "9:00 AM - 5:00 PM",
-      contact: "itsupport@udm.edu.ph | (02) 987-6543",
       location: "2nd Floor, IT Department",
     },
     {
@@ -31,7 +28,6 @@ function Services() {
       description: "Speak with professional counselors for guidance and support.",
       icon: "🧠",
       openingHours: "9:00 AM - 4:00 PM",
-      contact: "counseling@udm.edu.ph | (02) 456-7890",
       location: "1st Floor, Student Affairs Office",
     },
     {
@@ -39,7 +35,6 @@ function Services() {
       description: "Engage in student activities and access administrative support.",
       icon: "🎓",
       openingHours: "8:00 AM - 5:00 PM",
-      contact: "studentaffairs@udm.edu.ph | (02) 321-6547",
       location: "Ground Floor, Administration Building",
     },
     {
@@ -47,7 +42,6 @@ function Services() {
       description: "Handle enrollment, academic records, and certifications.",
       icon: "📝",
       openingHours: "8:00 AM - 5:00 PM",
-      contact: "registrar@udm.edu.ph | (02) 654-3210",
       location: "Ground Floor, Registrar's Office",
     },
   ];
@@ -83,7 +77,6 @@ function Services() {
             <p className="text-gray-600 text-center mb-3 text-sm">{service.description}</p>
             <div className="text-xs text-gray-700">
               <p><strong>Opening Hours:</strong> {service.openingHours}</p>
-              <p><strong>Contact:</strong> {service.contact}</p>
               <p><strong>Location:</strong> {service.location}</p>
             </div>
           </div>

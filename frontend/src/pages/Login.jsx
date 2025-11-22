@@ -53,6 +53,7 @@ const Login = ({ setIsAuthenticated }) => {
             if (response.ok && data.success) {
                 // Store authentication data
                 localStorage.setItem('adminAuthenticated', 'true');
+                localStorage.setItem('adminUsername', username.trim()); // Store username for display
                 if (data.token) {
                     localStorage.setItem('adminToken', data.token);
                 }

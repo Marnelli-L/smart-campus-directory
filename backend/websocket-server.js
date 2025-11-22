@@ -2,6 +2,9 @@
 const WebSocket = require('ws');
 const express = require('express');
 const http = require('http');
+const Logger = require('./utils/logger');
+
+const logger = new Logger('WebSocket');
 
 // Create Express app and HTTP server
 const app = express();
@@ -26,12 +29,12 @@ function broadcast(message) {
       try {
         client.send(messageString);
       } catch (error) {
-        console.error('Error sending message to client:', error);
+        logger.error('Error sending message to client:', error);
       }
     }
   });
   
-  console.log(`📡 Broadcasted: ${message.type}`);
+  logger.debug(`📡 Broadcasted: ${message.type}`);
 }
 
 // Send emergency alert
@@ -102,8 +105,8 @@ wss.on('connection', (ws, req) => {
   };
   
   clients.set(ws, clientInfo);
-  console.log(`✅ Client ${clientId} connected from ${clientInfo.ip}`);
-  console.log(`👥 Total clients: ${wss.clients.size}`);
+  logger.success(`✅ Client ${clientId} connected from ${clientInfo.ip}`);
+  logger.info(`👥 Total clients: ${wss.clients.size}`);
 
   // Send welcome message
   ws.send(JSON.stringify({
@@ -119,7 +122,7 @@ wss.on('connection', (ws, req) => {
   ws.on('message', (message) => {
     try {
       const data = JSON.parse(message);
-      console.log(`📨 Message from client ${clientId}:`, data.type);
+      logger.debug(`📨 Message from client ${clientId}:`, data.type);
       
       switch (data.type) {
         case 'client_info':
@@ -129,40 +132,40 @@ wss.on('connection', (ws, req) => {
           
         case 'user_location':
           // Handle location updates (could be used for occupancy tracking)
-          console.log(`📍 Location update from client ${clientId}:`, data.payload);
+          logger.debug(`📍 Location update from client ${clientId}:`, data.payload);
           break;
           
         case 'emergency_alert':
           // Emergency alert from client (e.g., panic button)
-          console.log(`🚨 Emergency alert from client ${clientId}:`, data.payload);
+          logger.warn(`🚨 Emergency alert from client ${clientId}:`, data.payload);
           sendEmergencyAlert(data.payload.message, data.payload.location);
           break;
           
         case 'maintenance_report':
           // Maintenance issue reported
-          console.log(`🔧 Maintenance report from client ${clientId}:`, data.payload);
+          logger.info(`🔧 Maintenance report from client ${clientId}:`, data.payload);
           sendMaintenanceAlert(data.payload.location, data.payload.description);
           break;
           
         default:
-          console.log('Unknown message type:', data.type);
+          logger.warn('Unknown message type:', data.type);
       }
       
     } catch (error) {
-      console.error(`Error parsing message from client ${clientId}:`, error);
+      logger.error(`Error parsing message from client ${clientId}:`, error);
     }
   });
 
   // Handle client disconnect
   ws.on('close', () => {
     clients.delete(ws);
-    console.log(`❌ Client ${clientId} disconnected`);
-    console.log(`👥 Total clients: ${wss.clients.size}`);
+    logger.info(`❌ Client ${clientId} disconnected`);
+    logger.info(`👥 Total clients: ${wss.clients.size}`);
   });
 
   // Handle errors
   ws.on('error', (error) => {
-    console.error(`Error with client ${clientId}:`, error);
+    logger.error(`Error with client ${clientId}:`, error);
   });
 });
 
@@ -223,22 +226,22 @@ app.get('/demo/maintenance', (req, res) => {
 // Start the server
 const PORT = process.env.WEBSOCKET_PORT || 5001;
 server.listen(PORT, () => {
-  console.log(`🚀 WebSocket Server running on port ${PORT}`);
-  console.log(`📡 WebSocket endpoint: ws://localhost:${PORT}`);
-  console.log(`🌐 HTTP endpoint: http://localhost:${PORT}`);
-  console.log(`\n📋 Demo endpoints:`);
-  console.log(`   http://localhost:${PORT}/demo/emergency`);
-  console.log(`   http://localhost:${PORT}/demo/announcement`);
-  console.log(`   http://localhost:${PORT}/demo/maintenance`);
-  console.log(`   http://localhost:${PORT}/api/status\n`);
+  logger.success(`🚀 WebSocket Server running on port ${PORT}`);
+  logger.info(`📡 WebSocket endpoint: ws://localhost:${PORT}`);
+  logger.info(`🌐 HTTP endpoint: http://localhost:${PORT}`);
+  logger.info(`\n📋 Demo endpoints:`);
+  logger.info(`   http://localhost:${PORT}/demo/emergency`);
+  logger.info(`   http://localhost:${PORT}/demo/announcement`);
+  logger.info(`   http://localhost:${PORT}/demo/maintenance`);
+  logger.info(`   http://localhost:${PORT}/api/status\n`);
 });
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log('🛑 Shutting down WebSocket server...');
+  logger.warn('🛑 Shutting down WebSocket server...');
   wss.close(() => {
     server.close(() => {
-      console.log('✅ WebSocket server shut down');
+      logger.success('✅ WebSocket server shut down');
       process.exit(0);
     });
   });

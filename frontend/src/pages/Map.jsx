@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { MdLayers } from "react-icons/md";
 import { createPortal } from "react-dom";
@@ -28,6 +28,7 @@ function Map() {
   const [search, setSearch] = useState("");
   const [selectedFloor, setSelectedFloor] = useState(FLOORS[0].value);
   const [searchDestination, setSearchDestination] = useState(null);
+  const [selectedSuggestion, setSelectedSuggestion] = useState(null); // Store complete suggestion data
   const [keyboardOpen, setKeyboardOpen] = useState(false);
   const [searchSuggestions, setSearchSuggestions] = useState([]);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -123,9 +124,9 @@ function Map() {
         });
         
         // Remove duplicates from each category based on unique name-floor combination
-        const uniqueBuildings = Array.from(new Map(allBuildings.map(item => [item.id, item])).values());
-        const uniqueRooms = Array.from(new Map(allRooms.map(item => [item.id, item])).values());
-        const uniqueServices = Array.from(new Map(allServices.map(item => [item.id, item])).values());
+        const uniqueBuildings = Array.from(new globalThis.Map(allBuildings.map(item => [item.id, item])).values());
+        const uniqueRooms = Array.from(new globalThis.Map(allRooms.map(item => [item.id, item])).values());
+        const uniqueServices = Array.from(new globalThis.Map(allServices.map(item => [item.id, item])).values());
 
         // Initialize search engine with deduplicated data
         campusSearchEngine.buildIndex({
@@ -171,6 +172,7 @@ function Map() {
       // Clear route
       setSearch("");
       setSearchDestination(null);
+      setSelectedSuggestion(null);
       if (mapViewRef.current && mapViewRef.current.clearRoute) {
         mapViewRef.current.clearRoute();
       }
@@ -218,6 +220,14 @@ function Map() {
 
     window.addEventListener('navigateToLocation', handleNavigateToLocation);
     return () => window.removeEventListener('navigateToLocation', handleNavigateToLocation);
+  }, []);
+
+  // Handle floor change from MapView (when auto-switching floors)
+  const handleFloorChange = useCallback((newFloor) => {
+    console.log('🔄 Floor changed in MapView, syncing dropdown:', newFloor);
+    // newFloor is already in dropdown format (F1, F2, F3, F4) from MapView
+    setSelectedFloor(newFloor);
+    console.log('✅ Dropdown updated to:', newFloor);
   }, []);
 
   // Custom dropdown open state for floor selector
@@ -363,8 +373,14 @@ function Map() {
               {searchDestination && (
                 <button
                   onClick={() => {
+                    // Clear route and all markers first
+                    if (mapViewRef.current && mapViewRef.current.clearRoute) {
+                      mapViewRef.current.clearRoute();
+                    }
+                    // Then clear search state
                     setSearchDestination(null);
                     setSearch('');
+                    setSelectedSuggestion(null);
                   }}
                   className="ml-2 text-[#00695C] hover:text-[#004d40] transition-colors flex-shrink-0"
                   title="Clear navigation"
@@ -383,6 +399,13 @@ function Map() {
                   <button
                     key={idx}
                     onClick={() => {
+                      console.log('🎯 Suggestion clicked:', suggestion);
+                      console.log('📍 Exact coordinates:', suggestion.coordinates);
+                      console.log('🏢 Floor:', suggestion.floor, `(${suggestion.floorKey})`);
+                      
+                      // CRITICAL: Set selectedSuggestion FIRST, then searchDestination
+                      // This ensures MapView receives the full object before the trigger
+                      setSelectedSuggestion(suggestion);
                       setSearch(suggestion.name);
                       setSearchDestination(suggestion.name);
                       setSearchSuggestions([]);
@@ -742,7 +765,9 @@ function Map() {
           ref={mapViewRef}
           selectedDestination={searchDestination}
           searchDestination={searchDestination}
+          selectedSuggestion={selectedSuggestion}
           selectedFloor={selectedFloor}
+          onFloorChange={handleFloorChange}
         />
       </div>
 
@@ -789,6 +814,18 @@ function Map() {
               onChange={(v) => setSearch(v)}
               suggestions={searchSuggestions}
               onClose={() => setKeyboardOpen(false)}
+              onSuggestionSelect={(suggestion) => {
+                console.log('🎯 Keyboard suggestion clicked:', suggestion);
+                console.log('📍 Exact coordinates:', suggestion.coordinates);
+                console.log('🏢 Floor:', suggestion.floor, `(${suggestion.floorKey})`);
+                
+                // Set suggestion data FIRST, then destination
+                setSelectedSuggestion(suggestion);
+                setSearch(suggestion.name);
+                setSearchDestination(suggestion.name);
+                setSearchSuggestions([]);
+                setKeyboardOpen(false);
+              }}
               onEnter={() => {
                 if (search.trim()) {
                   setSearchDestination(search.trim());

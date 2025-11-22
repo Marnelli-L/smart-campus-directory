@@ -1,4 +1,6 @@
 const express = require('express');
+const Logger = require('../utils/logger');
+const logger = new Logger('Server');
 const cors = require('cors');
 const announcementsRouter = require('./announcements');
 const buildingsRouter = require('./routes/buildings');
@@ -40,7 +42,7 @@ app.use(cors({
     if (isAllowed) {
       callback(null, true);
     } else {
-      console.log('Blocked origin:', origin);
+      logger.warn('Blocked origin:', origin);
       callback(null, false);
     }
   },
@@ -74,8 +76,8 @@ app.get('/api/health', (req, res) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, async () => {
-  console.log(`🧩 Unified server starting (server.js)`);
-  console.log(`Server running on port ${PORT}`);
+  logger.success(`🧩 Unified server starting`);
+  logger.info(`Server running on port ${PORT}`);
 
   // Schema probe
   try {
@@ -84,14 +86,14 @@ app.listen(PORT, async () => {
     for (const t of tables) {
       const colRes = await db.query(`SELECT column_name FROM information_schema.columns WHERE table_name = $1 ORDER BY ordinal_position`, [t]);
       if (colRes.rows.length) {
-        console.log(`📄 Table '${t}' columns:`, colRes.rows.map(r => r.column_name).join(', '));
+        logger.debug(`📄 Table '${t}' columns:`, colRes.rows.map(r => r.column_name).join(', '));
         const countRes = await db.query(`SELECT COUNT(*) FROM ${t}`);
-        console.log(`   → Row count: ${countRes.rows[0].count}`);
+        logger.debug(`   → Row count: ${countRes.rows[0].count}`);
       } else {
-        console.log(`⚠️ Table '${t}' not found.`);
+        logger.warn(`⚠️ Table '${t}' not found.`);
       }
     }
   } catch (e) {
-    console.error('❌ Schema probe failed:', e.message);
+    logger.error('❌ Schema probe failed:', e.message);
   }
 });

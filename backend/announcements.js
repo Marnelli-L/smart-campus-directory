@@ -1,4 +1,6 @@
 const express = require('express');
+const Logger = require('../utils/logger');
+const logger = new Logger('Announcements');
 const db = require('./db/db');
 const { logAudit } = require('./utils/auditLogger');
 const router = express.Router();
@@ -34,7 +36,7 @@ router.get('/', async (req, res) => {
     `);
     res.json(result.rows);
   } catch (err) {
-    console.error('Error fetching announcements:', err);
+    logger.error('Error fetching announcements:', err);
     res.status(500).json({ error: 'Database error' });
   }
 });
@@ -61,7 +63,7 @@ router.get('/admin/all', async (req, res) => {
     `);
     res.json(result.rows);
   } catch (err) {
-    console.error('Error fetching all announcements:', err);
+    logger.error('Error fetching all announcements:', err);
     res.status(500).json({ error: 'Database error' });
   }
 });
@@ -84,7 +86,7 @@ router.post('/', async (req, res) => {
     );
     
     // Log to audit log
-    console.log('🔍 About to log audit entry for announcement creation...');
+    logger.info('🔍 About to log audit entry for announcement creation...');
     try {
       const auditResult = await logAudit(
         'Created',
@@ -93,14 +95,14 @@ router.post('/', async (req, res) => {
         `Announcement "${title}" created`,
         { category, priority, status }
       );
-      console.log('✅ Audit log result:', auditResult);
+      logger.info('✅ Audit log result:', auditResult);
     } catch (auditError) {
-      console.error('❌ Audit log failed:', auditError);
+      logger.error('❌ Audit log failed:', auditError);
     }
     
     res.status(201).json({ success: true, data: result.rows[0] });
   } catch (err) {
-    console.error('Error creating announcement:', err);
+    logger.error('Error creating announcement:', err);
     res.status(500).json({ error: 'Database error: ' + err.message });
   }
 });
@@ -135,7 +137,7 @@ router.put('/:id', async (req, res) => {
 
     res.json({ success: true, data: result.rows[0] });
   } catch (err) {
-    console.error('Error updating announcement:', err);
+    logger.error('Error updating announcement:', err);
     res.status(500).json({ error: 'Database error: ' + err.message });
   }
 });
@@ -166,7 +168,7 @@ router.delete('/:id', async (req, res) => {
 
     res.json({ success: true, message: 'Announcement deleted' });
   } catch (err) {
-    console.error('Error deleting announcement:', err);
+    logger.error('Error deleting announcement:', err);
     res.status(500).json({ error: 'Database error: ' + err.message });
   }
 });
@@ -204,7 +206,7 @@ router.post('/bulk-delete', async (req, res) => {
 
     res.json({ success: true, message: `Successfully deleted ${result.rowCount} announcement(s)`, count: result.rowCount });
   } catch (err) {
-    console.error('Error bulk deleting announcements:', err);
+    logger.error('Error bulk deleting announcements:', err);
     res.status(500).json({ error: 'Database error: ' + err.message });
   }
 });

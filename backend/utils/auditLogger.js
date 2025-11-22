@@ -4,6 +4,9 @@
  */
 
 const db = require('../db/db');
+const Logger = require('./logger');
+
+const logger = new Logger('AuditLogger');
 
 /**
  * Log an audit entry
@@ -31,11 +34,11 @@ async function logAudit(action, entity, entityId, description, metadata = {}, us
       userName
     ]);
     
-    console.log(`📝 Audit log created: ${action} ${entity} - ${description}`);
+    logger.info(`📝 Audit log created: ${action} ${entity} - ${description}`);
     return result.rows[0];
   } catch (error) {
     // Don't fail the main operation if audit logging fails
-    console.error('⚠️ Failed to create audit log entry:', error.message);
+    logger.error('⚠️ Failed to create audit log entry:', error.message);
     return null;
   }
 }
@@ -64,7 +67,7 @@ function auditLogMiddleware(action, entity, getDescription) {
           method: req.method,
           path: req.path,
           ip: req.ip
-        }).catch(err => console.error('Audit log error:', err));
+        }).catch(err => logger.error('Audit log error:', err));
       }
       return originalJson.call(this, data);
     };
@@ -80,7 +83,7 @@ function auditLogMiddleware(action, entity, getDescription) {
           method: req.method,
           path: req.path,
           ip: req.ip
-        }).catch(err => console.error('Audit log error:', err));
+        }).catch(err => logger.error('Audit log error:', err));
       }
       return originalSend.call(this, data);
     };

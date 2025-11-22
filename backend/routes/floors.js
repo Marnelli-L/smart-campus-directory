@@ -1,4 +1,6 @@
 const express = require('express');
+const Logger = require('../utils/logger');
+const logger = new Logger('floors');
 const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
@@ -70,7 +72,7 @@ router.post('/upload', upload.single('file'), (req, res) => {
 
     return res.json({ success: true, message: 'GeoJSON uploaded', floor, path: `/floor-maps/${floor}.geojson` });
   } catch (e) {
-    console.error('Floor upload error:', e);
+    logger.error('Floor upload error:', e);
     return res.status(500).json({ success: false, message: 'Upload failed', error: e.message });
   }
 });

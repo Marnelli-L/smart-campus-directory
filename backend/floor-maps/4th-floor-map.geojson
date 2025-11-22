@@ -1,0 +1,2571 @@
+{
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Stairs",
+        "Stairs Type": "Emergency Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981552,
+          14.59221
+        ],
+        "type": "Point"
+      },
+      "id": "049aeb2dd851645205d00fb4e3bcb238"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Stairs",
+        "Stairs Type": "Emergency Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.98142,
+              14.591718
+            ],
+            [
+              120.981426,
+              14.591695
+            ],
+            [
+              120.981457,
+              14.591704
+            ],
+            [
+              120.981451,
+              14.591727
+            ],
+            [
+              120.98142,
+              14.591718
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "07245dfb9f05589dd147e083a8f1f82b"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M402",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981595,
+          14.59194
+        ],
+        "type": "Point"
+      },
+      "id": "0e1e2c42cfc6f47a16bd803fe7ad9dd6"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main",
+        "Floor": "4th ",
+        "Type": "Stairs",
+        "Stairs Type": "Emergency Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981538,
+              14.591727
+            ],
+            [
+              120.981531,
+              14.591749
+            ],
+            [
+              120.981562,
+              14.591758
+            ],
+            [
+              120.981568,
+              14.591735
+            ],
+            [
+              120.981538,
+              14.591727
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "0fd9b08fcc2c2ec625b32fc186aabb6f"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "NB403",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.980978,
+              14.593136
+            ],
+            [
+              120.980914,
+              14.593117
+            ],
+            [
+              120.980937,
+              14.59304
+            ],
+            [
+              120.981002,
+              14.593059
+            ],
+            [
+              120.980978,
+              14.593136
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "1bf4bf982337a17f1bd0d98dae2b1bb7"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.98086,
+              14.592975
+            ],
+            [
+              120.980852,
+              14.593003
+            ],
+            [
+              120.980834,
+              14.592998
+            ],
+            [
+              120.980842,
+              14.59297
+            ],
+            [
+              120.98086,
+              14.592975
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "1c7b6a2efbb761385ce05e16cc23124f"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "NB405",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.9811,
+              14.593088
+            ],
+            [
+              120.981052,
+              14.593074
+            ],
+            [
+              120.981027,
+              14.593151
+            ],
+            [
+              120.981075,
+              14.593166
+            ],
+            [
+              120.9811,
+              14.593088
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "1d1581328b6d4522b9b09b0029203123"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Function Hall",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Hall"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981353,
+          14.591601
+        ],
+        "type": "Point"
+      },
+      "id": "1e7fe5d8f34eabcf9c92e82fc1ba308c"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M406",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981598,
+              14.592149
+            ],
+            [
+              120.981491,
+              14.592118
+            ],
+            [
+              120.981503,
+              14.592075
+            ],
+            [
+              120.981611,
+              14.592105
+            ],
+            [
+              120.981598,
+              14.592149
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "222bc235e51cce0f73307718772dd91e"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981438,
+          14.592252
+        ],
+        "type": "Point"
+      },
+      "id": "22cb18b01025ec2e4f3b49a2d4ddd23d"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "NB406",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981126,
+              14.593181
+            ],
+            [
+              120.98115,
+              14.593103
+            ],
+            [
+              120.9811,
+              14.593088
+            ],
+            [
+              120.981075,
+              14.593166
+            ],
+            [
+              120.981126,
+              14.593181
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "2d2396d75bdb41b191f39b7d485cce1d"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M410",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981308,
+          14.591834
+        ],
+        "type": "Point"
+      },
+      "id": "2e80f5f95bf41a7336e6f362cad23c8c"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M403",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981583,
+          14.591983
+        ],
+        "type": "Point"
+      },
+      "id": "3386187ecb49127a33b3714153d99d7f"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Comfort Room",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Restroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981587,
+              14.5918
+            ],
+            [
+              120.981573,
+              14.591847
+            ],
+            [
+              120.981611,
+              14.591857
+            ],
+            [
+              120.981606,
+              14.591876
+            ],
+            [
+              120.981673,
+              14.591894
+            ],
+            [
+              120.981692,
+              14.591828
+            ],
+            [
+              120.981587,
+              14.5918
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "34a6de27ea6f1a9c9bcaaa9aaa310e4c"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Comfort Room",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Restroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981163,
+          14.593148
+        ],
+        "type": "Point"
+      },
+      "id": "3627b2a6f3256efa4d226fe7e4203817"
+    },
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981408,
+              14.592375
+            ],
+            [
+              120.981289,
+              14.592478
+            ],
+            [
+              120.981216,
+              14.5926
+            ],
+            [
+              120.981192,
+              14.59273
+            ],
+            [
+              120.981194,
+              14.592933
+            ],
+            [
+              120.981374,
+              14.592922
+            ],
+            [
+              120.981376,
+              14.59276
+            ],
+            [
+              120.981397,
+              14.592662
+            ],
+            [
+              120.981459,
+              14.59256
+            ],
+            [
+              120.981537,
+              14.592471
+            ],
+            [
+              120.981408,
+              14.592375
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "36faba40328015d1caee45dc8c4eb76a"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "NB402",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.980905,
+          14.593067
+        ],
+        "type": "Point"
+      },
+      "id": "38c0ac5bbf76780e784235dc9aa881a9"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "NB401",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.980858,
+          14.593051
+        ],
+        "type": "Point"
+      },
+      "id": "39a7b4dbe2dc58b98424a61b2af040e2"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "NB402",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.980867,
+              14.593102
+            ],
+            [
+              120.980891,
+              14.593027
+            ],
+            [
+              120.980937,
+              14.59304
+            ],
+            [
+              120.980914,
+              14.593116
+            ],
+            [
+              120.980867,
+              14.593102
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "3d0610720db71c9751ca07f946e63f1a"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M401",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.98166,
+              14.591939
+            ],
+            [
+              120.981674,
+              14.591895
+            ],
+            [
+              120.981566,
+              14.591866
+            ],
+            [
+              120.981553,
+              14.591909
+            ],
+            [
+              120.98166,
+              14.591939
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "3f664bb025d3ae9e484bdedd090fa915"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Comfort Room",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Restroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981192,
+          14.592072
+        ],
+        "type": "Point"
+      },
+      "id": "421e8184f127f07fe9da8e351412554c"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          120.980847,
+          14.592985
+        ],
+        "type": "Point"
+      },
+      "id": "451123917ec4116d79597349eb3472a1"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M413",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981262,
+          14.591983
+        ],
+        "type": "Point"
+      },
+      "id": "45eca998a9bee4167e8bf18aa2cd9bc1"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Faculty Assoc Room",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Room"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981628,
+              14.59161
+            ],
+            [
+              120.981608,
+              14.591673
+            ],
+            [
+              120.981654,
+              14.591687
+            ],
+            [
+              120.981674,
+              14.591623
+            ],
+            [
+              120.981628,
+              14.59161
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "4759520b4cee3e9dc2914be2dab77408"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Storage",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Utility"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981407,
+              14.591546
+            ],
+            [
+              120.981447,
+              14.591557
+            ],
+            [
+              120.981428,
+              14.591619
+            ],
+            [
+              120.981389,
+              14.591609
+            ],
+            [
+              120.981407,
+              14.591546
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "486699a6bbc7a264234d47d505f9a1f5"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M407",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981491,
+              14.592118
+            ],
+            [
+              120.981479,
+              14.592162
+            ],
+            [
+              120.981585,
+              14.592192
+            ],
+            [
+              120.981598,
+              14.592149
+            ],
+            [
+              120.981491,
+              14.592118
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "48bff3b2ec8bd3627f61d178e4924d7b"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981423,
+              14.592216
+            ],
+            [
+              120.981471,
+              14.592229
+            ],
+            [
+              120.981454,
+              14.592289
+            ],
+            [
+              120.981406,
+              14.592275
+            ],
+            [
+              120.981423,
+              14.592216
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "4bf1c897ee55fb8a61806ee0567f3dd5"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "NB401",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.980867,
+              14.593101
+            ],
+            [
+              120.980824,
+              14.593089
+            ],
+            [
+              120.980847,
+              14.593014
+            ],
+            [
+              120.980891,
+              14.593027
+            ],
+            [
+              120.980867,
+              14.593101
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "4cf12d2d3a6d6f17cdf84a57abc16ad0"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M405",
+        "Floor": "4th",
+        "Building": "Main",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981611,
+              14.592105
+            ],
+            [
+              120.981503,
+              14.592075
+            ],
+            [
+              120.981515,
+              14.592035
+            ],
+            [
+              120.981623,
+              14.592066
+            ],
+            [
+              120.981611,
+              14.592105
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "4f87dacd76be64e723e8e21ea33523fd"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M411",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981293,
+          14.591883
+        ],
+        "type": "Point"
+      },
+      "id": "4f8e90a2f12d8afc28f31cbb4c249543"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Comfort Room",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Restroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981176,
+              14.593196
+            ],
+            [
+              120.981126,
+              14.593181
+            ],
+            [
+              120.98115,
+              14.593103
+            ],
+            [
+              120.981183,
+              14.593114
+            ],
+            [
+              120.981171,
+              14.593151
+            ],
+            [
+              120.981188,
+              14.593157
+            ],
+            [
+              120.981176,
+              14.593196
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "5414b114aa7a0613e16ea5eeaf7e4a08"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M404",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981571,
+          14.592029
+        ],
+        "type": "Point"
+      },
+      "id": "5a5bc1ee91957edcce462ea7fd1846ad"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Nursing Hall",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Hall"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981527,
+          14.591624
+        ],
+        "type": "Point"
+      },
+      "id": "6492c9527590af1f68da997ddcd478c6"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M405",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981561,
+          14.59207
+        ],
+        "type": "Point"
+      },
+      "id": "66ab1cc9d30f2ecd327f99939516e015"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Comfort Room",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Restroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981278,
+              14.592071
+            ],
+            [
+              120.98127,
+              14.592096
+            ],
+            [
+              120.981214,
+              14.59208
+            ],
+            [
+              120.981207,
+              14.592104
+            ],
+            [
+              120.981159,
+              14.592089
+            ],
+            [
+              120.981174,
+              14.592041
+            ],
+            [
+              120.981278,
+              14.592071
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "6af0f2ff036a98d591bd048467a73ed5"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M408",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981339,
+          14.591741
+        ],
+        "type": "Point"
+      },
+      "id": "6ceff196a7f0ac650d7c1746ef48d805"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M411",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981325,
+              14.591919
+            ],
+            [
+              120.981219,
+              14.591891
+            ],
+            [
+              120.981233,
+              14.591843
+            ],
+            [
+              120.981339,
+              14.591871
+            ],
+            [
+              120.981325,
+              14.591919
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "74513bf1cb2dfc7508c3e4b459992f5b"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M408",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981367,
+              14.591773
+            ],
+            [
+              120.981264,
+              14.591743
+            ],
+            [
+              120.981279,
+              14.591692
+            ],
+            [
+              120.981382,
+              14.591722
+            ],
+            [
+              120.981367,
+              14.591773
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "768f9e53ae03c2963c3f675efd87c768"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "NB404",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981012,
+          14.593101
+        ],
+        "type": "Point"
+      },
+      "id": "7a491c29ef2e6d2365ace5da42c82907"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Faculty Assoc Room",
+        "Floor": "4th",
+        "Building": "Main",
+        "Type": "Room"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981639,
+          14.591648
+        ],
+        "type": "Point"
+      },
+      "id": "7c83496148e018c41f1f6bd717a7e817"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M412",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981309,
+              14.591971
+            ],
+            [
+              120.981204,
+              14.591942
+            ],
+            [
+              120.981218,
+              14.591891
+            ],
+            [
+              120.981325,
+              14.591919
+            ],
+            [
+              120.981309,
+              14.591971
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "8489c2cb968b37809323700fb44dcd45"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "NB404",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981026,
+              14.59315
+            ],
+            [
+              120.981052,
+              14.593074
+            ],
+            [
+              120.981002,
+              14.593059
+            ],
+            [
+              120.980978,
+              14.593136
+            ],
+            [
+              120.981026,
+              14.59315
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "8c457f56ec050c66cf2ccd399a834ffb"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Stairs",
+        "Stairs Type": "Emergency Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981441,
+          14.59171
+        ],
+        "type": "Point"
+      },
+      "id": "8e3f9c9db7316197e20d95eaaf973235"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Nursing Hall",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Hall"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981447,
+              14.591557
+            ],
+            [
+              120.981421,
+              14.591644
+            ],
+            [
+              120.981598,
+              14.591696
+            ],
+            [
+              120.981624,
+              14.591609
+            ],
+            [
+              120.981447,
+              14.591557
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "911ab5e0920cbffd072db5381292c9d0"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M410",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981339,
+              14.591871
+            ],
+            [
+              120.981233,
+              14.591843
+            ],
+            [
+              120.981248,
+              14.591793
+            ],
+            [
+              120.981353,
+              14.591821
+            ],
+            [
+              120.981339,
+              14.591871
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "9134d82caf0b47f917feb7a7be475e77"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M413",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981294,
+              14.592021
+            ],
+            [
+              120.981189,
+              14.591991
+            ],
+            [
+              120.981204,
+              14.591942
+            ],
+            [
+              120.981308,
+              14.59197
+            ],
+            [
+              120.981294,
+              14.592021
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "933c2e090509f43553ab4773319c0f4c"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M403",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981635,
+              14.592023
+            ],
+            [
+              120.981648,
+              14.591981
+            ],
+            [
+              120.98154,
+              14.591951
+            ],
+            [
+              120.981527,
+              14.591993
+            ],
+            [
+              120.981635,
+              14.592023
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "9354b486157b3a63a08e0e648670c664"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M412",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981278,
+          14.591931
+        ],
+        "type": "Point"
+      },
+      "id": "93ba5f266aeb22bfdf6b718046865318"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "NB403",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.980959,
+          14.593084
+        ],
+        "type": "Point"
+      },
+      "id": "951ddaa88419c08f22179880d00ea6d8"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M414",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981279,
+              14.592071
+            ],
+            [
+              120.981174,
+              14.592041
+            ],
+            [
+              120.981189,
+              14.591991
+            ],
+            [
+              120.981294,
+              14.592021
+            ],
+            [
+              120.981279,
+              14.592071
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "9e17bb9bf53684d59a3dad72b26a4162"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981229,
+          14.593101
+        ],
+        "type": "Point"
+      },
+      "id": "a6789fed6acb9d296467c7adc10a19e5"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M402",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981648,
+              14.591981
+            ],
+            [
+              120.98166,
+              14.591939
+            ],
+            [
+              120.981553,
+              14.59191
+            ],
+            [
+              120.98154,
+              14.591951
+            ],
+            [
+              120.981648,
+              14.591981
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "a6b9b93870b27caa3d25c8136cf9a515"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Stairs",
+        "Stairs Type": "Emergency Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981536,
+              14.592185
+            ],
+            [
+              120.981581,
+              14.592197
+            ],
+            [
+              120.981568,
+              14.592241
+            ],
+            [
+              120.981523,
+              14.592228
+            ],
+            [
+              120.981536,
+              14.592185
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "a833faf76995041aeb2f8fae2ef5bcc7"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M406",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.98155,
+          14.592108
+        ],
+        "type": "Point"
+      },
+      "id": "a9d3e7ff87788e58755b0a98a5c0f7ec"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Comfort Room",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Restroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981639,
+          14.591846
+        ],
+        "type": "Point"
+      },
+      "id": "aaa1793e168c60650dc15009be798c7c"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Storage",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Utility"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981416,
+          14.591585
+        ],
+        "type": "Point"
+      },
+      "id": "ad71fb9a629b2b6e91042076a5c72e18"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Criminology Laboratory",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Lab"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981675,
+              14.591624
+            ],
+            [
+              120.981628,
+              14.591779
+            ],
+            [
+              120.981699,
+              14.591801
+            ],
+            [
+              120.981747,
+              14.591644
+            ],
+            [
+              120.981675,
+              14.591624
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "ae851196ba68944d2a3b64133b873869"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M401",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981612,
+          14.591901
+        ],
+        "type": "Point"
+      },
+      "id": "bcfd63ed42b7ae22d9466bd1255fc380"
+    },
+    {
+      "type": "Feature",
+      "properties": {},
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981201,
+              14.592979
+            ],
+            [
+              120.981328,
+              14.592964
+            ],
+            [
+              120.98134,
+              14.593062
+            ],
+            [
+              120.981211,
+              14.593073
+            ],
+            [
+              120.981201,
+              14.592979
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "bf045e9a2910e2587ff60bae4898b455"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981225,
+              14.593084
+            ],
+            [
+              120.981215,
+              14.593116
+            ],
+            [
+              120.981233,
+              14.593121
+            ],
+            [
+              120.981243,
+              14.593089
+            ],
+            [
+              120.981225,
+              14.593084
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "c23563cd28024a87a33443a617254d40"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M414",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981249,
+          14.592032
+        ],
+        "type": "Point"
+      },
+      "id": "d08e4258ef303ad3ed7db2e205bacea8"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "NB405",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981063,
+          14.593116
+        ],
+        "type": "Point"
+      },
+      "id": "d096a6cadb56b2550899d6c9a9b5d098"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M407",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981537,
+          14.592154
+        ],
+        "type": "Point"
+      },
+      "id": "d1d501c49f09e30effc13b575e2fdd33"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Criminology Laboratory",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Lab"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981688,
+          14.591704
+        ],
+        "type": "Point"
+      },
+      "id": "d3de6fbeeb8819710da5cc3020d12438"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Stairs",
+        "Stairs Type": "Emergency Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981549,
+          14.591743
+        ],
+        "type": "Point"
+      },
+      "id": "d926fba3d30d5bbad81d8486dba71212"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Corridor": "4th Floor"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            120.981169,
+            14.592107
+          ],
+          [
+            120.98127,
+            14.592139
+          ],
+          [
+            120.981417,
+            14.591662
+          ],
+          [
+            120.981597,
+            14.591712
+          ],
+          [
+            120.981451,
+            14.592207
+          ],
+          [
+            120.981511,
+            14.592223
+          ],
+          [
+            120.981488,
+            14.5923
+          ],
+          [
+            120.981512,
+            14.592307
+          ],
+          [
+            120.981471,
+            14.592423
+          ],
+          [
+            120.981347,
+            14.592668
+          ],
+          [
+            120.981311,
+            14.592923
+          ],
+          [
+            120.981269,
+            14.593011
+          ],
+          [
+            120.981223,
+            14.593072
+          ],
+          [
+            120.981209,
+            14.593094
+          ],
+          [
+            120.981229,
+            14.593101
+          ],
+          [
+            120.980846,
+            14.592985
+          ],
+          [
+            120.980873,
+            14.592993
+          ],
+          [
+            120.980858,
+            14.593051
+          ],
+          [
+            120.980873,
+            14.592993
+          ],
+          [
+            120.980922,
+            14.593008
+          ],
+          [
+            120.980905,
+            14.593066
+          ],
+          [
+            120.980921,
+            14.593008
+          ],
+          [
+            120.980942,
+            14.593014
+          ],
+          [
+            120.980978,
+            14.593025
+          ],
+          [
+            120.98096,
+            14.593084
+          ],
+          [
+            120.980977,
+            14.593025
+          ],
+          [
+            120.98103,
+            14.59304
+          ],
+          [
+            120.981012,
+            14.5931
+          ],
+          [
+            120.98103,
+            14.59304
+          ],
+          [
+            120.981083,
+            14.593056
+          ],
+          [
+            120.981064,
+            14.593116
+          ],
+          [
+            120.981084,
+            14.593057
+          ],
+          [
+            120.981104,
+            14.593063
+          ],
+          [
+            120.981136,
+            14.593073
+          ],
+          [
+            120.981117,
+            14.593132
+          ],
+          [
+            120.981136,
+            14.593073
+          ],
+          [
+            120.981183,
+            14.593086
+          ],
+          [
+            120.981163,
+            14.593148
+          ],
+          [
+            120.981183,
+            14.593087
+          ],
+          [
+            120.981228,
+            14.593101
+          ],
+          [
+            120.981209,
+            14.593095
+          ],
+          [
+            120.981223,
+            14.593072
+          ],
+          [
+            120.98127,
+            14.593012
+          ],
+          [
+            120.981311,
+            14.592923
+          ],
+          [
+            120.981348,
+            14.592669
+          ],
+          [
+            120.981471,
+            14.592423
+          ],
+          [
+            120.981512,
+            14.592307
+          ],
+          [
+            120.981488,
+            14.592301
+          ],
+          [
+            120.981497,
+            14.592269
+          ],
+          [
+            120.981439,
+            14.592252
+          ],
+          [
+            120.981497,
+            14.592269
+          ],
+          [
+            120.981511,
+            14.592223
+          ],
+          [
+            120.981451,
+            14.592207
+          ],
+          [
+            120.981458,
+            14.592182
+          ],
+          [
+            120.981552,
+            14.59221
+          ],
+          [
+            120.981458,
+            14.592182
+          ],
+          [
+            120.981472,
+            14.592135
+          ],
+          [
+            120.981536,
+            14.592153
+          ],
+          [
+            120.981472,
+            14.592135
+          ],
+          [
+            120.981485,
+            14.59209
+          ],
+          [
+            120.98155,
+            14.592107
+          ],
+          [
+            120.981485,
+            14.592091
+          ],
+          [
+            120.981497,
+            14.592052
+          ],
+          [
+            120.981561,
+            14.59207
+          ],
+          [
+            120.981497,
+            14.592052
+          ],
+          [
+            120.981508,
+            14.592011
+          ],
+          [
+            120.98157,
+            14.592029
+          ],
+          [
+            120.981508,
+            14.592011
+          ],
+          [
+            120.981522,
+            14.591967
+          ],
+          [
+            120.981583,
+            14.591983
+          ],
+          [
+            120.981522,
+            14.591967
+          ],
+          [
+            120.981534,
+            14.591924
+          ],
+          [
+            120.981595,
+            14.591941
+          ],
+          [
+            120.981534,
+            14.591924
+          ],
+          [
+            120.981546,
+            14.591881
+          ],
+          [
+            120.981611,
+            14.5919
+          ],
+          [
+            120.981547,
+            14.591882
+          ],
+          [
+            120.981552,
+            14.591864
+          ],
+          [
+            120.981555,
+            14.591851
+          ],
+          [
+            120.981609,
+            14.591866
+          ],
+          [
+            120.981555,
+            14.591852
+          ],
+          [
+            120.981584,
+            14.591753
+          ],
+          [
+            120.981549,
+            14.591743
+          ],
+          [
+            120.981585,
+            14.591753
+          ],
+          [
+            120.981588,
+            14.591743
+          ],
+          [
+            120.981634,
+            14.591756
+          ],
+          [
+            120.981588,
+            14.591743
+          ],
+          [
+            120.981592,
+            14.591728
+          ],
+          [
+            120.981615,
+            14.591734
+          ],
+          [
+            120.981639,
+            14.591649
+          ],
+          [
+            120.981614,
+            14.591733
+          ],
+          [
+            120.981592,
+            14.591728
+          ],
+          [
+            120.981597,
+            14.591712
+          ],
+          [
+            120.981552,
+            14.591699
+          ],
+          [
+            120.981508,
+            14.591687
+          ],
+          [
+            120.981527,
+            14.591625
+          ],
+          [
+            120.981508,
+            14.591687
+          ],
+          [
+            120.981417,
+            14.591662
+          ],
+          [
+            120.981413,
+            14.591672
+          ],
+          [
+            120.981393,
+            14.591668
+          ],
+          [
+            120.981416,
+            14.591585
+          ],
+          [
+            120.981393,
+            14.591668
+          ],
+          [
+            120.981413,
+            14.591673
+          ],
+          [
+            120.98141,
+            14.591684
+          ],
+          [
+            120.98137,
+            14.591673
+          ],
+          [
+            120.98141,
+            14.591684
+          ],
+          [
+            120.981405,
+            14.591698
+          ],
+          [
+            120.981441,
+            14.59171
+          ],
+          [
+            120.981405,
+            14.591698
+          ],
+          [
+            120.981388,
+            14.591755
+          ],
+          [
+            120.981339,
+            14.591741
+          ],
+          [
+            120.981388,
+            14.591755
+          ],
+          [
+            120.981373,
+            14.591803
+          ],
+          [
+            120.981322,
+            14.59179
+          ],
+          [
+            120.981373,
+            14.591804
+          ],
+          [
+            120.981359,
+            14.591849
+          ],
+          [
+            120.981308,
+            14.591834
+          ],
+          [
+            120.981359,
+            14.591849
+          ],
+          [
+            120.981353,
+            14.59187
+          ],
+          [
+            120.981344,
+            14.591897
+          ],
+          [
+            120.981292,
+            14.591883
+          ],
+          [
+            120.981344,
+            14.591897
+          ],
+          [
+            120.981329,
+            14.591947
+          ],
+          [
+            120.981277,
+            14.591931
+          ],
+          [
+            120.981329,
+            14.591947
+          ],
+          [
+            120.981313,
+            14.591998
+          ],
+          [
+            120.981263,
+            14.591982
+          ],
+          [
+            120.981313,
+            14.591998
+          ],
+          [
+            120.981298,
+            14.592048
+          ],
+          [
+            120.981249,
+            14.592032
+          ],
+          [
+            120.981298,
+            14.592048
+          ],
+          [
+            120.981275,
+            14.592122
+          ],
+          [
+            120.981208,
+            14.592101
+          ],
+          [
+            120.981275,
+            14.592122
+          ],
+          [
+            120.98127,
+            14.592139
+          ],
+          [
+            120.981169,
+            14.592107
+          ]
+        ],
+        "type": "LineString"
+      },
+      "id": "dcee1f35bf75070c621cd242b6740b6f"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Function Hall",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Hall"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981332,
+              14.591524
+            ],
+            [
+              120.981407,
+              14.591546
+            ],
+            [
+              120.981366,
+              14.591689
+            ],
+            [
+              120.981289,
+              14.591666
+            ],
+            [
+              120.981332,
+              14.591524
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "e608c97db49e73631a1f2e24fdbe0e5a"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Stairs",
+        "Stairs Type": "Emergency Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981159,
+              14.592089
+            ],
+            [
+              120.981187,
+              14.592098
+            ],
+            [
+              120.981178,
+              14.592129
+            ],
+            [
+              120.981149,
+              14.59212
+            ],
+            [
+              120.981159,
+              14.592089
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "e920df547e5d7ccf588d2e3f24d09762"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "NB406",
+        "Building": "New",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981117,
+          14.593132
+        ],
+        "type": "Point"
+      },
+      "id": "f300330e21f60b676f6b0529f9fe0093"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M404",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981623,
+              14.592066
+            ],
+            [
+              120.981635,
+              14.592023
+            ],
+            [
+              120.981527,
+              14.591993
+            ],
+            [
+              120.981515,
+              14.592035
+            ],
+            [
+              120.981623,
+              14.592066
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "f71e6d057d8d247259c0e99a2552f908"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M409",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981352,
+              14.591821
+            ],
+            [
+              120.981248,
+              14.591793
+            ],
+            [
+              120.981264,
+              14.591743
+            ],
+            [
+              120.981366,
+              14.591773
+            ],
+            [
+              120.981352,
+              14.591821
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "f7a6be4d632fe02efdf69e15cb438b8e"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "M409",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Classroom"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981322,
+          14.591791
+        ],
+        "type": "Point"
+      },
+      "id": "fba9695bd98a84fffdcae5ca47d510b4"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Stairs",
+        "Building": "Main",
+        "Floor": "4th",
+        "Type": "Stairs",
+        "Stairs Type": "Emergency Stairs"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981168,
+          14.592107
+        ],
+        "type": "Point"
+      },
+      "id": "fbc70ee66a457c06c619f13f10da0e36"
+    }
+  ],
+  "type": "FeatureCollection"
+}

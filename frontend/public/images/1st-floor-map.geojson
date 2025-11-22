@@ -85,6 +85,22 @@
     {
       "type": "Feature",
       "properties": {
+        "Name": "Entrance/Exit",
+        "Floor": "Ground",
+        "Type": "Entrance/Exit"
+      },
+      "geometry": {
+        "coordinates": [
+          120.981076,
+          14.592941
+        ],
+        "type": "Point"
+      },
+      "id": "02abe179eaf424338577cbeaf29ca130"
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "Name": "Office of the President for Student Success and Support Services",
         "Building": "Main ",
         "Floor": "Ground ",
@@ -196,7 +212,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Staff Room",
+        "Name": "107 - Staff Room",
         "Building": "New ",
         "Floor": "Ground ",
         "Type": "Room"
@@ -233,7 +249,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Vacant",
+        "Name": "106 - Vacant",
         "Building": "New ",
         "Floor": "Ground ",
         "Type": "Room"
@@ -279,15 +295,15 @@
             14.591664
           ],
           [
-            120.981523,
-            14.591643
+            120.981524,
+            14.591642
           ],
           [
             120.981519,
             14.59166
           ],
           [
-            120.981523,
+            120.981524,
             14.591642
           ],
           [
@@ -295,8 +311,24 @@
             14.591639
           ],
           [
-            120.981542,
-            14.591561
+            120.981525,
+            14.591595
+          ],
+          [
+            120.981538,
+            14.59156
+          ],
+          [
+            120.981526,
+            14.591595
+          ],
+          [
+            120.981119,
+            14.59153
+          ],
+          [
+            120.981526,
+            14.591595
           ],
           [
             120.981513,
@@ -309,14 +341,6 @@
           [
             120.981513,
             14.591639
-          ],
-          [
-            120.98148,
-            14.591627
-          ],
-          [
-            120.981448,
-            14.591617
           ],
           [
             120.981416,
@@ -547,12 +571,16 @@
             14.592494
           ],
           [
-            120.981429,
-            14.59247
+            120.981447,
+            14.592479
           ],
           [
-            120.981414,
-            14.592489
+            120.981429,
+            14.592468
+          ],
+          [
+            120.981415,
+            14.592487
           ],
           [
             120.9814,
@@ -563,7 +591,7 @@
             14.592478
           ],
           [
-            120.981399,
+            120.9814,
             14.592509
           ],
           [
@@ -603,16 +631,12 @@
             14.592777
           ],
           [
-            120.98127,
-            14.592799
+            120.981266,
+            14.592822
           ],
           [
-            120.981267,
-            14.592823
-          ],
-          [
-            120.981217,
-            14.592849
+            120.981222,
+            14.592847
           ],
           [
             120.981167,
@@ -623,15 +647,47 @@
             14.592822
           ],
           [
-            120.981261,
+            120.981263,
+            14.592849
+          ],
+          [
+            120.98126,
+            14.592871
+          ],
+          [
+            120.981334,
+            14.592867
+          ],
+          [
+            120.981338,
+            14.592802
+          ],
+          [
+            120.98136,
+            14.592803
+          ],
+          [
+            120.981338,
+            14.592802
+          ],
+          [
+            120.981334,
+            14.592867
+          ],
+          [
+            120.98126,
+            14.59287
+          ],
+          [
+            120.98126,
             14.592878
           ],
           [
-            120.981335,
-            14.592874
+            120.981312,
+            14.59288
           ],
           [
-            120.981261,
+            120.98126,
             14.592878
           ],
           [
@@ -647,7 +703,7 @@
             14.592962
           ],
           [
-            120.981248,
+            120.981247,
             14.592995
           ],
           [
@@ -824,7 +880,7 @@
           ],
           [
             120.981258,
-            14.592897
+            14.592896
           ],
           [
             120.981284,
@@ -880,7 +936,7 @@
           ],
           [
             120.981429,
-            14.59247
+            14.592469
           ],
           [
             120.981437,
@@ -931,8 +987,40 @@
             14.592319
           ],
           [
-            120.981486,
-            14.592283
+            120.981477,
+            14.592312
+          ],
+          [
+            120.981552,
+            14.592332
+          ],
+          [
+            120.981559,
+            14.592306
+          ],
+          [
+            120.98158,
+            14.592312
+          ],
+          [
+            120.981559,
+            14.592306
+          ],
+          [
+            120.981552,
+            14.592332
+          ],
+          [
+            120.981477,
+            14.592312
+          ],
+          [
+            120.981481,
+            14.5923
+          ],
+          [
+            120.981485,
+            14.592278
           ],
           [
             120.981531,
@@ -940,15 +1028,15 @@
           ],
           [
             120.981486,
-            14.592282
+            14.592278
           ],
           [
             120.981494,
             14.592256
           ],
           [
-            120.98152,
-            14.592265
+            120.981528,
+            14.592267
           ],
           [
             120.981546,
@@ -984,7 +1072,7 @@
           ],
           [
             120.981457,
-            14.592162
+            14.59216
           ],
           [
             120.980999,
@@ -999,8 +1087,8 @@
             14.592026
           ],
           [
-            120.981456,
-            14.592161
+            120.981457,
+            14.59216
           ],
           [
             120.981465,
@@ -1094,6 +1182,23 @@
         "type": "LineString"
       },
       "id": "0df04faad34efed77021f9d072894d53"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "Isolation Room",
+        "Building": "Main",
+        "Floor": "Ground",
+        "Type": "Room"
+      },
+      "geometry": {
+        "coordinates": [
+          120.98158,
+          14.592312
+        ],
+        "type": "Point"
+      },
+      "id": "116da82cc7586a8fedd8f3da6f011888"
     },
     {
       "type": "Feature",
@@ -1297,7 +1402,44 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Taekwando Room",
+        "Name": "Isolation Room ",
+        "Building": "Main",
+        "Floor": "Ground",
+        "Type": "Room"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.98157,
+              14.592293
+            ],
+            [
+              120.981598,
+              14.592301
+            ],
+            [
+              120.981589,
+              14.592329
+            ],
+            [
+              120.981562,
+              14.592321
+            ],
+            [
+              120.98157,
+              14.592293
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "31dd39f89cd69e9a3a0becdd4335ce15"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "101 - Taekwando Room",
         "Building": "New ",
         "Floor": "Ground ",
         "Type": "Gym / Training Room"
@@ -1371,6 +1513,43 @@
     {
       "type": "Feature",
       "properties": {
+        "Name": "VPA Office",
+        "Building": "Main",
+        "Floor": "Ground",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981356,
+              14.592783
+            ],
+            [
+              120.981376,
+              14.592786
+            ],
+            [
+              120.98137,
+              14.592833
+            ],
+            [
+              120.98135,
+              14.592831
+            ],
+            [
+              120.981356,
+              14.592783
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "3c12f85913272422804642b517afdb87"
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "Name": "Court",
         "Floor": "Ground "
       },
@@ -1402,7 +1581,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Staff Room",
+        "Name": "107 - Staff Room",
         "Building": "New ",
         "Floor": "Ground ",
         "Type": "Room"
@@ -1436,7 +1615,24 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Human Resources Management and Development Division",
+        "Name": "Office of the Vice President for Administration",
+        "Building": "Main",
+        "Floor": "Ground",
+        "Type": "Office"
+      },
+      "geometry": {
+        "coordinates": [
+          120.98136,
+          14.592802
+        ],
+        "type": "Point"
+      },
+      "id": "49914e95028c6b36f80e09af578a704a"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "105 - Human Resources Management and Development Division (HRMDD)",
         "Building": "New ",
         "Floor": "Ground ",
         "Type": "Office"
@@ -1553,16 +1749,32 @@
               14.592721
             ],
             [
-              120.981374,
-              14.592737
+              120.981358,
+              14.59273
             ],
             [
-              120.981367,
-              14.592829
+              120.981382,
+              14.592736
+            ],
+            [
+              120.981379,
+              14.592753
+            ],
+            [
+              120.981376,
+              14.592781
+            ],
+            [
+              120.981352,
+              14.592777
+            ],
+            [
+              120.981346,
+              14.592836
             ],
             [
               120.98137,
-              14.59286
+              14.592837
             ],
             [
               120.981377,
@@ -1634,6 +1846,22 @@
     {
       "type": "Feature",
       "properties": {
+        "Name": "Exit",
+        "Floor": "Ground",
+        "Type": "Exit"
+      },
+      "geometry": {
+        "coordinates": [
+          120.980401,
+          14.592459
+        ],
+        "type": "Point"
+      },
+      "id": "5c9d9a53d080975c5f42468cd43c4551"
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "Name": "Guidance Office",
         "Building": "Main ",
         "Floor": "Ground ",
@@ -1690,7 +1918,7 @@
       "properties": {
         "Name": "Stairs",
         "Building": "Main ",
-        "Floor": "Ground Flor",
+        "Floor": "Ground ",
         "Type": "Stairs"
       },
       "geometry": {
@@ -1746,7 +1974,7 @@
               14.592378
             ],
             [
-              120.981587,
+              120.981589,
               14.592329
             ],
             [
@@ -1762,7 +1990,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Taekwando Room",
+        "Name": "101 - Taekwando Room",
         "Building": "New ",
         "Floor": "Ground ",
         "Type": "Gym / Training Room"
@@ -1824,8 +2052,8 @@
       },
       "geometry": {
         "coordinates": [
-          120.9813,
-          14.592528
+          120.981299,
+          14.592527
         ],
         "type": "Point"
       },
@@ -2163,7 +2391,7 @@
       "geometry": {
         "coordinates": [
           120.981519,
-          14.591659
+          14.59166
         ],
         "type": "Point"
       },
@@ -2219,8 +2447,8 @@
         "coordinates": [
           [
             [
-              120.981281,
-              14.592501
+              120.98128,
+              14.592498
             ],
             [
               120.981335,
@@ -2235,8 +2463,8 @@
               14.59254
             ],
             [
-              120.981281,
-              14.592501
+              120.98128,
+              14.592498
             ]
           ]
         ],
@@ -2371,7 +2599,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Planning and Budget and Accounting Division",
+        "Name": "103 - Planning and Budget and Accounting Division",
         "Building": "New ",
         "Floor": "Ground ",
         "Type": "Office"
@@ -2516,8 +2744,8 @@
               14.592307
             ],
             [
-              120.981545,
-              14.592317
+              120.981547,
+              14.592316
             ],
             [
               120.981555,
@@ -2536,7 +2764,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Vacant",
+        "Name": "102 - Vacant",
         "Building": "New ",
         "Floor": "Ground ",
         "Type": "Room"
@@ -2570,7 +2798,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Procurement Division",
+        "Name": "104 - Procurement Division",
         "Building": "New ",
         "Floor": "Ground ",
         "Type": "Office"
@@ -2587,7 +2815,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Human Resources Management and Development Division",
+        "Name": "105 - Human Resources Management and Development Division (HRMDD)",
         "Building": "New ",
         "Floor": "Ground ",
         "Type": "Office"
@@ -2631,7 +2859,7 @@
       },
       "geometry": {
         "coordinates": [
-          120.981532,
+          120.981531,
           14.592298
         ],
         "type": "Point"
@@ -2729,7 +2957,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Vacant",
+        "Name": "106 - Vacant",
         "Building": "New ",
         "Floor": "Ground ",
         "Type": "Room"
@@ -2742,6 +2970,42 @@
         "type": "Point"
       },
       "id": "b0060f93db3da866081fbeda721b0b2d"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "GATE 2",
+        "Floor": "Ground",
+        "Type": "Exit"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.980647,
+              14.5915
+            ],
+            [
+              120.980614,
+              14.591628
+            ],
+            [
+              120.980815,
+              14.591646
+            ],
+            [
+              120.980853,
+              14.591502
+            ],
+            [
+              120.980647,
+              14.5915
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "b328b33dd2cd9004b226f738b7ec4f4c"
     },
     {
       "type": "Feature",
@@ -2833,6 +3097,42 @@
         "type": "Point"
       },
       "id": "b6b11217e87ab23f881fb8a8a228d1c1"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "Name": "GATE 1",
+        "Floor": "Ground",
+        "Type": "Entrance"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.981065,
+              14.5929
+            ],
+            [
+              120.981103,
+              14.592913
+            ],
+            [
+              120.981085,
+              14.59298
+            ],
+            [
+              120.981044,
+              14.592969
+            ],
+            [
+              120.981065,
+              14.5929
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "ba56d227d9e0aa18f73e0e10c5a1946f"
     },
     {
       "type": "Feature",
@@ -2930,8 +3230,8 @@
       },
       "geometry": {
         "coordinates": [
-          120.981538,
-          14.592341
+          120.981539,
+          14.59234
         ],
         "type": "Point"
       },
@@ -2957,7 +3257,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Vacant",
+        "Name": "102 - Vacant",
         "Building": "New ",
         "Floor": "Ground ",
         "Type": "Room"
@@ -3001,8 +3301,8 @@
       },
       "geometry": {
         "coordinates": [
-          120.981335,
-          14.592876
+          120.981311,
+          14.592879
         ],
         "type": "Point"
       },
@@ -3248,6 +3548,42 @@
     {
       "type": "Feature",
       "properties": {
+        "Name": "GATE 3",
+        "Floor": "Ground",
+        "Type": "Entrance"
+      },
+      "geometry": {
+        "coordinates": [
+          [
+            [
+              120.980367,
+              14.592356
+            ],
+            [
+              120.980489,
+              14.592376
+            ],
+            [
+              120.980439,
+              14.592565
+            ],
+            [
+              120.980316,
+              14.592543
+            ],
+            [
+              120.980367,
+              14.592356
+            ]
+          ]
+        ],
+        "type": "Polygon"
+      },
+      "id": "e25137b443e049c24d2a465d5def0e44"
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "Name": "CED Office",
         "Building": "Main ",
         "Floor": "Ground ",
@@ -3285,7 +3621,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Planning and Budget and Accounting Division",
+        "Name": "103 - Planning and Budget and Accounting Division",
         "Building": "New ",
         "Floor": "Ground ",
         "Type": "Office"
@@ -3390,6 +3726,22 @@
     {
       "type": "Feature",
       "properties": {
+        "Name": "GATE 2",
+        "Floor": "Ground",
+        "Type": "Exit"
+      },
+      "geometry": {
+        "coordinates": [
+          120.980738,
+          14.591559
+        ],
+        "type": "Point"
+      },
+      "id": "f25fffb735bc91816eff23125614132e"
+    },
+    {
+      "type": "Feature",
+      "properties": {
         "Name": "CHS Office",
         "Building": "Main ",
         "Floor": "Ground ",
@@ -3488,8 +3840,24 @@
         "coordinates": [
           [
             [
-              120.980575,
-              14.591531
+              120.980587,
+              14.591502
+            ],
+            [
+              120.980627,
+              14.591503
+            ],
+            [
+              120.980586,
+              14.591648
+            ],
+            [
+              120.980828,
+              14.591677
+            ],
+            [
+              120.980873,
+              14.591503
             ],
             [
               120.980972,
@@ -3516,6 +3884,22 @@
               14.592833
             ],
             [
+              120.981105,
+              14.59291
+            ],
+            [
+              120.981061,
+              14.592895
+            ],
+            [
+              120.981038,
+              14.59297
+            ],
+            [
+              120.981083,
+              14.592982
+            ],
+            [
               120.981083,
               14.592984
             ],
@@ -3524,8 +3908,28 @@
               14.592747
             ],
             [
-              120.980575,
-              14.591531
+              120.980311,
+              14.592557
+            ],
+            [
+              120.980454,
+              14.592587
+            ],
+            [
+              120.980516,
+              14.592363
+            ],
+            [
+              120.980364,
+              14.592337
+            ],
+            [
+              120.980419,
+              14.592124
+            ],
+            [
+              120.980587,
+              14.591502
             ]
           ]
         ],
@@ -3536,7 +3940,7 @@
     {
       "type": "Feature",
       "properties": {
-        "Name": "Procurement Division",
+        "Name": "104 - Procurement Division",
         "Building": "New ",
         "Floor": "Ground ",
         "Type": "Office"

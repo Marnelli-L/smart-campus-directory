@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { createPortal } from "react-dom";
 import OnScreenKeyboard from "../components/OnScreenKeyboard";
 import { staticDepartments } from "../data/departments";
@@ -82,11 +81,8 @@ const getIconForCategory = (category) => {
 };
 
 function Directory() {
-  const navigate = useNavigate();
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [openModal, setOpenModal] = useState(false);
-  const [modalDept, setModalDept] = useState(null);
   const [departments, setDepartments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -148,12 +144,6 @@ function Directory() {
         score.label = dept.name;
         score.sublabel = `${dept.category} • ${dept.location}`;
       }
-      // Check contact
-      else if (dept.contact.toLowerCase().includes(searchTerm)) {
-        score.value = 40;
-        score.label = dept.name;
-        score.sublabel = `Contact: ${dept.contact}`;
-      }
       // Check email
       else if (dept.email && dept.email.toLowerCase().includes(searchTerm)) {
         score.value = 35;
@@ -198,9 +188,8 @@ function Directory() {
             const formattedDepartments = data.map(building => ({
               name: building.name || building.title,
               location: building.location,
-              contact: building.contact || building.phone || 'N/A',
               email: building.email || '',
-              staff: building.staff || building.contact_person || 'N/A',
+
               officeHours: building.office_hours || building.hours || 'Mon-Fri 8:00am-5:00pm',
               category: building.category || 'General',
               accent: getAccentColor(building.category || 'General'),
@@ -339,7 +328,7 @@ function Directory() {
                    d.contact.toLowerCase().includes(searchTerm) ||
                    d.category.toLowerCase().includes(searchTerm) ||
                    (d.email && d.email.toLowerCase().includes(searchTerm)) ||
-                   (d.staff && d.staff.toLowerCase().includes(searchTerm));
+                   false;
           });
         }
       } catch (error) {
@@ -376,21 +365,6 @@ function Directory() {
   // Export functionality
 
   // Enhanced search handler
-
-  const handleOpenModal = (dept) => {
-    setModalDept(dept);
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-    setModalDept(null);
-  };
-
-  const handleNavigateHere = (department) => {
-    // Navigate to map with the department as destination
-    navigate(`/map?destination=${encodeURIComponent(department.name)}`);
-  };
 
   // Add a handler for search button (same as input change)
   const handleSearch = (e) => {
@@ -658,10 +632,6 @@ function Directory() {
                   bgcolor: "#fff",
                   overflow: "hidden",
                 }}
-                onClick={() => handleOpenModal(d)}
-                onKeyPress={(e) => {
-                  if (e.key === "Enter" || e.key === " ") handleOpenModal(d);
-                }}
               >
                 <CardContent
                   sx={{
@@ -789,6 +759,24 @@ function Directory() {
                     align="center"
                     sx={{
                       color: "#333",
+                      mb: { xs: 0.5, md: 0.75 },
+                      width: "100%",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                      px: { xs: 0.5, md: 1 },
+                      fontSize: { xs: "0.8rem", md: "0.9rem" },
+                      fontWeight: 500,
+                    }}
+                    title={d.email}
+                  >
+                    <strong style={{ color: "#00594A" }}>Email:</strong> {d.email}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    align="center"
+                    sx={{
+                      color: "#333",
                       mb: { xs: 2, md: 3 },
                       width: "100%",
                       overflow: "hidden",
@@ -798,9 +786,9 @@ function Directory() {
                       fontSize: { xs: "0.8rem", md: "0.9rem" },
                       fontWeight: 500,
                     }}
-                    title={d.contact}
+                    title={d.officeHours}
                   >
-                    <strong style={{ color: "#00594A" }}>Contact:</strong> {d.contact}
+                    <strong style={{ color: "#00594A" }}>Hours:</strong> {d.officeHours}
                   </Typography>
                   
                   {/* Button positioned at bottom */}
@@ -848,230 +836,6 @@ function Directory() {
           </Box>
         </Box>
       )}
-
-      {/* Department Detail Modal */}
-      <Dialog
-        open={openModal}
-        onClose={handleCloseModal}
-        aria-labelledby="dept-detail-title"
-        maxWidth="sm"
-        fullWidth
-        fullScreen={false}
-        PaperProps={{
-          sx: {
-            borderRadius: { xs: 2, md: 2 },
-            fontFamily: "inherit",
-            maxWidth: "480px",
-            margin: { xs: 1, md: 2 },
-            maxHeight: { xs: "95vh", md: "90vh" },
-            width: { xs: "calc(100% - 16px)", md: "100%" },
-            animation: "slideUp 0.25s ease-out",
-            "@keyframes slideUp": {
-              "0%": { transform: "translateY(50px)", opacity: 0 },
-              "100%": { transform: "translateY(0)", opacity: 1 },
-            },
-          },
-        }}
-        BackdropProps={{
-          sx: {
-            backgroundColor: "rgba(0, 0, 0, 0.5)",
-            backdropFilter: "blur(4px)",
-          },
-        }}
-        TransitionProps={{
-          timeout: 300,
-        }}
-      >
-        {modalDept && (
-          <>
-            <DialogTitle
-              id="dept-detail-title"
-              sx={{
-                bgcolor: "#fff",
-                color: "#0b3d36",
-                borderTopLeftRadius: { xs: 8, md: 8 },
-                borderTopRightRadius: { xs: 8, md: 8 },
-                fontFamily: "inherit",
-                py: { xs: 1.25, md: 1.5 },
-                px: { xs: 1.5, md: 2 },
-                borderBottom: "1px solid #e5e7eb",
-              }}
-            >
-              <Stack direction="row" alignItems="center" spacing={{ xs: 1, md: 1.5 }}>
-                <Avatar sx={{ bgcolor: "#e6f3f1", color: "#00594A", width: { xs: 32, md: 36 }, height: { xs: 32, md: 36 } }}>
-                  {modalDept.icon}
-                </Avatar>
-                <Box sx={{ minWidth: 0, flex: 1 }}>
-                  <Typography variant="h6" sx={{ fontWeight: 700, mb: 0, lineHeight: 1.2, fontSize: { xs: "1rem", md: "1.25rem" } }} noWrap>
-                    {modalDept.name}
-                  </Typography>
-                  <Chip
-                    label={modalDept.category}
-                    size="small"
-                    sx={{
-                      bgcolor: "#e6f3f1",
-                      color: "#00594A",
-                      fontWeight: 600,
-                      fontSize: { xs: "0.65rem", md: "0.7rem" },
-                      height: { xs: 20, md: 22 },
-                      mt: 0.5,
-                    }}
-                  />
-                </Box>
-              </Stack>
-            </DialogTitle>
-            <DialogContent dividers sx={{ pt: { xs: 1.5, md: 2 }, pb: { xs: 1.5, md: 2 }, px: { xs: 1.5, md: 2 }, fontFamily: "inherit" }}>
-              <Stack spacing={{ xs: 2, md: 2.5 }}>
-                <Stack direction="row" spacing={{ xs: 1, md: 1.25 }} alignItems="center">
-                  <BusinessIcon fontSize="small" sx={{ color: "#00594A", fontSize: { xs: 18, md: 20 } }} />
-                  <Typography variant="body2" sx={{ fontSize: { xs: "0.8rem", md: "0.9rem" } }}>
-                    <strong>Location:</strong> {modalDept.location}
-                  </Typography>
-                </Stack>
-                <Stack direction="row" spacing={{ xs: 1, md: 1.25 }} alignItems="center">
-                  <AccessTimeIcon fontSize="small" sx={{ color: "#00594A", fontSize: { xs: 18, md: 20 } }} />
-                  <Typography variant="body2" sx={{ fontSize: { xs: "0.8rem", md: "0.9rem" } }}>
-                    <strong>Office Hours:</strong> {modalDept.officeHours}
-                  </Typography>
-                </Stack>
-                <Stack direction="row" spacing={{ xs: 1, md: 1.25 }} alignItems="center">
-                  <PersonIcon fontSize="small" sx={{ color: "#00594A", fontSize: { xs: 18, md: 20 } }} />
-                  <Typography variant="body2" sx={{ fontSize: { xs: "0.8rem", md: "0.9rem" } }}>
-                    <strong>Staff-in-Charge:</strong> {modalDept.staff}
-                  </Typography>
-                </Stack>
-                <Stack direction="row" spacing={{ xs: 1, md: 1.25 }} alignItems="center">
-                  <EmailIcon fontSize="small" sx={{ color: "#00594A", fontSize: { xs: 18, md: 20 } }} />
-                  <Typography variant="body2" sx={{ fontSize: { xs: "0.8rem", md: "0.9rem" } }}>
-                    <strong>Email:</strong>{" "}
-                    {modalDept.email ? (
-                      <a
-                        href={`mailto:${modalDept.email}`}
-                        style={{ color: "#00594A", textDecoration: "underline" }}
-                      >
-                        {modalDept.email}
-                      </a>
-                    ) : (
-                      <span style={{ color: "#999" }}>N/A</span>
-                    )}
-                  </Typography>
-                </Stack>
-                <Stack direction="row" spacing={{ xs: 1, md: 1.25 }} alignItems="center">
-                  <SupportAgentIcon fontSize="small" sx={{ color: "#00594A", fontSize: { xs: 18, md: 20 } }} />
-                  <Typography variant="body2" sx={{ fontSize: { xs: "0.8rem", md: "0.9rem" } }}>
-                    <strong>Contact:</strong> {modalDept.contact}
-                  </Typography>
-                </Stack>
-                <Stack direction="row" spacing={{ xs: 1, md: 1.5 }} alignItems="center" sx={{ mt: { xs: 0.5, md: 1 } }}>
-                  <Chip
-                    label={modalDept.category}
-                    size="small"
-                    sx={{
-                      bgcolor: "#00695C",
-                      color: "#fff",
-                      fontWeight: "bold",
-                      fontSize: "0.8rem",
-                      borderRadius: 2,
-                      fontFamily: "inherit",
-                    }}
-                  />
-                  {modalDept.status === "closed" && (
-                    <Tooltip title="Temporarily Closed">
-                      <Chip
-                        icon={<WarningIcon sx={{ color: "#fff" }} />}
-                        label="Closed"
-                        size="small"
-                        sx={{
-                          bgcolor: "#E53935",
-                          color: "#fff",
-                          fontWeight: "bold",
-                          fontSize: "0.8rem",
-                          borderRadius: 2,
-                          fontFamily: "inherit",
-                        }}
-                      />
-                    </Tooltip>
-                  )}
-                </Stack>
-                {modalDept.announcement && (
-                  <Paper
-                    sx={{
-                      bgcolor: "#FFF3E0",
-                      p: 2,
-                      mt: 2,
-                      borderLeft: "4px solid #E53935",
-                      borderRadius: 2,
-                      fontFamily: "inherit",
-                    }}
-                  >
-                    <Stack direction="row" spacing={1.5} alignItems="center">
-                      <WarningIcon sx={{ color: "#E53935" }} />
-                      <Typography variant="body2" sx={{ color: "#E53935", fontSize: "0.95rem" }}>
-                        <strong>Announcement:</strong> {modalDept.announcement}
-                      </Typography>
-                    </Stack>
-                  </Paper>
-                )}
-                
-                {/* (Removed quick actions at user request) */}
-              </Stack>
-            </DialogContent>
-            <DialogActions
-              sx={{
-                justifyContent: "flex-end",
-                px: { xs: 1.5, md: 2 },
-                py: { xs: 1, md: 1.25 },
-                gap: { xs: 0.75, md: 1 },
-                borderTop: "1px solid #e5e7eb",
-                background: "#fff",
-                flexWrap: { xs: "wrap", sm: "nowrap" },
-              }}
-            >
-              <Button
-                variant="text"
-                size="small"
-                sx={{ color: "#6b7280", fontSize: { xs: "0.8rem", md: "0.875rem" } }}
-                onClick={handleCloseModal}
-              >
-                Close
-              </Button>
-              <Button
-                variant="outlined"
-                size="small"
-                sx={{ 
-                  borderColor: "#00594A", 
-                  color: "#00594A", 
-                  textTransform: "none",
-                  fontSize: { xs: "0.8rem", md: "0.875rem" },
-                  minWidth: { xs: 70, md: 80 },
-                }}
-                startIcon={<MapIcon sx={{ fontSize: { xs: 16, md: 18 } }} />}
-                href={modalDept.mapLink}
-                target="_blank"
-                aria-label={`View ${modalDept.name} on map`}
-              >
-                Map
-              </Button>
-              <Button
-                variant="contained"
-                size="small"
-                sx={{ 
-                  bgcolor: "#00594A", 
-                  '&:hover': { bgcolor: "#00473f" }, 
-                  textTransform: "none",
-                  fontSize: { xs: "0.8rem", md: "0.875rem" },
-                  minWidth: { xs: 90, md: 100 },
-                }}
-                startIcon={<NavigationIcon sx={{ fontSize: { xs: 16, md: 18 } }} />}
-                onClick={() => handleNavigateHere(modalDept)}
-                aria-label={`Navigate to ${modalDept.name}`}
-              >
-                Navigate
-              </Button>
-            </DialogActions>
-          </>
-        )}
-      </Dialog>
 
       {/* On-Screen Keyboard - Only show on non-mobile devices */}
       {!isMobile && keyboardOpen && createPortal(

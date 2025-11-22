@@ -240,12 +240,12 @@ function buildNavigationGraph(corridors) {
     }
   });
 
-  // Add cross-connections for nearby nodes (corridor intersections)
-  // This creates shortcuts through the graph for more direct routing
-  const CROSS_CONNECTION_THRESHOLD = 5.0; // Increased from 3.0 for better connections
+  // Add cross-connections ONLY for corridor intersections (very close nodes)
+  // This handles T-junctions and corridor crossings without creating wall-cutting shortcuts
+  const CROSS_CONNECTION_THRESHOLD = 0.5; // Only connect nodes that are extremely close (same intersection)
   const nodes = Array.from(nodeMap.values());
   
-  console.log(`  Adding cross-connections between nearby nodes...`);
+  console.log(`  Adding cross-connections for corridor intersections...`);
   let crossConnections = 0;
   
   for (let i = 0; i < nodes.length; i++) {
@@ -262,8 +262,9 @@ function buildNavigationGraph(corridors) {
         { units: 'meters' }
       );
       
-      // Create cross-connection for nearby nodes (hallway intersections)
-      if (distance <= CROSS_CONNECTION_THRESHOLD && distance > 0.1) {
+      // Only create connections for nodes at the same location (intersection handling)
+      // This prevents cutting through walls while allowing corridor junction navigation
+      if (distance <= CROSS_CONNECTION_THRESHOLD && distance > 0.01) {
         node1.neighbors.push({ node: node2, distance, isStair: false });
         node2.neighbors.push({ node: node1, distance, isStair: false });
         crossConnections++;
@@ -271,7 +272,7 @@ function buildNavigationGraph(corridors) {
     }
   }
   
-  console.log(`  Added ${crossConnections} cross-connections for shortcuts`);
+  console.log(`  Added ${crossConnections} cross-connections for intersections`);
 
   return nodeMap;
 }
@@ -633,6 +634,13 @@ export function findSimpleRoute(startCoords, endCoords, features = []) {
     console.log(`  Start node: ${minStartDist.toFixed(1)}m away`);
     console.log(`  End node: ${minEndDist.toFixed(1)}m away`);
     
+    // WARN if destination is too far from corridor
+    if (minEndDist > 30) {
+      console.warn(`⚠️ WARNING: Destination is ${minEndDist.toFixed(1)}m from nearest corridor!`);
+      console.warn(`  This may result in line cutting through buildings.`);
+      console.warn(`  Consider adding more corridor coverage on this floor.`);
+    }
+    
     // Debug: Check if start and end are well connected
     console.log(`  Start node has ${nearestStart.neighbors.length} neighbors`);
     console.log(`  End node has ${nearestEnd.neighbors.length} neighbors`);
@@ -653,10 +661,10 @@ export function findSimpleRoute(startCoords, endCoords, features = []) {
       };
     }
 
-    // Don't simplify or add start/end coords - keep ONLY corridor nodes
-    // This ensures the route NEVER leaves the corridors
-    const completePath = [...result.path];
-    console.log(`  Path waypoints: ${result.path.length} points`);
+    // Use ONLY corridor nodes for the path to prevent cutting through buildings
+    // Do NOT add startCoords/endCoords as they create lines through walls
+    const completePath = [...result.path]; // Only corridor path from A* algorithm
+    console.log(`  Path waypoints: ${completePath.length} points (corridor nodes only)`);
 
     // Calculate total distance along corridor path
     let totalDistance = 0;
@@ -668,10 +676,8 @@ export function findSimpleRoute(startCoords, endCoords, features = []) {
       );
     }
     
-    // Add estimated walking distance from start to first corridor node
-    totalDistance += minStartDist;
-    // Add estimated walking distance from last corridor node to destination
-    totalDistance += minEndDist;
+    // Add walking distance from start/end to nearest corridor nodes
+    totalDistance += minStartDist + minEndDist;
 
     // Generate turn-by-turn directions using only corridor nodes
     const directions = generateDirections(completePath);

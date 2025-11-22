@@ -1,4 +1,6 @@
 const express = require('express');
+const Logger = require('../utils/logger');
+const logger = new Logger('audit-log');
 const router = express.Router();
 const pool = require('../db/db');
 
@@ -70,7 +72,7 @@ router.get('/', async (req, res) => {
       offset: parseInt(offset)
     });
   } catch (error) {
-    console.error('Error fetching audit log:', error);
+    logger.error('Error fetching audit log:', error);
     res.status(500).json({ error: 'Failed to fetch audit log' });
   }
 });
@@ -104,7 +106,7 @@ router.post('/', async (req, res) => {
     
     res.status(201).json({ data: result.rows[0] });
   } catch (error) {
-    console.error('Error creating audit log:', error);
+    logger.error('Error creating audit log:', error);
     res.status(500).json({ error: 'Failed to create audit log entry' });
   }
 });
@@ -125,7 +127,7 @@ router.get('/stats', async (req, res) => {
     const result = await pool.query(statsQuery);
     res.json({ data: result.rows[0] });
   } catch (error) {
-    console.error('Error fetching audit log stats:', error);
+    logger.error('Error fetching audit log stats:', error);
     res.status(500).json({ error: 'Failed to fetch audit log statistics' });
   }
 });
@@ -136,7 +138,7 @@ router.delete('/', async (req, res) => {
     await pool.query('DELETE FROM audit_log');
     res.json({ message: 'Audit log cleared successfully' });
   } catch (error) {
-    console.error('Error clearing audit log:', error);
+    logger.error('Error clearing audit log:', error);
     res.status(500).json({ error: 'Failed to clear audit log' });
   }
 });
@@ -155,7 +157,7 @@ router.delete('/old', async (req, res) => {
       deleted: result.rowCount
     });
   } catch (error) {
-    console.error('Error cleaning up old audit entries:', error);
+    logger.error('Error cleaning up old audit entries:', error);
     res.status(500).json({ error: 'Failed to clean up old entries' });
   }
 });

@@ -78,7 +78,9 @@ const Admin = ({ setIsAuthenticated }) => {
   const [editingItem, setEditingItem] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const [_submitting, _setSubmitting] = useState(false);
+  const [_validationErrors, _setValidationErrors] = useState({});
+  
   // Dashboard context
   const [activityFeed, setActivityFeed] = useState([]);
   const [systemHealth] = useState({
@@ -89,6 +91,17 @@ const Admin = ({ setIsAuthenticated }) => {
   const [role] = useState("Super Admin");
   const [globalSearch, setGlobalSearch] = useState("");
   const [showHelp, setShowHelp] = useState(false);
+  const [exporting, _setExporting] = useState(false);
+  const [bulkAction, _setBulkAction] = useState('');
+  
+  // Feature flags and permissions (defined after role)
+  const permissions = {
+    canCreate: ['Super Admin', 'Admin'].includes(role),
+    canEdit: ['Super Admin', 'Admin', 'Editor'].includes(role),
+    canDelete: ['Super Admin', 'Admin'].includes(role),
+    canExport: ['Super Admin', 'Admin', 'Editor'].includes(role),
+    canViewAudit: ['Super Admin', 'Admin'].includes(role),
+  };
 
   // Building management
   const [buildingFilter, setBuildingFilter] = useState({
@@ -727,7 +740,7 @@ const Admin = ({ setIsAuthenticated }) => {
       formData.append('location', building.location || building.info || '');
       formData.append('contact', building.contact || '');
       formData.append('email', building.email || '');
-      formData.append('staff', building.staff || '');
+
       formData.append('office_hours', building.office_hours || building.hours || 'Mon-Fri 8:00am-5:00pm');
       formData.append('category', building.category || 'General');
       formData.append('status', building.status || 'open');
@@ -765,7 +778,7 @@ const Admin = ({ setIsAuthenticated }) => {
       formData.append('location', updated.location || updated.info || '');
       formData.append('contact', updated.contact || '');
       formData.append('email', updated.email || '');
-      formData.append('staff', updated.staff || '');
+
       formData.append('office_hours', updated.office_hours || updated.hours || 'Mon-Fri 8:00am-5:00pm');
       formData.append('category', updated.category || 'General');
       formData.append('status', updated.status || 'open');
@@ -833,7 +846,7 @@ const Admin = ({ setIsAuthenticated }) => {
       }
       
       // Create CSV content with correct field names
-      const headers = ['ID', 'Name', 'Category', 'Location', 'Contact', 'Email', 'Staff', 'Office Hours', 'Status', 'Announcement'];
+      const headers = ['ID', 'Name', 'Category', 'Location', 'Contact', 'Email', 'Office Hours', 'Status', 'Announcement'];
       const csvRows = [headers.join(',')];
       
       // Add building data with proper field mapping
@@ -845,7 +858,7 @@ const Admin = ({ setIsAuthenticated }) => {
           `"${(building.location || building.info || '').replace(/"/g, '""')}"`,
           `"${(building.contact || '').replace(/"/g, '""')}"`,
           `"${(building.email || '').replace(/"/g, '""')}"`,
-          `"${(building.staff || '').replace(/"/g, '""')}"`,
+
           `"${(building.office_hours || building.hours || '').replace(/"/g, '""')}"`,
           `"${(building.status || '').replace(/"/g, '""')}"`,
           `"${(building.announcement || '').replace(/"/g, '""')}"`
@@ -881,6 +894,253 @@ const Admin = ({ setIsAuthenticated }) => {
     }
   };
   
+  // ============================================================================
+  // VALIDATION FUNCTIONS - Priority 1
+  // ============================================================================
+  
+  // Validate announcement form
+  const _validateAnnouncement = (data) => {
+    const errors = {};
+    
+    if (!data.title || data.title.trim().length < 3) {
+      errors.title = 'Title must be at least 3 characters long';
+    }
+    if (data.title && data.title.length > 200) {
+      errors.title = 'Title must not exceed 200 characters';
+    }
+    if (!data.content || data.content.trim().length < 10) {
+      errors.content = 'Content must be at least 10 characters long';
+    }
+    if (!data.category) {
+      errors.category = 'Please select a category';
+    }
+    if (data.publish_date && data.expire_date) {
+      const publishDate = new Date(data.publish_date);
+      const expireDate = new Date(data.expire_date);
+      if (expireDate <= publishDate) {
+        errors.expire_date = 'Expiry date must be after publish date';
+      }
+    }
+    
+    _setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+  
+  // Validate directory/building form
+  const _validateBuilding = (data) => {
+    const errors = {};
+    
+    if (!data.name || data.name.trim().length < 2) {
+      errors.name = 'Name must be at least 2 characters long';
+    }
+    if (!data.department || data.department.trim().length < 2) {
+      errors.department = 'Department must be at least 2 characters long';
+    }
+    if (!data.room || data.room.trim().length < 1) {
+      errors.room = 'Room/Location is required';
+    }
+    if (data.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+      errors.email = 'Please enter a valid email address';
+    }
+    
+    _setValidationErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+  
+  // ============================================================================
+  // EXPORT FUNCTIONS - Priority 2
+  // ============================================================================
+  
+  // Export announcements to CSV
+  const exportAnnouncements = () => {
+    try {
+      _setExporting(true);
+      
+      if (!announcements || announcements.length === 0) {
+        showToast('warning', 'No announcements to export');
+        return;
+      }
+      
+      const headers = ['ID', 'Title', 'Content', 'Category', 'Priority', 'Status', 'Publish Date', 'Expire Date', 'Created At'];
+      const csvRows = [headers.join(',')];
+      
+      announcements.forEach(ann => {
+        const row = [
+          ann.id || '',
+          `"${(ann.title || '').replace(/"/g, '""')}"`,
+          `"${(ann.content || '').replace(/"/g, '""')}"`,
+          ann.category || '',
+          ann.priority || 'Normal',
+          ann.status || 'Active',
+          ann.publish_date ? new Date(ann.publish_date).toLocaleDateString() : '',
+          ann.expire_date ? new Date(ann.expire_date).toLocaleDateString() : '',
+          ann.created_at ? new Date(ann.created_at).toLocaleDateString() : ''
+        ];
+        csvRows.push(row.join(','));
+      });
+      
+      const csvContent = csvRows.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      const date = new Date().toISOString().split('T')[0];
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `announcements-export-${date}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      showToast('success', `Successfully exported ${announcements.length} announcements`);
+      addActivityLog('Exported', `Announcements data exported (${announcements.length} entries)`, 'Announcements', { count: announcements.length });
+    } catch (error) {
+      console.error('Export error:', error);
+      showToast('error', 'Failed to export announcements');
+    } finally {
+      _setExporting(false);
+    }
+  };
+  
+  // Export feedback to CSV
+  const exportFeedback = () => {
+    try {
+      _setExporting(true);
+      
+      if (!feedback || feedback.length === 0) {
+        showToast('warning', 'No feedback to export');
+        return;
+      }
+      
+      const headers = ['ID', 'Name', 'Email', 'Type', 'Feedback', 'Rating', 'Created At'];
+      const csvRows = [headers.join(',')];
+      
+      feedback.forEach(fb => {
+        const row = [
+          fb.id || '',
+          `"${(fb.name || 'Anonymous').replace(/"/g, '""')}"`,
+          `"${(fb.email || '').replace(/"/g, '""')}"`,
+          fb.type || '',
+          `"${(fb.feedback || '').replace(/"/g, '""')}"`,
+          fb.rating || '',
+          fb.created_at ? new Date(fb.created_at).toLocaleString() : ''
+        ];
+        csvRows.push(row.join(','));
+      });
+      
+      const csvContent = csvRows.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      const date = new Date().toISOString().split('T')[0];
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `feedback-export-${date}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      showToast('success', `Successfully exported ${feedback.length} feedback entries`);
+      addActivityLog('Exported', `Feedback data exported (${feedback.length} entries)`, 'Feedback', { count: feedback.length });
+    } catch (error) {
+      console.error('Export error:', error);
+      showToast('error', 'Failed to export feedback');
+    } finally {
+      _setExporting(false);
+    }
+  };
+  
+  // Export filtered data to JSON
+  const _exportToJSON = (data, filename) => {
+    try {
+      _setExporting(true);
+      
+      const jsonContent = JSON.stringify(data, null, 2);
+      const blob = new Blob([jsonContent], { type: 'application/json' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      const date = new Date().toISOString().split('T')[0];
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', `${filename}-${date}.json`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      
+      showToast('success', `Successfully exported ${data.length} entries to JSON`);
+    } catch (error) {
+      console.error('Export error:', error);
+      showToast('error', 'Failed to export data');
+    } finally {
+      _setExporting(false);
+    }
+  };
+  
+  // ============================================================================
+  // BULK OPERATIONS - Priority 2
+  // ============================================================================
+  
+  // Bulk update announcement status
+  const bulkUpdateAnnouncementStatus = async (status) => {
+    if (selectedAnnouncements.length === 0) return;
+    
+    try {
+      _setSubmitting(true);
+      const response = await fetch(`${API_URL}/api/announcements/bulk-update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: selectedAnnouncements, status })
+      });
+      
+      if (!response.ok) throw new Error('Bulk update failed');
+      
+      setAnnouncements(announcements.map(a => 
+        selectedAnnouncements.includes(a.id) ? { ...a, status } : a
+      ));
+      showToast('success', `Updated ${selectedAnnouncements.length} announcements to ${status}`);
+      setSelectedAnnouncements([]);
+      setIsSelectingAnnouncements(false);
+    } catch (error) {
+      console.error('Bulk update error:', error);
+      showToast('error', 'Failed to update announcements');
+    } finally {
+      _setSubmitting(false);
+    }
+  };
+  
+  // Bulk update announcement category
+  const bulkUpdateAnnouncementCategory = async (category) => {
+    if (selectedAnnouncements.length === 0) return;
+    
+    try {
+      _setSubmitting(true);
+      const response = await fetch(`${API_URL}/api/announcements/bulk-update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ids: selectedAnnouncements, category })
+      });
+      
+      if (!response.ok) throw new Error('Bulk update failed');
+      
+      setAnnouncements(announcements.map(a => 
+        selectedAnnouncements.includes(a.id) ? { ...a, category } : a
+      ));
+      showToast('success', `Updated ${selectedAnnouncements.length} announcements to category: ${category}`);
+      setSelectedAnnouncements([]);
+      setIsSelectingAnnouncements(false);
+    } catch (error) {
+      console.error('Bulk update error:', error);
+      showToast('error', 'Failed to update categories');
+    } finally {
+      _setSubmitting(false);
+    }
+  };
+  
   // Global search handler and filtered data
   const handleGlobalSearch = (e) => {
     setGlobalSearch(e.target.value);
@@ -912,7 +1172,7 @@ const Admin = ({ setIsAuthenticated }) => {
       bldg.info?.toLowerCase().includes(searchLower) ||
       bldg.contact?.toLowerCase().includes(searchLower) ||
       bldg.email?.toLowerCase().includes(searchLower) ||
-      bldg.staff?.toLowerCase().includes(searchLower) ||
+
       bldg.category?.toLowerCase().includes(searchLower)
     );
   });
@@ -1185,15 +1445,74 @@ const Admin = ({ setIsAuthenticated }) => {
                       )}
                     </>
                   )}
-                  <button
-                    className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#00594A] text-white rounded-md hover:bg-[#007763] transition font-medium shadow-sm"
-                    onClick={() => handleQuickAction("Add Announcement")}
-                  >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
-                    New Announcement
-                  </button>
+                  {/* Export Button */}
+                  {permissions.canExport && !isSelectingAnnouncements && (
+                    <button
+                      onClick={exportAnnouncements}
+                      disabled={exporting || announcements.length === 0}
+                      className="inline-flex items-center gap-2 px-4 py-2.5 border border-[#00594A] text-[#00594A] rounded-md hover:bg-[#00594A] hover:text-white transition font-medium"
+                      title="Export announcements to CSV"
+                    >
+                      {exporting ? (
+                        <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                      ) : (
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                      )}
+                      Export
+                    </button>
+                  )}
+                  {/* Bulk Actions Dropdown - shown when items are selected */}
+                  {isSelectingAnnouncements && selectedAnnouncements.length > 0 && (
+                    <>
+                      <select
+                        value={bulkAction}
+                        onChange={(e) => {
+                          const action = e.target.value;
+                          _setBulkAction(action);
+                          if (action === 'status-active') bulkUpdateAnnouncementStatus('Active');
+                          else if (action === 'status-inactive') bulkUpdateAnnouncementStatus('Inactive');
+                          else if (action === 'status-archived') bulkUpdateAnnouncementStatus('Archived');
+                          else if (action.startsWith('category-')) {
+                            const category = action.replace('category-', '');
+                            bulkUpdateAnnouncementCategory(category);
+                          }
+                          _setBulkAction('');
+                        }}
+                        className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium focus:ring-2 focus:ring-[#00594A]"
+                      >
+                        <option value="">Bulk Actions...</option>
+                        <optgroup label="Status">
+                          <option value="status-active">Set to Active</option>
+                          <option value="status-inactive">Set to Inactive</option>
+                          <option value="status-archived">Archive</option>
+                        </optgroup>
+                        <optgroup label="Category">
+                          <option value="category-Academic">Academic</option>
+                          <option value="category-Event">Event</option>
+                          <option value="category-Maintenance">Maintenance</option>
+                          <option value="category-Policy">Policy</option>
+                          <option value="category-Emergency">Emergency</option>
+                          <option value="category-General">General</option>
+                        </optgroup>
+                      </select>
+                    </>
+                  )}
+                  {permissions.canCreate && (
+                    <button
+                      className="inline-flex items-center gap-2 px-4 py-2.5 bg-[#00594A] text-white rounded-md hover:bg-[#007763] transition font-medium shadow-sm"
+                      onClick={() => handleQuickAction("Add Announcement")}
+                    >
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
+                      </svg>
+                      New Announcement
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -1661,6 +1980,27 @@ const Admin = ({ setIsAuthenticated }) => {
                       </>
                     )}
                   </>
+                )}
+                {/* Export Button */}
+                {permissions.canExport && (
+                  <button
+                    onClick={exportFeedback}
+                    disabled={exporting || feedback.length === 0}
+                    className="inline-flex items-center gap-2 px-4 py-2 border border-[#00594A] text-[#00594A] rounded-md hover:bg-[#00594A] hover:text-white transition font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Export feedback to CSV"
+                  >
+                    {exporting ? (
+                      <svg className="w-4 h-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                    ) : (
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                      </svg>
+                    )}
+                    Export
+                  </button>
                 )}
                 <button
                   type="button"
@@ -2383,12 +2723,6 @@ const Admin = ({ setIsAuthenticated }) => {
                       )}
                     </div>
                     <div className="space-y-2">
-                      {bldg.staff && (
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-gray-600">Staff:</span>
-                          <span>{bldg.staff}</span>
-                        </div>
-                      )}
                       {bldg.office_hours && (
                         <div className="flex items-center gap-2">
                           <span className="font-semibold text-gray-600">Hours:</span>
@@ -3264,7 +3598,6 @@ const Admin = ({ setIsAuthenticated }) => {
                     location: e.target.location.value,
                     contact: e.target.contact.value,
                     email: e.target.email.value,
-                    staff: e.target.staff.value,
                     office_hours: e.target.office_hours.value,
                     category: e.target.category.value,
                     status: e.target.status.value, 
@@ -3316,15 +3649,6 @@ const Admin = ({ setIsAuthenticated }) => {
                         type="email" 
                         defaultValue={editingItem?.email || ""} 
                         placeholder="e.g., registrar@udm.edu.ph" 
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#00594A] focus:border-transparent text-sm" 
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1.5">Staff in Charge</label>
-                      <input 
-                        name="staff" 
-                        defaultValue={editingItem?.staff || ""} 
-                        placeholder="e.g., Ms. Maria Santos" 
                         className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#00594A] focus:border-transparent text-sm" 
                       />
                     </div>

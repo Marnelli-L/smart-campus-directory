@@ -10,6 +10,7 @@ export default function OnScreenKeyboard({
   onChange = () => {}, 
   onEnter = () => {}, 
   onClose = () => {}, 
+  onSuggestionSelect = null, // NEW: callback for when suggestion is clicked
   className = '', 
   style = {}, 
   suggestions = [],
@@ -114,7 +115,13 @@ export default function OnScreenKeyboard({
   };
 
   const handleSuggestionClick = (suggestion) => {
-    // Handle both string suggestions and object suggestions
+    // If we have a onSuggestionSelect callback and this is an object suggestion, use it
+    if (onSuggestionSelect && typeof suggestion === 'object' && suggestion.name) {
+      onSuggestionSelect(suggestion);
+      return;
+    }
+    
+    // Fallback: Handle both string suggestions and object suggestions
     const suggestionText = typeof suggestion === 'string' ? suggestion : (suggestion.label || suggestion.name || suggestion);
     onChange(suggestionText);
     if (onEnter) {
